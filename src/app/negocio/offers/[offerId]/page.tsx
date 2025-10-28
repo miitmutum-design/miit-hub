@@ -37,7 +37,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const handleSaveToWallet = () => {
     toast({
       title: "Salvo com Sucesso!",
-      description: "Seu ingresso digital foi salvo na sua carteira.",
+      description: "Sua oferta digital foi salva na sua carteira.",
     });
   }
 
@@ -107,7 +107,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md bg-card border-border/50">
                     <DialogHeader>
-                        <DialogTitle className="text-center text-2xl font-bold font-headline">Seu Ingresso Digital</DialogTitle>
+                        <DialogTitle className="text-center text-2xl font-bold font-headline">Sua Oferta Digital</DialogTitle>
                         <DialogDescription className="text-center text-muted-foreground pt-2">
                             Apresente este QR Code no estabelecimento para validar sua oferta.
                         </DialogDescription>
