@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const serviceBusinesses = [
   {
-    id: 'serv-1',
+    id: '1',
     name: 'União Construtora',
     category: 'Serviços',
     rating: 4.8,
@@ -12,7 +12,7 @@ const serviceBusinesses = [
     distance: '0.5 km',
   },
   {
-    id: 'serv-2',
+    id: '2',
     name: 'Build Master',
     category: 'Serviços',
     rating: 4.6,
@@ -20,7 +20,7 @@ const serviceBusinesses = [
     distance: '1.2 km',
   },
   {
-    id: 'serv-3',
+    id: '3',
     name: 'Construtora Nova Era',
     category: 'Serviços',
     rating: 4.9,
@@ -52,7 +52,7 @@ export default function ServicesPage() {
 
       <section className="space-y-4">
         {serviceBusinesses.map((business) => (
-          <Link key={business.id} href="#" className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
+          <Link key={business.id} href={`/business/${business.id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
             <div className="bg-card p-4 rounded-lg flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50 border border-transparent">
               <div className="relative">
                 <div className="bg-muted p-4 rounded-lg flex items-center justify-center">
