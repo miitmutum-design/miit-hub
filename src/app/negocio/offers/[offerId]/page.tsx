@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -37,6 +37,11 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const { toast } = useToast();
   const { claimOffer } = useCompany();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    setFormattedDate(new Date(offer.validUntil).toLocaleDateString());
+  }, [offer.validUntil]);
 
   const isExpired = new Date(offer.validUntil) < new Date();
 
@@ -111,7 +116,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                     <Clock className="h-5 w-5 text-primary mt-1 flex-shrink-0"/>
                     <div>
                         <p className="font-semibold">Validade</p>
-                        <p className="text-muted-foreground text-sm">A promoção é válida até {new Date(offer.validUntil).toLocaleDateString()}</p>
+                        <p className="text-muted-foreground text-sm">A promoção é válida até {formattedDate}</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -150,7 +155,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                         <div className="text-center text-sm">
                             <p className="font-bold">{offer.businessName}</p>
                             <p>{offer.title}</p>
-                            <p className="text-muted-foreground">Válido até {new Date(offer.validUntil).toLocaleDateString()}</p>
+                            <p className="text-muted-foreground">Válido até {formattedDate}</p>
                         </div>
                     </div>
                     <DialogFooter>
