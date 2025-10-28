@@ -14,6 +14,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" className="dark">
       <head>
@@ -25,8 +26,8 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <div className="relative flex min-h-screen w-full flex-col">
-          <main className={cn("flex-1", 'pb-20')}>{children}</main>
-          <BottomNav />
+            <main className={cn("flex-1", 'pb-20')}>{children}</main>
+            <BottomNav />
         </div>
         <Toaster />
       </body>

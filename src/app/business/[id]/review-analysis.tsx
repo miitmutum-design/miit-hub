@@ -1,7 +1,6 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState } from 'react';
-import { useFormStatus } from 'react-dom';
 import { handleReviewAnalysis, FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,7 +14,7 @@ const initialState: FormState = {
 };
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const { pending } = useActionState();
   return (
     <Button type="submit" disabled={pending} className="w-full text-lg py-6">
       {pending ? 'Analyzing...' : 'Analyze Reviews with AI'}
@@ -56,21 +55,18 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="space-y-6">
         <div>
-            <Card className="h-full">
+            <Card className="h-full bg-card border-border/50">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-headline">
+                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
                         <FileText className="text-primary"/>
                         Community Reviews
                     </CardTitle>
-                    <CardDescription>
-                        A glimpse of what people are saying.
-                    </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {initialReviews.map((review, index) => (
-                        <div key={index} className="p-3 rounded-lg border bg-background text-sm">
+                        <div key={index} className="p-3 rounded-lg border border-border/50 bg-background/50 text-sm">
                             <p className="text-foreground/80">"{review}"</p>
                         </div>
                     ))}
@@ -78,9 +74,9 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
             </Card>
         </div>
         <div className="space-y-6">
-            <Card>
+            <Card className="bg-card border-border/50">
                 <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-headline">
+                <CardTitle className="flex items-center gap-2 font-headline text-xl">
                     <Bot className="text-primary" />
                     AI Review Analyzer
                 </CardTitle>
@@ -98,7 +94,7 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
                             rows={3}
                             value={review}
                             onChange={(e) => handleReviewChange(index, e.target.value)}
-                            className="text-base"
+                            className="text-base bg-background/50"
                         />
                         </div>
                     ))}
@@ -112,9 +108,9 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
             </Card>
 
             {state.analysis && (
-                <Card className="bg-accent/10 border-accent/30 animate-in fade-in-50">
+                <Card className="bg-card border-primary/30 animate-in fade-in-50">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-headline">
+                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
                         <Star className="text-primary"/>
                         Analysis Result
                     </CardTitle>
@@ -131,7 +127,7 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
                     </div>
                     <div>
                     <h4 className="font-semibold mb-2">AI Summary</h4>
-                    <p className="text-sm text-muted-foreground p-4 rounded-lg border bg-background">
+                    <p className="text-sm text-muted-foreground p-4 rounded-lg border border-border/50 bg-background/50">
                         {state.analysis.summary}
                     </p>
                     </div>
