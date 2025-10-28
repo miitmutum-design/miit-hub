@@ -2,18 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Ticket, User, Shapes } from 'lucide-react';
+import { Home, Ticket, User, Shapes, Building } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCompany } from '@/contexts/CompanyContext';
 
-const navItems = [
-  { href: '/', icon: Home, label: 'Home' },
-  { href: '/categoria', icon: Shapes, label: 'Categorias' },
-  { href: '/offers', icon: Ticket, label: 'Ofertas' },
-  { href: '/account', icon: User, label: 'Conta' },
-];
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { companyProfile } = useCompany();
+  
+  const isCompany = companyProfile.id !== 'user-demo';
+
+  const navItems = [
+    { href: '/', icon: Home, label: 'Home' },
+    { href: '/categoria', icon: Shapes, label: 'Categorias' },
+    { href: '/offers', icon: Ticket, label: 'Ofertas' },
+    { 
+      href: '/account', 
+      icon: isCompany ? Building : User, 
+      label: isCompany ? 'Empresa' : 'Conta' 
+    },
+  ];
+
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/80 backdrop-blur-lg">
