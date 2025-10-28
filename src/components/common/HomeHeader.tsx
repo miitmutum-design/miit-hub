@@ -1,15 +1,18 @@
 'use client';
 
-import { Bell, Ticket, User, Shapes, Building } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompany } from '@/contexts/CompanyContext';
+import { useRouter } from 'next/navigation';
 
 export default function HomeHeader() {
   const { hasNotifications, clearNotifications } = useCompany();
+  const router = useRouter();
 
   const handleNotificationClick = () => {
     // In a real app, this would open a notification modal/page
-    alert('Exibindo novas notificações...');
+    // For now, we navigate to a dedicated notifications page
+    router.push('/notifications');
     clearNotifications();
   };
 
@@ -25,11 +28,12 @@ export default function HomeHeader() {
           size="icon"
           className="rounded-full"
           onClick={handleNotificationClick}
+          aria-label="Notifications"
         >
           <Bell className="h-6 w-6" />
         </Button>
         {hasNotifications && (
-          <span className="absolute top-1 right-1 flex h-3 w-3">
+          <span className="absolute top-1 right-1 flex h-3 w-3 pointer-events-none">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
           </span>
