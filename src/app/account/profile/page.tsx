@@ -32,6 +32,18 @@ export default function EditProfilePage() {
       setter(placeholderUrl);
     }
   };
+  
+  const handleSaveChanges = () => {
+    console.log("Salvando alterações...");
+    console.log("URL da Logo:", logoUrl);
+    console.log("URL do Fundo:", backgroundUrl);
+    // Aqui viria a lógica para chamar a API PUT /api/companies/:id
+    // Ex: await fetch(`/api/companies/123`, { 
+    //   method: 'PUT',
+    //   body: JSON.stringify({ logo_url: logoUrl, background_url: backgroundUrl, ...outrosDados })
+    // });
+    alert("Alterações salvas no console!");
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -103,7 +115,7 @@ export default function EditProfilePage() {
               />
           </div>
 
-          <form className="w-full space-y-6">
+          <form className="w-full space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div className="space-y-2">
               <label
                 htmlFor="name"
@@ -151,6 +163,7 @@ export default function EditProfilePage() {
               <Button
                 size="lg"
                 className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold"
+                onClick={handleSaveChanges}
               >
                 Salvar Alterações
               </Button>
