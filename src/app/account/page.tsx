@@ -6,10 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { useState } from 'react';
-import { useCompany } from "@/contexts/CompanyContext";
+import { useCompany, CompanyProfile, mockCompanyProfiles } from "@/contexts/CompanyContext";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false }) => (
     <Link href={href} className="block w-full">
@@ -24,11 +25,37 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
     </Link>
 );
 
+// Mock database of access keys
+const accessKeysDB = [
+    { key: 'ABCD-EFGH-IJKL', isUsed: false, companyId: 'company-gold' },
+    { key: '1234-5678-9012', isUsed: true, companyId: 'company-silver' },
+    { key: 'QWER-TYUI-OPAS', isUsed: false, companyId: 'company-silver' },
+];
+
+const redeemAccessKeyMockAPI = (key: string): Promise<{ success: boolean; message: string; companyId?: string }> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const dbKey = accessKeysDB.find(k => k.key === key);
+            if (!dbKey) {
+                resolve({ success: false, message: 'Chave de acesso inválida.' });
+            } else if (dbKey.isUsed) {
+                resolve({ success: false, message: 'Chave de acesso já utilizada.' });
+            } else {
+                // Mark key as used in the mock DB
+                dbKey.isUsed = true;
+                resolve({ success: true, message: 'Chave resgatada com sucesso!', companyId: dbKey.companyId });
+            }
+        }, 1000); // Simulate network delay
+    });
+};
+
 
 export default function AccountPage() {
-  const { companyProfile } = useCompany();
+  const { companyProfile, setCompanyProfile } = useCompany();
+  const { toast } = useToast();
   const [accessKey, setAccessKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRedeeming, setIsRedeeming] = useState(false);
 
   const handleAccessKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/-/g, '').toUpperCase();
@@ -47,13 +74,37 @@ export default function AccountPage() {
     setAccessKey(formattedValue);
   };
   
-  const handleRedeemKey = () => {
-    if (accessKey.replace(/-/g, '').length === 12) {
-      alert(`Chave resgatada: ${accessKey}`);
-      setIsModalOpen(false);
-      setAccessKey('');
+  const handleRedeemKey = async () => {
+    if (accessKey.replace(/-/g, '').length !== 12) {
+      toast({
+        variant: "destructive",
+        title: "Chave Inválida",
+        description: "Por favor, insira uma chave válida de 12 caracteres.",
+      });
+      return;
+    }
+    
+    setIsRedeeming(true);
+    const result = await redeemAccessKeyMockAPI(accessKey);
+    setIsRedeeming(false);
+
+    if (result.success && result.companyId) {
+        const newProfile = mockCompanyProfiles[result.companyId as keyof typeof mockCompanyProfiles];
+        if (newProfile) {
+            setCompanyProfile(newProfile);
+            toast({
+                title: "Bem-vindo!",
+                description: "Chave resgatada com sucesso. Seu painel foi ativado.",
+            });
+            setIsModalOpen(false);
+            setAccessKey('');
+        }
     } else {
-      alert('Por favor, insira uma chave válida de 12 caracteres.');
+        toast({
+            variant: "destructive",
+            title: "Falha no Resgate",
+            description: result.message,
+        });
     }
   }
 
@@ -66,9 +117,9 @@ export default function AccountPage() {
         <div className="flex items-center bg-card p-4 rounded-lg">
             <Avatar className="h-16 w-16 mr-4">
                 {companyProfile.logoUrl ? (
-                  <Image src={companyProfile.logoUrl} alt="Logo da Empresa" layout="fill" className="object-cover rounded-full" />
+                  <Image src={companyProfile.logoUrl} alt="Logo da Empresa" fill className="object-cover rounded-full" />
                 ) : (
-                  <AvatarFallback>UD</AvatarFallback>
+                  <AvatarFallback>{companyProfile.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                 )}
             </Avatar>
             <div>
@@ -110,12 +161,13 @@ export default function AccountPage() {
                         onChange={handleAccessKeyChange}
                         className="h-14 text-2xl tracking-widest text-center bg-input border-border/50"
                         maxLength={14}
+                        disabled={isRedeeming}
                     />
                     <p className="text-sm text-muted-foreground text-center">{accessKey.replace(/-/g, '').length}/12 caracteres</p>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleRedeemKey} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
-                        Resgatar Chave
+                    <Button onClick={handleRedeemKey} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold" disabled={isRedeeming}>
+                        {isRedeeming ? 'Validando...' : 'Resgatar Chave'}
                     </Button>
                 </DialogFooter>
                  <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">

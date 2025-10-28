@@ -10,17 +10,24 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useCompany } from '@/contexts/CompanyContext';
 import type { CompanyProfile } from '@/contexts/CompanyContext';
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function EditProfilePage() {
   const { companyProfile, setCompanyProfile } = useCompany();
+  const { toast } = useToast();
 
-  // originalData will be the state from the context
   const [originalData, setOriginalData] = useState<CompanyProfile>(companyProfile);
-  // formData will be the local state for the form
   const [formData, setFormData] = useState<CompanyProfile>(companyProfile);
   const [hasChanges, setHasChanges] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
+
+  // Update form if companyProfile from context changes (e.g. after redeeming a key)
+  useEffect(() => {
+    setOriginalData(companyProfile);
+    setFormData(companyProfile);
+  }, [companyProfile]);
 
   // Check for changes between form data and the original data from context
   useEffect(() => {
@@ -60,7 +67,10 @@ export default function EditProfilePage() {
     // Reset the hasChanges state
     setHasChanges(false);
 
-    alert("Alterações salvas no contexto!");
+    toast({
+      title: "Sucesso!",
+      description: "Seu perfil foi atualizado.",
+    });
   };
 
   return (
