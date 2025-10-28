@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react-dom';
 import { handleReviewAnalysis, FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,7 +25,7 @@ function SubmitButton() {
 }
 
 export default function ReviewAnalysis({ initialReviews }: { initialReviews: string[] }) {
-  const [state, formAction] = useFormState(handleReviewAnalysis, initialState);
+  const [state, formAction] = useActionState(handleReviewAnalysis, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const [reviews, setReviews] = useState<string[]>(['']);
