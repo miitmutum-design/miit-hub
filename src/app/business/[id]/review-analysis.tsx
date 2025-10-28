@@ -45,7 +45,7 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
                                         <p className="font-semibold text-foreground">{review.name}</p>
                                         <p className="text-xs text-muted-foreground">{review.date}</p>
                                     </div>
-                                    <div className="inline-flex items-center gap-1.5 bg-green-700/80 text-white font-bold py-1 px-2.5 rounded-lg text-sm">
+                                    <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-2.5 rounded-lg text-sm">
                                         <Star className="h-3.5 w-3.5 fill-white" />
                                         <span>{review.rating}</span>
                                     </div>
