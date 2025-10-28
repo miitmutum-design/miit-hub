@@ -55,6 +55,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
 interface CompanyContextType {
   companyProfile: CompanyProfile;
   setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
+  logoutCompany: () => void;
 }
 
 // Create the context with a default value
@@ -64,8 +65,12 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile>(initialDemoProfile);
 
+  const logoutCompany = () => {
+    setCompanyProfile(initialDemoProfile);
+  };
+
   return (
-    <CompanyContext.Provider value={{ companyProfile, setCompanyProfile }}>
+    <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, logoutCompany }}>
       {children}
     </CompanyContext.Provider>
   );

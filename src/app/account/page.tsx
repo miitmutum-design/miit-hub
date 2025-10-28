@@ -12,8 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false }) => (
-    <Link href={href} className="block w-full">
+const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void }) => {
+    const content = (
         <div className="flex items-center bg-card p-4 rounded-lg transition-colors hover:bg-muted/50">
             <Icon className={`w-6 h-6 mr-4 ${isDestructive ? 'text-orange-500' : 'text-primary'}`} />
             <div className="flex-grow">
@@ -22,8 +22,23 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
             </div>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </div>
-    </Link>
-);
+    );
+
+    if (onClick) {
+        return (
+            <button onClick={onClick} className="block w-full text-left">
+                {content}
+            </button>
+        );
+    }
+
+    return (
+        <Link href={href} className="block w-full">
+            {content}
+        </Link>
+    );
+};
+
 
 // Mock database of access keys
 const accessKeysDB = [
@@ -51,7 +66,7 @@ const redeemAccessKeyMockAPI = (key: string): Promise<{ success: boolean; messag
 
 
 export default function AccountPage() {
-  const { companyProfile, setCompanyProfile } = useCompany();
+  const { companyProfile, setCompanyProfile, logoutCompany } = useCompany();
   const { toast } = useToast();
   const [accessKey, setAccessKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -111,6 +126,14 @@ export default function AccountPage() {
     }
   }
 
+  const handleLogout = () => {
+    logoutCompany();
+    toast({
+        title: "Sessão encerrada",
+        description: "Você saiu do seu perfil de empresa.",
+    });
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header title="Minha Conta" />
@@ -135,8 +158,8 @@ export default function AccountPage() {
         <div className="space-y-3">
           <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
           <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
-          <AccountItem icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
-          <AccountItem icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
+          <AccountItem href="#" icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
+          <AccountItem onClick={handleLogout} icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>
 
         {/* Business CTA - Only show if not a company */}
