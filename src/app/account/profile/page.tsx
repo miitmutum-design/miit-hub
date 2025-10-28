@@ -1,42 +1,33 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, User, Pencil, ImagePlus, Building } from 'lucide-react';
+import { ArrowLeft, Pencil, ImagePlus, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
-interface CompanyProfile {
-  name: string;
-  email: string;
-  phone: string;
-  logoUrl: string | null;
-  backgroundUrl: string | null;
-}
-
-const originalData: CompanyProfile = {
-  name: "Minha Empresa",
-  email: "contato@minhaempresa.com",
-  phone: "(65) 99999-9999",
-  logoUrl: null,
-  backgroundUrl: null,
-};
-
+import { useCompany } from '@/contexts/CompanyContext';
+import type { CompanyProfile } from '@/contexts/CompanyContext';
 
 export default function EditProfilePage() {
-  const [formData, setFormData] = useState<CompanyProfile>(originalData);
+  const { companyProfile, setCompanyProfile } = useCompany();
+
+  // originalData will be the state from the context
+  const [originalData, setOriginalData] = useState<CompanyProfile>(companyProfile);
+  // formData will be the local state for the form
+  const [formData, setFormData] = useState<CompanyProfile>(companyProfile);
   const [hasChanges, setHasChanges] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
+  // Check for changes between form data and the original data from context
   useEffect(() => {
     const changes = JSON.stringify(formData) !== JSON.stringify(originalData);
     setHasChanges(changes);
-  }, [formData]);
+  }, [formData, originalData]);
   
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -64,18 +55,17 @@ export default function EditProfilePage() {
   
   const handleSaveChanges = () => {
     if (!hasChanges) return;
-    
-    console.log("Salvando alterações...", formData);
-    // Aqui viria a lógica para chamar a API PUT /api/companies/:id
-    // Ex: await fetch(`/api/companies/123`, { 
-    //   method: 'PUT',
-    //   body: JSON.stringify(formData)
-    // });
-    alert("Alterações salvas no console!");
 
-    // Reseta o estado original para o novo estado salvo e desabilita o botão
-    Object.assign(originalData, formData);
+    // Update the context with the new form data
+    setCompanyProfile(formData);
+    
+    // Update the original data state to match the newly saved data
+    setOriginalData(formData);
+
+    // Reset the hasChanges state
     setHasChanges(false);
+
+    alert("Alterações salvas no contexto!");
   };
 
   return (

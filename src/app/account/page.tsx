@@ -2,10 +2,12 @@
 
 import { User, CreditCard, Settings, LogOut, ChevronRight } from "lucide-react";
 import Header from "@/components/common/Header";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from 'react';
+import { useCompany } from "@/contexts/CompanyContext";
+import Image from "next/image";
 
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false }) => (
     <Link href={href} className="block w-full">
@@ -22,6 +24,8 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
 
 
 export default function AccountPage() {
+  const { companyProfile } = useCompany();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header title="Minha Conta" />
@@ -30,11 +34,15 @@ export default function AccountPage() {
         {/* User Info Card */}
         <div className="flex items-center bg-card p-4 rounded-lg">
             <Avatar className="h-16 w-16 mr-4">
-                <AvatarFallback>UD</AvatarFallback>
+                {companyProfile.logoUrl ? (
+                  <Image src={companyProfile.logoUrl} alt="Logo da Empresa" layout="fill" className="object-cover" />
+                ) : (
+                  <AvatarFallback>UD</AvatarFallback>
+                )}
             </Avatar>
             <div>
-                <h2 className="text-xl font-bold font-headline">Usuário Demo</h2>
-                <p className="text-muted-foreground">demo@example.com</p>
+                <h2 className="text-xl font-bold font-headline">{companyProfile.name}</h2>
+                <p className="text-muted-foreground">{companyProfile.email}</p>
             </div>
         </div>
 

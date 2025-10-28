@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import BottomNav from "@/components/common/BottomNav";
 import { cn } from '@/lib/utils';
+import { CompanyProvider } from '@/contexts/CompanyContext';
 
 export const metadata: Metadata = {
   title: 'Local Hub',
@@ -25,11 +26,13 @@ export default function RootLayout({
         <meta name="theme-color" content="#1A1A18" />
       </head>
       <body className="font-body antialiased">
-        <div className="relative flex min-h-screen w-full flex-col">
-            <main className={cn("flex-1", 'pb-32 md:pb-20')}>{children}</main>
-            <BottomNav />
-        </div>
-        <Toaster />
+        <CompanyProvider>
+          <div className="relative flex min-h-screen w-full flex-col">
+              <main className={cn("flex-1", 'pb-32 md:pb-20')}>{children}</main>
+              <BottomNav />
+          </div>
+          <Toaster />
+        </CompanyProvider>
       </body>
     </html>
   );
