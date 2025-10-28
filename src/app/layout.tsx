@@ -25,8 +25,8 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <div className="relative flex min-h-screen w-full flex-col">
-          <main className={cn("flex-1", { 'pb-20': children?.type?.name !== 'MapPage' })}>{children}</main>
-          {children?.type?.name !== 'MapPage' && <BottomNav />}
+          <main className={cn("flex-1", 'pb-20')}>{children}</main>
+          <BottomNav />
         </div>
         <Toaster />
       </body>
