@@ -1,9 +1,9 @@
 'use client';
 
-import { ArrowLeft, User, Pencil } from 'lucide-react';
+import { ArrowLeft, User, Pencil, ImagePlus, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 
 export default function EditProfilePage() {
@@ -18,34 +18,45 @@ export default function EditProfilePage() {
             </Button>
           </Link>
           <h1 className="text-xl font-bold text-foreground font-headline">
-            Editar Perfil
+            Editar Perfil da Empresa
           </h1>
         </header>
 
         <div className="flex flex-col items-center space-y-8">
-          <div className="relative">
-            <Avatar className="h-32 w-32">
-              <div className="bg-card rounded-full flex items-center justify-center h-full w-full">
-                <User className="h-16 w-16 text-muted-foreground/50" />
-              </div>
-            </Avatar>
-            <Button size="icon" className="absolute bottom-2 right-2 h-9 w-9 bg-lime-500 hover:bg-lime-600 rounded-full">
-              <Pencil className="h-5 w-5 text-black" />
-            </Button>
+          <div className="space-y-6 text-center">
+            <div className="relative inline-block">
+              <Avatar className="h-32 w-32">
+                <AvatarFallback className="bg-card">
+                  <Building className="h-16 w-16 text-muted-foreground/50" />
+                </AvatarFallback>
+              </Avatar>
+              <Button size="icon" className="absolute bottom-2 right-2 h-9 w-9 bg-lime-500 hover:bg-lime-600 rounded-full">
+                <Pencil className="h-5 w-5 text-black" />
+              </Button>
+            </div>
+             <p className="text-sm font-medium text-muted-foreground">Logo da Empresa</p>
           </div>
+
+          <div className="w-full text-center">
+             <Button variant="outline" className="w-full h-12 border-dashed">
+                <ImagePlus className="mr-2 h-5 w-5" />
+                Upload da Imagem de Fundo
+             </Button>
+          </div>
+
 
           <form className="w-full space-y-6">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium text-muted-foreground">
-                Nome Completo
+                Nome da Empresa
               </label>
-              <Input id="name" type="text" defaultValue="Usuário Demo" className="bg-card border-border/50 h-12" />
+              <Input id="name" type="text" defaultValue="Minha Empresa" className="bg-card border-border/50 h-12" />
             </div>
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
-                Email
+                Email de Contato
               </label>
-              <Input id="email" type="email" defaultValue="usuario@email.com" className="bg-card border-border/50 h-12" />
+              <Input id="email" type="email" defaultValue="contato@minhaempresa.com" className="bg-card border-border/50 h-12" />
             </div>
             <div className="space-y-2">
               <label htmlFor="phone" className="text-sm font-medium text-muted-foreground">
