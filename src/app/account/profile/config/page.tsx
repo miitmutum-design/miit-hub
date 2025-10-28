@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Bell, FileText, Globe, Heart, Ticket, Gift, Calendar } from 'lucide-react';
+import { ArrowLeft, Bell, FileText, Globe, Bookmark, Ticket, Gift, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -45,7 +45,7 @@ export default function ConsumerConfigPage() {
 
       <Card className="bg-card">
         <CardContent className="p-0">
-            <ConfigItem icon={Heart} title="Empresas Favoritadas" description="Veja seus locais salvos" href="/account/profile/favorites" />
+            <ConfigItem icon={Bookmark} title="Empresas Favoritadas" description="Veja seus locais salvos" href="/account/profile/favorites" />
             <Separator />
             <ConfigItem icon={Ticket} title="Meus Cupons" description="Cupons de desconto disponíveis" href="/account/profile/coupons" />
             <Separator />
