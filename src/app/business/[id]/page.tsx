@@ -57,7 +57,7 @@ export default function BusinessPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="flex items-center gap-4 text-sm mb-6">
-          <Badge variant="secondary" className="bg-green-700/20 text-green-300 border-none">Aberto agora</Badge>
+          <Badge variant="secondary" className="bg-orange-600/20 text-orange-300 border-none">Aberto agora</Badge>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <MapPin className="h-4 w-4" />
             <span>{business.distance}</span>
