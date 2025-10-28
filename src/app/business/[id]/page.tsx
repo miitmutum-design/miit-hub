@@ -1,6 +1,6 @@
 import { getBusinessById } from '@/lib/data';
 import { notFound } from 'next/navigation';
-import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2 } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -93,6 +93,13 @@ export default function BusinessPage({ params }: { params: { id: string } }) {
                     <div>
                         <p className="font-semibold">Telefone</p>
                         <p className="text-muted-foreground">(65) 99999-9999</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <Globe className="h-5 w-5 text-primary mt-1"/>
+                    <div>
+                        <p className="font-semibold">Site</p>
+                        <Link href="#" className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site &rarr;</Link>
                     </div>
                 </div>
             </div>
