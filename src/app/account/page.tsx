@@ -11,10 +11,15 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void }) => {
+const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick, disabled = false }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void, disabled?: boolean }) => {
     const content = (
-        <div className="flex items-center bg-card p-4 rounded-lg transition-colors hover:bg-muted/50">
+        <div className={cn(
+            "flex items-center bg-card p-4 rounded-lg transition-colors",
+            !disabled && "hover:bg-muted/50",
+            disabled && "opacity-50 cursor-not-allowed"
+        )}>
             <Icon className={`w-6 h-6 mr-4 ${isDestructive ? 'text-orange-500' : 'text-primary'}`} />
             <div className="flex-grow">
                 <h3 className={`font-semibold ${isDestructive ? 'text-orange-500' : 'text-foreground'}`}>{title}</h3>
@@ -23,6 +28,10 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </div>
     );
+
+    if (disabled) {
+        return <div>{content}</div>;
+    }
 
     if (onClick) {
         return (
@@ -157,7 +166,7 @@ export default function AccountPage() {
         {/* Menu Items */}
         <div className="space-y-3">
           <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
-          <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
+          <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" disabled={!isCompany} />
           <AccountItem href="#" icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
           <AccountItem onClick={handleLogout} icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>
