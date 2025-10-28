@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, Pencil, ImagePlus, Building } from 'lucide-react';
+import { ArrowLeft, Pencil, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,7 +21,6 @@ export default function EditProfilePage() {
   const [hasChanges, setHasChanges] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const backgroundInputRef = useRef<HTMLInputElement>(null);
 
   // Check for changes between form data and the original data from context
   useEffect(() => {
@@ -38,13 +37,9 @@ export default function EditProfilePage() {
     logoInputRef.current?.click();
   };
 
-  const handleBackgroundClick = () => {
-    backgroundInputRef.current?.click();
-  };
-
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
-    field: 'logoUrl' | 'backgroundUrl'
+    field: 'logoUrl'
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -118,24 +113,6 @@ export default function EditProfilePage() {
             <p className="text-sm font-medium text-muted-foreground">
               Logo da Empresa
             </p>
-          </div>
-
-          <div className="w-full text-center">
-            <Button
-              variant="outline"
-              className="w-full h-12 border-dashed"
-              onClick={handleBackgroundClick}
-            >
-              <ImagePlus className="mr-2 h-5 w-5" />
-              {formData.backgroundUrl ? 'Imagem de Fundo Selecionada' : 'Upload da Imagem de Fundo'}
-            </Button>
-             <input
-                type="file"
-                ref={backgroundInputRef}
-                onChange={(e) => handleFileChange(e, 'backgroundUrl')}
-                className="hidden"
-                accept="image/*"
-              />
           </div>
 
           <form className="w-full space-y-6" onSubmit={(e) => e.preventDefault()}>
