@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, Pencil, Building } from 'lucide-react';
+import { ArrowLeft, Pencil, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -23,7 +23,7 @@ export default function EditProfilePage() {
   
   const logoInputRef = useRef<HTMLInputElement>(null);
 
-  // Update form if companyProfile from context changes (e.g. after redeeming a key)
+  // Update form if companyProfile from context changes
   useEffect(() => {
     setOriginalData(companyProfile);
     setFormData(companyProfile);
@@ -84,7 +84,7 @@ export default function EditProfilePage() {
             </Button>
           </Link>
           <h1 className="text-xl font-bold text-foreground font-headline">
-            Editar Perfil da Empresa
+            Editar Perfil Pessoal
           </h1>
         </header>
 
@@ -95,13 +95,13 @@ export default function EditProfilePage() {
                 {formData.logoUrl ? (
                   <Image
                     src={formData.logoUrl}
-                    alt="Logo da Empresa"
+                    alt="Foto do Perfil"
                     fill
                     className="object-cover rounded-full"
                   />
                 ) : (
                   <AvatarFallback className="bg-card">
-                    <Building className="h-16 w-16 text-muted-foreground/50" />
+                    <User className="h-16 w-16 text-muted-foreground/50" />
                   </AvatarFallback>
                 )}
               </Avatar>
@@ -121,7 +121,7 @@ export default function EditProfilePage() {
               />
             </div>
             <p className="text-sm font-medium text-muted-foreground">
-              Logo da Empresa
+              Foto de Perfil
             </p>
           </div>
 
@@ -131,7 +131,7 @@ export default function EditProfilePage() {
                 htmlFor="name"
                 className="text-sm font-medium text-muted-foreground"
               >
-                Nome da Empresa
+                Seu Nome
               </label>
               <Input
                 id="name"
@@ -146,7 +146,7 @@ export default function EditProfilePage() {
                 htmlFor="email"
                 className="text-sm font-medium text-muted-foreground"
               >
-                Email de Contato
+                Email
               </label>
               <Input
                 id="email"

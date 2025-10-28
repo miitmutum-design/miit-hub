@@ -56,6 +56,9 @@ export default function AccountPage() {
   const [accessKey, setAccessKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRedeeming, setIsRedeeming] = useState(false);
+  
+  const isCompany = companyProfile.id !== 'user-demo';
+  const profileHref = isCompany ? '/account/empresas' : '/account/profile';
 
   const handleAccessKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/-/g, '').toUpperCase();
@@ -130,52 +133,54 @@ export default function AccountPage() {
 
         {/* Menu Items */}
         <div className="space-y-3">
-          <AccountItem href="/account/empresas" icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
+          <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
           <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
           <AccountItem icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
           <AccountItem icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>
 
-        {/* Business CTA */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogTrigger asChild>
-                <div className="bg-gradient-to-br from-green-900/40 via-green-800/30 to-card p-6 rounded-lg mt-8 text-center cursor-pointer">
-                    <h3 className="text-2xl font-bold font-headline text-white">Empresa?</h3>
-                    <p className="text-muted-foreground mt-2 mb-4">Cadastre seu negócio e alcance mais clientes</p>
-                    <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold pointer-events-none">
-                        Criar Perfil Empresarial
-                    </Button>
-                </div>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-card border-border/50">
-                <DialogHeader>
-                    <DialogTitle className="text-center text-2xl font-bold font-headline">Resgatar Chave de Acesso</DialogTitle>
-                    <DialogDescription className="text-center text-muted-foreground pt-2">
-                        Insira a chave de 12 caracteres que você recebeu para acessar o painel da sua empresa.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="py-4 space-y-2">
-                    <Input 
-                        placeholder="XXXX-XXXX-XXXX" 
-                        value={accessKey}
-                        onChange={handleAccessKeyChange}
-                        className="h-14 text-2xl tracking-widest text-center bg-input border-border/50"
-                        maxLength={14}
-                        disabled={isRedeeming}
-                    />
-                    <p className="text-sm text-muted-foreground text-center">{accessKey.replace(/-/g, '').length}/12 caracteres</p>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleRedeemKey} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold" disabled={isRedeeming}>
-                        {isRedeeming ? 'Validando...' : 'Resgatar Chave'}
-                    </Button>
-                </DialogFooter>
-                 <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Fechar</span>
-                </DialogClose>
-            </DialogContent>
-        </Dialog>
+        {/* Business CTA - Only show if not a company */}
+        {!isCompany && (
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                    <div className="bg-gradient-to-br from-green-900/40 via-green-800/30 to-card p-6 rounded-lg mt-8 text-center cursor-pointer">
+                        <h3 className="text-2xl font-bold font-headline text-white">Empresa?</h3>
+                        <p className="text-muted-foreground mt-2 mb-4">Cadastre seu negócio e alcance mais clientes</p>
+                        <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold pointer-events-none">
+                            Criar Perfil Empresarial
+                        </Button>
+                    </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md bg-card border-border/50">
+                    <DialogHeader>
+                        <DialogTitle className="text-center text-2xl font-bold font-headline">Resgatar Chave de Acesso</DialogTitle>
+                        <DialogDescription className="text-center text-muted-foreground pt-2">
+                            Insira a chave de 12 caracteres que você recebeu para acessar o painel da sua empresa.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-2">
+                        <Input 
+                            placeholder="XXXX-XXXX-XXXX" 
+                            value={accessKey}
+                            onChange={handleAccessKeyChange}
+                            className="h-14 text-2xl tracking-widest text-center bg-input border-border/50"
+                            maxLength={14}
+                            disabled={isRedeeming}
+                        />
+                        <p className="text-sm text-muted-foreground text-center">{accessKey.replace(/-/g, '').length}/12 caracteres</p>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={handleRedeemKey} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold" disabled={isRedeeming}>
+                            {isRedeeming ? 'Validando...' : 'Resgatar Chave'}
+                        </Button>
+                    </DialogFooter>
+                    <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Fechar</span>
+                    </DialogClose>
+                </DialogContent>
+            </Dialog>
+        )}
       </div>
     </div>
   );
