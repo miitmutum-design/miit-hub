@@ -1,8 +1,22 @@
-import { ArrowLeft, Clock, Gift, Tag, FileText, Building } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data - in a real app, you'd fetch this based on offerId
 const mockOfferDetails = {
@@ -18,6 +32,26 @@ const mockOfferDetails = {
 
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
   const offer = mockOfferDetails; // Using mock data
+  const { toast } = useToast();
+
+  const handleSaveToWallet = () => {
+    toast({
+      title: "Salvo com Sucesso!",
+      description: "Seu ingresso digital foi salvo na sua carteira.",
+    });
+  }
+
+  // Create the payload for the QR code
+  const qrPayload = JSON.stringify({
+    businessName: offer.businessName,
+    offerTitle: offer.title,
+    validUntil: offer.validUntil,
+    couponCode: offer.couponCode,
+    consumerId: 'user-demo-id-12345', // Mock consumer ID
+  });
+
+  // URL encode the payload to use in the QR code API
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -63,6 +97,44 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                     </div>
                 </div>
             </div>
+
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
+                        <QrCode className="mr-2 h-5 w-5"/>
+                        Gerar Ingresso Digital
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md bg-card border-border/50">
+                    <DialogHeader>
+                        <DialogTitle className="text-center text-2xl font-bold font-headline">Seu Ingresso Digital</DialogTitle>
+                        <DialogDescription className="text-center text-muted-foreground pt-2">
+                            Apresente este QR Code no estabelecimento para validar sua oferta.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 flex flex-col items-center justify-center gap-6">
+                        <div className="bg-white p-2 rounded-lg">
+                           <Image
+                            src={qrCodeUrl}
+                            alt="QR Code da Oferta"
+                            width={250}
+                            height={250}
+                           />
+                        </div>
+                        <div className="text-center text-sm">
+                            <p className="font-bold">{offer.businessName}</p>
+                            <p>{offer.title}</p>
+                            <p className="text-muted-foreground">Válido até {offer.validUntil}</p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" onClick={handleSaveToWallet} className="w-full h-12">
+                            <Download className="mr-2 h-5 w-5"/>
+                            Salvar no Wallet
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <div>
                 <h3 className="font-semibold mb-2">Descrição da Oferta</h3>
