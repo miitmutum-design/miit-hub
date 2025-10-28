@@ -83,6 +83,7 @@ export default function AccountPage() {
   
   const isCompany = companyProfile.id !== 'user-demo';
   const profileHref = isCompany ? '/account/empresas' : '/account/profile';
+  const settingsHref = isCompany ? '#' : '/account/profile/config'; // TODO: Add company settings page
 
   const handleAccessKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/-/g, '').toUpperCase();
@@ -166,7 +167,7 @@ export default function AccountPage() {
         {/* Menu Items */}
         <div className="space-y-3">
           <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
-          <AccountItem href="#" icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
+          <AccountItem href={settingsHref} icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" disabled={isCompany} />
           <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" disabled={!isCompany} />
           <AccountItem onClick={handleLogout} icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>
