@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { notFound } from 'next/navigation';
+import { useParams, notFound } from 'next/navigation';
 import { ArrowLeft, Star, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,7 +24,10 @@ function StarRating({ rating, setRating }: { rating: number; setRating: (rating:
   );
 }
 
-export default function RateBusinessPage({ params: { id } }: { params: { id: string } }) {
+export default function RateBusinessPage() {
+  const params = useParams();
+  const id = params.id as string;
+  
   const business = getBusinessById(id);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
