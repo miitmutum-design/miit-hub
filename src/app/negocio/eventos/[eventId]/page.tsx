@@ -34,7 +34,7 @@ export default function EventDetailPage() {
   
   useEffect(() => {
     if (event) {
-        setFormattedDate(new Date(event.date).toLocaleDateString('pt-BR', { dateStyle: 'full', timeStyle: 'short' }));
+        setFormattedDate(new Date(event.date).toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' }));
     }
   }, [event]);
 
