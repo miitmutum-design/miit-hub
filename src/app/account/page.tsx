@@ -30,9 +30,6 @@ export default function AccountPage() {
         {/* User Info Card */}
         <div className="flex items-center bg-card p-4 rounded-lg">
             <Avatar className="h-16 w-16 mr-4">
-                <div className="bg-primary rounded-full flex items-center justify-center h-full w-full">
-                    <User className="h-8 w-8 text-primary-foreground" />
-                </div>
                 <AvatarFallback>UD</AvatarFallback>
             </Avatar>
             <div>
