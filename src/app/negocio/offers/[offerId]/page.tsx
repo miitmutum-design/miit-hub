@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
+import { cn } from '@/lib/utils';
 
 // Mock data - in a real app, you'd fetch this based on offerId
 const mockOfferDetails = {
@@ -30,24 +31,29 @@ const mockOfferDetails = {
     description: 'Aproveite 50% de desconto em nossa linha de sofás de 3 e 4 lugares. Perfeito para renovar sua sala com estilo e conforto. Promoção não cumulativa e válida enquanto durar o estoque.',
     couponCode: 'SOFANOVO50',
     terms: 'Válido apenas para sofás selecionados. Desconto não aplicável a outros itens. Necessário apresentar o código no caixa.',
+    limitPerUser: 1, // Max claims per user
 };
 
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
   const offer = mockOfferDetails; // Using mock data
   const { toast } = useToast();
-  const { claimOffer } = useCompany();
+  const { claimedOffers, claimOffer } = useCompany();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
-    setFormattedDate(new Date(offer.validUntil).toLocaleDateString());
+    setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));
   }, [offer.validUntil]);
 
   const isExpired = new Date(offer.validUntil) < new Date();
+  
+  const timesClaimed = claimedOffers.filter(claimed => claimed.id === offer.id).length;
+  const isLimitReached = timesClaimed >= offer.limitPerUser;
+
 
   const handleGenerateOffer = () => {
-    if (isExpired) return;
-    claimOffer(offer);
+    if (isExpired || isLimitReached) return;
+    claimOffer(offer, offer.limitPerUser);
   };
   
   const handleSaveToWallet = () => {
@@ -61,7 +67,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const qrPayload = JSON.stringify({
     businessName: offer.businessName,
     offerTitle: offer.title,
-    validUntil: offer.validUntil,
+    validUntil: formattedDate,
     couponCode: offer.couponCode,
     consumerId: 'user-demo-id-12345',
   });
@@ -131,9 +137,25 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
 
             <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
                 <DialogTrigger asChild>
-                    <Button onClick={handleGenerateOffer} size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
-                        <QrCode className="mr-2 h-5 w-5"/>
-                        Gerar Oferta
+                    <Button 
+                      onClick={handleGenerateOffer} 
+                      size="lg" 
+                      className={cn(
+                        "w-full h-12 text-lg font-bold transition-colors",
+                        isLimitReached
+                          ? "bg-muted text-muted-foreground cursor-not-allowed"
+                          : "bg-lime-500 hover:bg-lime-600 text-black"
+                      )}
+                      disabled={isLimitReached}
+                    >
+                        {isLimitReached ? (
+                          'Limite de uso atingido'
+                        ) : (
+                          <>
+                            <QrCode className="mr-2 h-5 w-5"/>
+                            Gerar Oferta
+                          </>
+                        )}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md bg-card border-border/50">

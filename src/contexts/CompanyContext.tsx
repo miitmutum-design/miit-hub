@@ -71,7 +71,7 @@ interface CompanyContextType {
   toggleFavorite: (companyId: string) => void;
   isFavorited: (companyId: string) => boolean;
   claimedOffers: ClaimedOffer[];
-  claimOffer: (offer: Omit<ClaimedOffer, 'claimedAt'>) => void;
+  claimOffer: (offer: Omit<ClaimedOffer, 'claimedAt'>, limit: number) => void;
 }
 
 // Create the context with a default value
@@ -101,9 +101,12 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     return favorites.includes(companyId);
   }
 
-  const claimOffer = (offer: Omit<ClaimedOffer, 'claimedAt'>) => {
-    // Prevent adding duplicates
-    if (claimedOffers.some(o => o.id === offer.id)) return;
+  const claimOffer = (offer: Omit<ClaimedOffer, 'claimedAt'>, limit: number) => {
+    const timesClaimed = claimedOffers.filter(o => o.id === offer.id).length;
+    if (timesClaimed >= limit) {
+      console.warn("Offer claim limit reached.");
+      return;
+    }
 
     const newClaimedOffer: ClaimedOffer = {
       ...offer,
