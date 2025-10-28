@@ -48,7 +48,7 @@ export default function BusinessPage({ params }: { params: { id: string } }) {
             <p className="text-muted-foreground mt-1">{business.category}</p>
           </div>
           <div className="text-right">
-             <div className="inline-flex items-center gap-1.5 bg-green-700/80 text-white font-bold py-1 px-3 rounded-lg">
+             <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
                 <Star className="h-4 w-4 fill-white" />
                 <span>{business.rating}</span>
              </div>
