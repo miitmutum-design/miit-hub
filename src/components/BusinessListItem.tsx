@@ -8,7 +8,7 @@ type BusinessListItemProps = {
 
 export default function BusinessListItem({ business }: BusinessListItemProps) {
   return (
-    <div className="bg-card p-4 rounded-lg flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50 border border-transparent">
+    <div className="bg-card p-4 rounded-lg flex items-center gap-4 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 border border-transparent">
         <div className="relative">
         <div className="bg-muted p-4 rounded-lg flex items-center justify-center">
             <Building2 className="h-8 w-8 text-muted-foreground" />

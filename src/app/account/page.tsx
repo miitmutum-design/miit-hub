@@ -1,6 +1,6 @@
 'use client';
 
-import { User, CreditCard, Settings, LogOut, ChevronRight, X } from "lucide-react";
+import { User, CreditCard, Settings, LogOut, ChevronRight, X, Building } from "lucide-react";
 import Header from "@/components/common/Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick, disabled = false }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void, disabled?: boolean }) => {
     const content = (
         <div className={cn(
-            "flex items-center bg-card p-4 rounded-lg transition-colors",
-            !disabled && "hover:bg-muted/50",
+            "flex items-center bg-card p-4 rounded-lg transition-all duration-300 border border-transparent",
+            !disabled && "hover:border-primary/50 hover:shadow-md",
             disabled && "opacity-50 cursor-not-allowed"
         )}>
             <Icon className={`w-6 h-6 mr-4 ${isDestructive ? 'text-orange-500' : 'text-primary'}`} />
@@ -155,7 +155,7 @@ export default function AccountPage() {
                 {companyProfile.logoUrl ? (
                   <Image src={companyProfile.logoUrl} alt="Logo da Empresa" fill className="object-cover rounded-full" />
                 ) : (
-                  <AvatarFallback>{companyProfile.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>{isCompany ? <Building/> : companyProfile.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                 )}
             </Avatar>
             <div>
@@ -166,7 +166,7 @@ export default function AccountPage() {
 
         {/* Menu Items */}
         <div className="space-y-3">
-          <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
+          <AccountItem href={profileHref} icon={isCompany ? Building : User} title="Meu Perfil" subtitle="Editar informações pessoais" />
           <AccountItem href={settingsHref} icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" disabled={isCompany} />
           <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" disabled={!isCompany} />
           <AccountItem onClick={handleLogout} icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />

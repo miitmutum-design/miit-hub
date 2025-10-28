@@ -42,7 +42,7 @@ export default function OffersPage() {
 
       <section className="space-y-4">
         {offers.map((offer, index) => (
-          <Card key={index} className="overflow-hidden bg-card border-border/50">
+          <Card key={index} className="overflow-hidden bg-card border-border/50 transition-all duration-300 hover:border-primary/70 hover:shadow-lg hover:shadow-primary/20">
             <CardHeader className="p-0 relative h-32 bg-gradient-to-br from-green-900/40 via-green-800/20 to-card">
                <div className="absolute top-3 right-3">
                  <Badge className="bg-lime-400 text-lime-900 font-bold hover:bg-lime-400/90 text-sm">
