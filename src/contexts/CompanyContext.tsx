@@ -14,6 +14,17 @@ export interface CompanyProfile {
   subscriptionEndDate: string; 
 }
 
+// Define the shape of a claimed offer
+export interface ClaimedOffer {
+  id: string;
+  businessName: string;
+  title: string;
+  validUntil: string;
+  discount: string;
+  couponCode: string;
+  claimedAt: string;
+}
+
 // Initial mock data for a demo user
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
@@ -59,6 +70,8 @@ interface CompanyContextType {
   favorites: string[];
   toggleFavorite: (companyId: string) => void;
   isFavorited: (companyId: string) => boolean;
+  claimedOffers: ClaimedOffer[];
+  claimOffer: (offer: Omit<ClaimedOffer, 'claimedAt'>) => void;
 }
 
 // Create the context with a default value
@@ -68,9 +81,12 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile>(initialDemoProfile);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [claimedOffers, setClaimedOffers] = useState<ClaimedOffer[]>([]);
 
   const logoutCompany = () => {
     setCompanyProfile(initialDemoProfile);
+    setFavorites([]);
+    setClaimedOffers([]);
   };
 
   const toggleFavorite = (companyId: string) => {
@@ -85,8 +101,28 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     return favorites.includes(companyId);
   }
 
+  const claimOffer = (offer: Omit<ClaimedOffer, 'claimedAt'>) => {
+    // Prevent adding duplicates
+    if (claimedOffers.some(o => o.id === offer.id)) return;
+
+    const newClaimedOffer: ClaimedOffer = {
+      ...offer,
+      claimedAt: new Date().toISOString(),
+    };
+    setClaimedOffers(prev => [...prev, newClaimedOffer]);
+  };
+
   return (
-    <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, logoutCompany, favorites, toggleFavorite, isFavorited }}>
+    <CompanyContext.Provider value={{ 
+        companyProfile, 
+        setCompanyProfile, 
+        logoutCompany, 
+        favorites, 
+        toggleFavorite, 
+        isFavorited,
+        claimedOffers,
+        claimOffer
+    }}>
       {children}
     </CompanyContext.Provider>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode } from 'lucide-react';
+import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -17,13 +17,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { useCompany } from '@/contexts/CompanyContext';
 
 // Mock data - in a real app, you'd fetch this based on offerId
 const mockOfferDetails = {
     id: '1',
     businessName: 'Flor de Lótus Móveis',
     title: '50% OFF em Sofás Selecionados',
-    validUntil: '31/12/2024',
+    validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // Expires in 30 days
     discount: '50%',
     description: 'Aproveite 50% de desconto em nossa linha de sofás de 3 e 4 lugares. Perfeito para renovar sua sala com estilo e conforto. Promoção não cumulativa e válida enquanto durar o estoque.',
     couponCode: 'SOFANOVO50',
@@ -33,8 +34,15 @@ const mockOfferDetails = {
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
   const offer = mockOfferDetails; // Using mock data
   const { toast } = useToast();
+  const { claimOffer } = useCompany();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
+  const isExpired = new Date(offer.validUntil) < new Date();
+
+  const handleGenerateOffer = () => {
+    claimOffer(offer);
+  };
+  
   const handleSaveToWallet = () => {
     toast({
       title: "Salvo com Sucesso!",
@@ -43,16 +51,14 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
     setIsQrModalOpen(false);
   }
 
-  // Create the payload for the QR code
   const qrPayload = JSON.stringify({
     businessName: offer.businessName,
     offerTitle: offer.title,
     validUntil: offer.validUntil,
     couponCode: offer.couponCode,
-    consumerId: 'user-demo-id-12345', // Mock consumer ID
+    consumerId: 'user-demo-id-12345',
   });
 
-  // URL encode the payload to use in the QR code API
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
 
   return (
@@ -68,7 +74,23 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
           Oferta Especial
         </h1>
       </header>
-
+      
+      {isExpired ? (
+        <Card className="bg-card border-destructive/50">
+          <CardContent className="p-8 flex flex-col items-center justify-center text-center">
+            <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
+            <h2 className="text-2xl font-semibold font-headline text-destructive">Oferta Expirada</h2>
+            <p className="text-muted-foreground mt-2 max-w-sm">
+              Esta oferta não está mais disponível. Fique de olho para futuras promoções!
+            </p>
+             <Link href="/offers" className="mt-6">
+                <Button variant="outline">
+                    Ver outras ofertas
+                </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      ) : (
       <Card className="overflow-hidden bg-card">
         <CardHeader className="p-0 relative h-40 bg-gradient-to-br from-green-900/40 via-green-800/20 to-card flex items-center justify-center">
            <Gift className="h-20 w-20 text-yellow-400 drop-shadow-lg" strokeWidth={1.5} />
@@ -87,7 +109,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                     <Clock className="h-5 w-5 text-primary mt-1 flex-shrink-0"/>
                     <div>
                         <p className="font-semibold">Validade</p>
-                        <p className="text-muted-foreground text-sm">A promoção é válida até {offer.validUntil}.</p>
+                        <p className="text-muted-foreground text-sm">A promoção é válida até {new Date(offer.validUntil).toLocaleDateString()}</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -102,7 +124,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
 
             <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
                 <DialogTrigger asChild>
-                    <Button size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
+                    <Button onClick={handleGenerateOffer} size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
                         <QrCode className="mr-2 h-5 w-5"/>
                         Gerar Oferta
                     </Button>
@@ -126,7 +148,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                         <div className="text-center text-sm">
                             <p className="font-bold">{offer.businessName}</p>
                             <p>{offer.title}</p>
-                            <p className="text-muted-foreground">Válido até {offer.validUntil}</p>
+                            <p className="text-muted-foreground">Válido até {new Date(offer.validUntil).toLocaleDateString()}</p>
                         </div>
                     </div>
                     <DialogFooter>
@@ -150,6 +172,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
 
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }

@@ -18,14 +18,14 @@ const businessOffers = [
     id: '1',
     businessName: 'The Daily Grind',
     title: 'Café e Croissant por R$15',
-    validUntil: '31/12',
+    validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // Expires in 30 days
     discount: '25%',
   },
   {
     id: '2',
     businessName: 'The Daily Grind',
     title: 'Happy Hour: 2x1 em Iced Lattes',
-    validUntil: 'Toda sexta',
+    validUntil: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), // Expired yesterday
     discount: '50%',
   },
 ];
@@ -42,6 +42,7 @@ export default function BusinessPage() {
   }
   
   const isBookmarked = isFavorited(business.id);
+  const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date());
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -149,24 +150,34 @@ export default function BusinessPage() {
           </TabsContent>
           
           <TabsContent value="offers">
-            <div className="space-y-4">
-              {businessOffers.map(offer => (
-                  <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
-                      <Card className="bg-card border-border/50">
-                          <CardContent className="p-4 flex items-center gap-4">
-                            <div className="bg-primary/10 p-3 rounded-lg">
-                                <Ticket className="h-6 w-6 text-primary"/>
-                            </div>
-                            <div className="flex-1">
-                                <p className="font-bold text-foreground">{offer.title}</p>
-                                <p className="text-sm text-muted-foreground">Válido até {offer.validUntil}</p>
-                            </div>
-                            <Badge variant="secondary">{offer.discount}</Badge>
-                          </CardContent>
-                      </Card>
-                  </Link>
-              ))}
-            </div>
+            {activeOffers.length > 0 ? (
+                <div className="space-y-4">
+                {activeOffers.map(offer => (
+                    <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
+                        <Card className="bg-card border-border/50">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-lg">
+                                    <Ticket className="h-6 w-6 text-primary"/>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold text-foreground">{offer.title}</p>
+                                    <p className="text-sm text-muted-foreground">Válido até {new Date(offer.validUntil).toLocaleDateString()}</p>
+                                </div>
+                                <Badge variant="secondary">{offer.discount}</Badge>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                ))}
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-lg bg-card">
+                    <Gift className="w-16 h-16 text-muted-foreground/50 mb-4" />
+                    <h2 className="text-2xl font-semibold font-headline">Nenhuma oferta ativa</h2>
+                    <p className="text-muted-foreground mt-2 max-w-sm">
+                        Esta empresa não tem ofertas disponíveis no momento.
+                    </p>
+                </div>
+            )}
           </TabsContent>
 
           <TabsContent value="events">
