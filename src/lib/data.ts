@@ -12,6 +12,10 @@ export type Business = {
     url: string;
     hint: string;
   };
+  coordinates?: {
+    x: number;
+    y: number;
+  };
 };
 
 const getImage = (id: string) => {
@@ -37,6 +41,7 @@ export const businesses: Business[] = [
       'I love their loyalty program. Great place to work from.',
     ],
     image: getImage('business-1'),
+    coordinates: { x: 40, y: 70 },
   },
   {
     id: '2',
@@ -53,6 +58,7 @@ export const businesses: Business[] = [
       'A little dusty in the back corners, but that adds to the charm.',
     ],
     image: getImage('business-2'),
+    coordinates: { x: 80, y: 80 },
   },
   {
     id: '3',
@@ -67,6 +73,7 @@ export const businesses: Business[] = [
       'Very helpful staff who helped me pick the perfect arrangement.',
     ],
     image: getImage('business-3'),
+    coordinates: { x: 65, y: 30 },
   },
   {
     id: '4',
@@ -82,6 +89,7 @@ export const businesses: Business[] = [
       'The staff is so friendly and always has a smile.',
     ],
     image: getImage('business-4'),
+    coordinates: { x: 25, y: 45 },
   },
 ];
 

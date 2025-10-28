@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import BottomNav from "@/components/common/BottomNav";
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Local Hub',
@@ -24,8 +25,8 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <div className="relative flex min-h-screen w-full flex-col">
-          <main className="flex-1 pb-20">{children}</main>
-          <BottomNav />
+          <main className={cn("flex-1", { 'pb-20': children?.type?.name !== 'MapPage' })}>{children}</main>
+          {children?.type?.name !== 'MapPage' && <BottomNav />}
         </div>
         <Toaster />
       </body>
