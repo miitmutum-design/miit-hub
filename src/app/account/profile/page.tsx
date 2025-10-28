@@ -1,18 +1,47 @@
 'use client';
 
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { ArrowLeft, User, Pencil, ImagePlus, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
+
+interface CompanyProfile {
+  name: string;
+  email: string;
+  phone: string;
+  logoUrl: string | null;
+  backgroundUrl: string | null;
+}
+
+const originalData: CompanyProfile = {
+  name: "Minha Empresa",
+  email: "contato@minhaempresa.com",
+  phone: "(65) 99999-9999",
+  logoUrl: null,
+  backgroundUrl: null,
+};
+
 
 export default function EditProfilePage() {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+  const [formData, setFormData] = useState<CompanyProfile>(originalData);
+  const [hasChanges, setHasChanges] = useState(false);
+  
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const changes = JSON.stringify(formData) !== JSON.stringify(originalData);
+    setHasChanges(changes);
+  }, [formData]);
+  
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({...prev, [id]: value}));
+  };
 
   const handleLogoClick = () => {
     logoInputRef.current?.click();
@@ -24,25 +53,29 @@ export default function EditProfilePage() {
 
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
-    setter: (url: string | null) => void
+    field: 'logoUrl' | 'backgroundUrl'
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       const placeholderUrl = URL.createObjectURL(file);
-      setter(placeholderUrl);
+      setFormData(prev => ({...prev, [field]: placeholderUrl}));
     }
   };
   
   const handleSaveChanges = () => {
-    console.log("Salvando alterações...");
-    console.log("URL da Logo:", logoUrl);
-    console.log("URL do Fundo:", backgroundUrl);
+    if (!hasChanges) return;
+    
+    console.log("Salvando alterações...", formData);
     // Aqui viria a lógica para chamar a API PUT /api/companies/:id
     // Ex: await fetch(`/api/companies/123`, { 
     //   method: 'PUT',
-    //   body: JSON.stringify({ logo_url: logoUrl, background_url: backgroundUrl, ...outrosDados })
+    //   body: JSON.stringify(formData)
     // });
     alert("Alterações salvas no console!");
+
+    // Reseta o estado original para o novo estado salvo e desabilita o botão
+    Object.assign(originalData, formData);
+    setHasChanges(false);
   };
 
   return (
@@ -64,9 +97,9 @@ export default function EditProfilePage() {
           <div className="space-y-6 text-center">
             <div className="relative inline-block">
               <Avatar className="h-32 w-32 border-2 border-dashed border-border">
-                {logoUrl ? (
+                {formData.logoUrl ? (
                   <Image
-                    src={logoUrl}
+                    src={formData.logoUrl}
                     alt="Logo da Empresa"
                     fill
                     className="object-cover rounded-full"
@@ -87,7 +120,7 @@ export default function EditProfilePage() {
               <input
                 type="file"
                 ref={logoInputRef}
-                onChange={(e) => handleFileChange(e, setLogoUrl)}
+                onChange={(e) => handleFileChange(e, 'logoUrl')}
                 className="hidden"
                 accept="image/*"
               />
@@ -104,12 +137,12 @@ export default function EditProfilePage() {
               onClick={handleBackgroundClick}
             >
               <ImagePlus className="mr-2 h-5 w-5" />
-              {backgroundUrl ? 'Imagem de Fundo Selecionada' : 'Upload da Imagem de Fundo'}
+              {formData.backgroundUrl ? 'Imagem de Fundo Selecionada' : 'Upload da Imagem de Fundo'}
             </Button>
              <input
                 type="file"
                 ref={backgroundInputRef}
-                onChange={(e) => handleFileChange(e, setBackgroundUrl)}
+                onChange={(e) => handleFileChange(e, 'backgroundUrl')}
                 className="hidden"
                 accept="image/*"
               />
@@ -126,7 +159,8 @@ export default function EditProfilePage() {
               <Input
                 id="name"
                 type="text"
-                defaultValue="Minha Empresa"
+                value={formData.name}
+                onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
             </div>
@@ -140,7 +174,8 @@ export default function EditProfilePage() {
               <Input
                 id="email"
                 type="email"
-                defaultValue="contato@minhaempresa.com"
+                value={formData.email}
+                onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
             </div>
@@ -154,7 +189,8 @@ export default function EditProfilePage() {
               <Input
                 id="phone"
                 type="tel"
-                defaultValue="(65) 99999-9999"
+                value={formData.phone}
+                onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
             </div>
@@ -162,8 +198,14 @@ export default function EditProfilePage() {
             <div className="pt-4">
               <Button
                 size="lg"
-                className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold"
+                className={cn(
+                  "w-full h-12 text-lg font-bold transition-colors",
+                  hasChanges
+                    ? "bg-lime-500 hover:bg-lime-600 text-black"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                )}
                 onClick={handleSaveChanges}
+                disabled={!hasChanges}
               >
                 Salvar Alterações
               </Button>
