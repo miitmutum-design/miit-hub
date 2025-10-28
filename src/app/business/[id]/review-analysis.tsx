@@ -1,140 +1,64 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
-import { handleReviewAnalysis, FormState } from '@/app/actions';
+import { Star, MessageSquarePlus } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Bot, Star, FileText, PlusCircle } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const initialState: FormState = {
-  message: '',
+type Review = {
+    id: number;
+    name: string;
+    date: string;
+    rating: number;
+    text: string;
+    avatar: string;
 };
 
-function SubmitButton() {
-  const { pending } = useActionState();
-  return (
-    <Button type="submit" disabled={pending} className="w-full text-lg py-6">
-      {pending ? 'Analyzing...' : 'Analyze Reviews with AI'}
-      <Bot className="ml-2 h-5 w-5" />
-    </Button>
-  );
-}
+// Mock data for reviews, including new fields
+const mockReviews: Review[] = [
+    { id: 1, name: 'Maria Silva', date: '20/10/2025 às 14:30', rating: 5, text: 'Excelente comida e atendimento!', avatar: 'MS' },
+    { id: 2, name: 'João Santos', date: '19/10/2025 às 19:15', rating: 4, text: 'Muito bom, recomendo!', avatar: 'JS' },
+    { id: 3, name: 'Ana Costa', date: '18/10/2025 às 20:00', rating: 5, text: 'O melhor da cidade, sem dúvidas.', avatar: 'AC' },
+];
+
 
 export default function ReviewAnalysis({ initialReviews }: { initialReviews: string[] }) {
-  const [state, formAction] = useActionState(handleReviewAnalysis, initialState);
-  const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [reviews, setReviews] = useState<string[]>(['']);
+    // We can use initialReviews later if we want to integrate the existing data
+    const reviewsToDisplay = mockReviews;
 
-  useEffect(() => {
-    if (state.message && state.message !== 'Analysis successful!') {
-      const description = state.errors?.reviews ? state.errors.reviews.join(' ') : state.message;
-      toast({
-        variant: 'destructive',
-        title: 'Analysis Error',
-        description: description,
-      });
-    }
-    if (state.message === 'Analysis successful!') {
-      formRef.current?.reset();
-      setReviews(['']);
-    }
-  }, [state, toast]);
-
-  const addReviewInput = () => {
-    setReviews([...reviews, '']);
-  };
-
-  const handleReviewChange = (index: number, value: string) => {
-    const newReviews = [...reviews];
-    newReviews[index] = value;
-    setReviews(newReviews);
-  };
-
-  return (
-    <div className="space-y-6">
-        <div>
-            <Card className="h-full bg-card border-border/50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                        <FileText className="text-primary"/>
-                        Community Reviews
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {initialReviews.map((review, index) => (
-                        <div key={index} className="p-3 rounded-lg border border-border/50 bg-background/50 text-sm">
-                            <p className="text-foreground/80">"{review}"</p>
+    return (
+        <div className="space-y-4">
+            {reviewsToDisplay.map((review) => (
+                <Card key={review.id} className="bg-card border-border/50">
+                    <CardContent className="p-4">
+                        <div className="flex items-start gap-4">
+                            <Avatar className="h-10 w-10">
+                                <AvatarFallback>{review.avatar}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="font-semibold text-foreground">{review.name}</p>
+                                        <p className="text-xs text-muted-foreground">{review.date}</p>
+                                    </div>
+                                    <div className="inline-flex items-center gap-1.5 bg-green-700/80 text-white font-bold py-1 px-2.5 rounded-lg text-sm">
+                                        <Star className="h-3.5 w-3.5 fill-white" />
+                                        <span>{review.rating}</span>
+                                    </div>
+                                </div>
+                                <p className="mt-3 text-foreground/90">{review.text}</p>
+                            </div>
                         </div>
-                    ))}
-                </CardContent>
-            </Card>
-        </div>
-        <div className="space-y-6">
-            <Card className="bg-card border-border/50">
-                <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                    <Bot className="text-primary" />
-                    AI Review Analyzer
-                </CardTitle>
-                <CardDescription>
-                    Enter customer reviews (real or imagined) to get an AI-powered analysis of overall satisfaction.
-                </CardDescription>
-                </CardHeader>
-                <CardContent>
-                <form ref={formRef} action={formAction} className="space-y-4">
-                    {reviews.map((review, index) => (
-                        <div key={index}>
-                        <Textarea
-                            name="reviews"
-                            placeholder={`Enter customer review ${index + 1}...`}
-                            rows={3}
-                            value={review}
-                            onChange={(e) => handleReviewChange(index, e.target.value)}
-                            className="text-base bg-background/50"
-                        />
-                        </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={addReviewInput} className="w-full border-dashed">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Another Review
-                    </Button>
-                    <SubmitButton />
-                </form>
-                </CardContent>
-            </Card>
-
-            {state.analysis && (
-                <Card className="bg-card border-primary/30 animate-in fade-in-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                        <Star className="text-primary"/>
-                        Analysis Result
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div>
-                    <div className="flex justify-between items-center mb-1">
-                        <h4 className="font-semibold">Aggregate Satisfaction</h4>
-                        <span className="font-bold text-lg text-primary">
-                        {(state.analysis.aggregateScore * 100).toFixed(0)}%
-                        </span>
-                    </div>
-                    <Progress value={state.analysis.aggregateScore * 100} className="h-2 bg-primary/20" />
-                    </div>
-                    <div>
-                    <h4 className="font-semibold mb-2">AI Summary</h4>
-                    <p className="text-sm text-muted-foreground p-4 rounded-lg border border-border/50 bg-background/50">
-                        {state.analysis.summary}
-                    </p>
-                    </div>
-                </CardContent>
+                    </CardContent>
                 </Card>
-            )}
+            ))}
+
+            <div className="fixed bottom-20 left-0 right-0 p-4 bg-background border-t border-border/50 md:static md:bg-transparent md:border-t-0 md:p-0">
+                 <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white">
+                    <MessageSquarePlus className="mr-2 h-5 w-5" />
+                    Adicionar Avaliação
+                </Button>
+            </div>
         </div>
-    </div>
-  );
+    );
 }
