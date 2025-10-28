@@ -4,8 +4,8 @@ import { ArrowLeft, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useCompany } from '@/contexts/CompanyContext';
-import { businesses, getBusinessById } from '@/lib/data';
-import BusinessCard from '@/components/BusinessCard';
+import { businesses } from '@/lib/data';
+import BusinessListItem from '@/components/BusinessListItem';
 
 export default function FavoritesPage() {
   const { favorites } = useCompany();
@@ -27,13 +27,13 @@ export default function FavoritesPage() {
 
       {favoritedBusinesses.length > 0 ? (
         <section>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
             {favoritedBusinesses.map((business) => (
-                <Link key={business.id} href={`/business/${business.id}`} className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
-                <BusinessCard business={business} />
-                </Link>
+              <Link key={business.id} href={`/business/${business.id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
+                <BusinessListItem business={business} />
+              </Link>
             ))}
-            </div>
+          </div>
         </section>
       ) : (
         <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-lg bg-card">
