@@ -43,7 +43,7 @@ export default function AccountPage() {
 
         {/* Menu Items */}
         <div className="space-y-3">
-          <AccountItem icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
+          <AccountItem href="/account/profile" icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
           <AccountItem icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
           <AccountItem icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
           <AccountItem icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
