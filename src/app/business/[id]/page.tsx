@@ -2,7 +2,7 @@
 
 import { getBusinessById } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
-import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,26 @@ import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
+
+// Mock data, similar to /offers/page.tsx
+const businessOffers = [
+  {
+    id: '1',
+    businessName: 'The Daily Grind',
+    title: 'Café e Croissant por R$15',
+    validUntil: '31/12',
+    discount: '25%',
+  },
+  {
+    id: '2',
+    businessName: 'The Daily Grind',
+    title: 'Happy Hour: 2x1 em Iced Lattes',
+    validUntil: 'Toda sexta',
+    discount: '50%',
+  },
+];
+
 
 export default function BusinessPage() {
   const params = useParams();
@@ -80,8 +100,10 @@ export default function BusinessPage() {
 
         {/* Tabs */}
         <Tabs defaultValue="info" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-card mb-6">
-            <TabsTrigger value="info">INFORMAÇÕES</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 bg-card mb-6">
+            <TabsTrigger value="info">INFO</TabsTrigger>
+            <TabsTrigger value="offers">OFERTAS</TabsTrigger>
+            <TabsTrigger value="events">EVENTOS</TabsTrigger>
             <TabsTrigger value="reviews">AVALIAÇÕES</TabsTrigger>
           </TabsList>
           
@@ -123,6 +145,37 @@ export default function BusinessPage() {
                         <p className="text-muted-foreground text-sm">{business.description}</p>
                     </div>
                 </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="offers">
+            <div className="space-y-4">
+              {businessOffers.map(offer => (
+                  <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
+                      <Card className="bg-card border-border/50">
+                          <CardContent className="p-4 flex items-center gap-4">
+                            <div className="bg-primary/10 p-3 rounded-lg">
+                                <Ticket className="h-6 w-6 text-primary"/>
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-bold text-foreground">{offer.title}</p>
+                                <p className="text-sm text-muted-foreground">Válido até {offer.validUntil}</p>
+                            </div>
+                            <Badge variant="secondary">{offer.discount}</Badge>
+                          </CardContent>
+                      </Card>
+                  </Link>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="events">
+            <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-lg bg-card">
+              <Calendar className="w-16 h-16 text-muted-foreground/50 mb-4" />
+              <h2 className="text-2xl font-semibold font-headline">Nenhum evento agendado</h2>
+              <p className="text-muted-foreground mt-2 max-w-sm">
+                Esta empresa não tem eventos futuros no momento.
+              </p>
             </div>
           </TabsContent>
 
