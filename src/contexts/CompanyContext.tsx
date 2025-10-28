@@ -84,6 +84,8 @@ interface CompanyContextType {
   claimOffer: (offer: Omit<ClaimedOffer, 'claimedAt'>, limit: number) => void;
   claimedEvents: ClaimedEvent[];
   claimEvent: (event: Omit<ClaimedEvent, 'claimedAt'>, limit: number) => void;
+  hasNotifications: boolean;
+  clearNotifications: () => void;
 }
 
 // Create the context with a default value
@@ -95,13 +97,19 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [claimedOffers, setClaimedOffers] = useState<ClaimedOffer[]>([]);
   const [claimedEvents, setClaimedEvents] = useState<ClaimedEvent[]>([]);
+  const [hasNotifications, setHasNotifications] = useState(true); // Default to true for demo
 
   const logoutCompany = () => {
     setCompanyProfile(initialDemoProfile);
     setFavorites([]);
     setClaimedOffers([]);
     setClaimedEvents([]);
+    setHasNotifications(true); // Reset for next session
   };
+
+  const clearNotifications = () => {
+    setHasNotifications(false);
+  }
 
   const toggleFavorite = (companyId: string) => {
     setFavorites(prev => 
@@ -154,7 +162,9 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
         claimedOffers,
         claimOffer,
         claimedEvents,
-        claimEvent
+        claimEvent,
+        hasNotifications,
+        clearNotifications
     }}>
       {children}
     </CompanyContext.Provider>

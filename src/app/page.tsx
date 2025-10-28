@@ -1,16 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import BusinessCard from '@/components/BusinessCard';
 import { Input } from '@/components/ui/input';
 import { businesses } from '@/lib/data';
+import HomeHeader from '@/components/common/HomeHeader';
 
 export default function Home() {
   return (
     <div className="container mx-auto max-w-3xl py-6 sm:py-8">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-primary font-headline">Local Hub</h1>
-        <p className="text-muted-foreground mt-2 text-lg">Discover the best businesses near you</p>
-      </header>
+      <HomeHeader />
 
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
