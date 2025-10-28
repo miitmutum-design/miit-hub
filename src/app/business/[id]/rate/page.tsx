@@ -24,8 +24,8 @@ function StarRating({ rating, setRating }: { rating: number; setRating: (rating:
   );
 }
 
-export default function RateBusinessPage({ params }: { params: { id: string } }) {
-  const business = getBusinessById(params.id);
+export default function RateBusinessPage({ params: { id } }: { params: { id: string } }) {
+  const business = getBusinessById(id);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
@@ -36,7 +36,7 @@ export default function RateBusinessPage({ params }: { params: { id: string } })
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
-        <Link href={`/business/${params.id}`} className="absolute left-0">
+        <Link href={`/business/${id}`} className="absolute left-0">
           <Button variant="ghost" size="icon">
             <ArrowLeft />
             <span className="sr-only">Voltar</span>
