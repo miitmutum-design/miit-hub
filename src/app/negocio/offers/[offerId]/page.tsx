@@ -33,12 +33,14 @@ const mockOfferDetails = {
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
   const offer = mockOfferDetails; // Using mock data
   const { toast } = useToast();
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const handleSaveToWallet = () => {
     toast({
       title: "Salvo com Sucesso!",
       description: "Sua oferta digital foi salva na sua carteira.",
     });
+    setIsQrModalOpen(false);
   }
 
   // Create the payload for the QR code
@@ -98,7 +100,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                 </div>
             </div>
 
-            <Dialog>
+            <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
                 <DialogTrigger asChild>
                     <Button size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
                         <QrCode className="mr-2 h-5 w-5"/>
