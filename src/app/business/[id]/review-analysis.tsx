@@ -4,6 +4,8 @@ import { Star, MessageSquarePlus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 type Review = {
     id: number;
@@ -23,6 +25,8 @@ const mockReviews: Review[] = [
 
 
 export default function ReviewAnalysis({ initialReviews }: { initialReviews: string[] }) {
+    const params = useParams();
+    const id = params.id;
     // We can use initialReviews later if we want to integrate the existing data
     const reviewsToDisplay = mockReviews;
 
@@ -54,10 +58,12 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
             ))}
 
             <div className="fixed bottom-20 left-0 right-0 p-4 bg-background border-t border-border/50 md:static md:bg-transparent md:border-t-0 md:p-0">
-                 <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white">
-                    <MessageSquarePlus className="mr-2 h-5 w-5" />
-                    Adicionar Avaliação
-                </Button>
+                 <Link href={`/business/${id}/rate`} className="w-full">
+                    <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white">
+                        <MessageSquarePlus className="mr-2 h-5 w-5" />
+                        Adicionar Avaliação
+                    </Button>
+                 </Link>
             </div>
         </div>
     );
