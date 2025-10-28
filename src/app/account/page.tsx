@@ -166,8 +166,8 @@ export default function AccountPage() {
         {/* Menu Items */}
         <div className="space-y-3">
           <AccountItem href={profileHref} icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
-          <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" disabled={!isCompany} />
           <AccountItem href="#" icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
+          <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" disabled={!isCompany} />
           <AccountItem onClick={handleLogout} icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>
 
