@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { businesses, type Business } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,14 @@ import Link from 'next/link';
 
 export default function MapPage() {
   const [selectedBusiness, setSelectedBusiness] = useState<Business>(businesses[0]);
+  const [reviewCount, setReviewCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Set a random review count for the selected business when it changes,
+    // or on initial load.
+    setReviewCount(Math.floor(Math.random() * 200) + 50);
+  }, [selectedBusiness]);
+
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-background">
@@ -74,7 +82,7 @@ export default function MapPage() {
                         <Star key={i} className="w-4 h-4 text-muted-foreground/50" />
                     ))}
                   </div>
-                  <span className="text-xs text-muted-foreground">({Math.floor(Math.random() * 200) + 50})</span>
+                  <span className="text-xs text-muted-foreground">({reviewCount ?? '...'})</span>
                 </div>
               </div>
               <Button size="icon" className="rounded-full w-12 h-12 bg-primary/20 text-primary hover:bg-primary/30 shrink-0">
