@@ -102,7 +102,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                 <DialogTrigger asChild>
                     <Button size="lg" className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black">
                         <QrCode className="mr-2 h-5 w-5"/>
-                        Gerar Ingresso Digital
+                        Gerar Oferta
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md bg-card border-border/50">
