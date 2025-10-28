@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "business-1",
+      "description": "A cozy coffee shop interior.",
+      "imageUrl": "https://images.unsplash.com/photo-1511920170033-f8396924c348?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2ZmZWUlMjBzaG9wfGVufDB8fHx8MTc2MTYwMDgwOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coffee shop"
+    },
+    {
+      "id": "business-2",
+      "description": "A modern bookstore with many shelves.",
+      "imageUrl": "https://images.unsplash.com/photo-1648999528869-5292670c6681?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxib29rc3RvcmUlMjBpbnRlcmlvcnxlbnwwfHx8fDE3NjE2NzQ4ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bookstore interior"
+    },
+    {
+      "id": "business-3",
+      "description": "A vibrant flower shop.",
+      "imageUrl": "https://images.unsplash.com/photo-1589244159943-460088ed5c92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmbG93ZXIlMjBzaG9wfGVufDB8fHx8MTc2MTU5MTE1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "flower shop"
+    },
+    {
+      "id": "business-4",
+      "description": "A local bakery with fresh bread.",
+      "imageUrl": "https://images.unsplash.com/photo-1677825948767-5d379d012bda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxiYWtlcnklMjBicmVhZHxlbnwwfHx8fDE3NjE2NjE0Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bakery bread"
+    },
+    {
+      "id": "business-5",
+      "description": "An independent cinema exterior at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1623720676213-af134f1fd22b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaW5lbWElMjBuaWdodHxlbnwwfHx8fDE3NjE2NzQ4ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cinema night"
+    },
+    {
+      "id": "business-6",
+      "description": "A boutique clothing store.",
+      "imageUrl": "https://images.unsplash.com/photo-1573612664822-d7d347da7b80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG90aGluZyUyMGJvdXRpcXVlfGVufDB8fHx8MTc2MTY2ODQ4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "clothing boutique"
+    }
+  ]
 }
