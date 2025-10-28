@@ -1,17 +1,17 @@
-import { ArrowLeft, Car, HeartPulse, Home, Laptop, LayoutGrid, Book, Sparkles, Utensils, Wrench } from 'lucide-react';
+import { ArrowLeft, Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const categories = [
-  { name: 'Saúde', count: 12, icon: HeartPulse },
-  { name: 'Imobiliária', count: 8, icon: Home },
-  { name: 'Alimentação', count: 24, icon: Utensils },
-  { name: 'Serviços', count: 18, icon: Wrench },
-  { name: 'Educação', count: 7, icon: Book },
-  { name: 'Beleza', count: 15, icon: Sparkles },
-  { name: 'Automotivo', count: 11, icon: Car },
-  { name: 'Tecnologia', count: 9, icon: Laptop },
+  { name: 'Saúde', count: 12, icon: HeartPulse, href: '#' },
+  { name: 'Imobiliária', count: 8, icon: Home, href: '#' },
+  { name: 'Alimentação', count: 24, icon: Utensils, href: '#' },
+  { name: 'Serviços', count: 18, icon: Wrench, href: '/servicos' },
+  { name: 'Educação', count: 7, icon: Book, href: '#' },
+  { name: 'Beleza', count: 15, icon: Sparkles, href: '#' },
+  { name: 'Automotivo', count: 11, icon: Car, href: '#' },
+  { name: 'Tecnologia', count: 9, icon: Laptop, href: '#' },
 ];
 
 export default function CategoriesPage() {
@@ -32,24 +32,25 @@ export default function CategoriesPage() {
       <section>
         <div className="grid grid-cols-2 gap-4">
           {categories.map((category) => (
-            <Card
-              key={category.name}
-              className="group cursor-pointer overflow-hidden text-center transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 bg-card"
-            >
-              <CardContent className="flex flex-col items-center justify-center p-6 gap-3">
-                <div className="bg-primary/10 p-4 rounded-lg">
-                    <category.icon className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-                </div>
-                <div className="flex flex-col">
-                  <p className="font-bold text-lg font-headline text-foreground">
-                    {category.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {category.count} empresas
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link key={category.name} href={category.href} className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
+              <Card
+                className="group h-full cursor-pointer overflow-hidden text-center transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 bg-card"
+              >
+                <CardContent className="flex flex-col items-center justify-center p-6 gap-3">
+                  <div className="bg-primary/10 p-4 rounded-lg">
+                      <category.icon className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="font-bold text-lg font-headline text-foreground">
+                      {category.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {category.count} empresas
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>
