@@ -22,6 +22,7 @@ import { useCompany } from '@/contexts/CompanyContext';
 // Mock data - in a real app, you'd fetch this based on offerId
 const mockOfferDetails = {
     id: '1',
+    companyId: '3', // Added companyId
     businessName: 'Flor de Lótus Móveis',
     title: '50% OFF em Sofás Selecionados',
     validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // Expires in 30 days
@@ -40,6 +41,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const isExpired = new Date(offer.validUntil) < new Date();
 
   const handleGenerateOffer = () => {
+    if (isExpired) return;
     claimOffer(offer);
   };
   
@@ -64,7 +66,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
-        <Link href="/offers" className="absolute left-0">
+        <Link href={`/business/${offer.companyId}`} className="absolute left-0">
           <Button variant="ghost" size="icon">
             <ArrowLeft />
             <span className="sr-only">Voltar</span>

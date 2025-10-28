@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 const offers = [
   {
     id: '1',
+    companyId: '3',
     businessName: 'Flor de Lótus Móveis',
     title: '50% OFF em Sofás',
     validUntil: '31/12',
@@ -14,6 +15,7 @@ const offers = [
   },
   {
     id: '2',
+    companyId: '4',
     businessName: 'Bellinha Kids',
     title: 'Compre 2 Leve 3',
     validUntil: '25/12',
@@ -21,6 +23,7 @@ const offers = [
   },
   {
     id: '3',
+    companyId: '1',
     businessName: 'Clínica Acolher Life',
     title: 'Consulta por R$ 80',
     validUntil: '15/01',
