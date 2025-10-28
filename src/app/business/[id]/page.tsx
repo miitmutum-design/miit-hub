@@ -1,6 +1,6 @@
 'use client';
 
-import { getBusinessById } from '@/lib/data';
+import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
 import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -11,24 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
-
-// Mock data, similar to /offers/page.tsx
-const businessOffers = [
-  {
-    id: '1',
-    businessName: 'The Daily Grind',
-    title: 'Café e Croissant por R$15',
-    validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // Expires in 30 days
-    discount: '25%',
-  },
-  {
-    id: '2',
-    businessName: 'The Daily Grind',
-    title: 'Happy Hour: 2x1 em Iced Lattes',
-    validUntil: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), // Expired yesterday
-    discount: '50%',
-  },
-];
 
 
 export default function BusinessPage() {
@@ -42,7 +24,8 @@ export default function BusinessPage() {
   }
   
   const isBookmarked = isFavorited(business.id);
-  const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date());
+  const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
+  const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -181,13 +164,33 @@ export default function BusinessPage() {
           </TabsContent>
 
           <TabsContent value="events">
-            <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-lg bg-card">
-              <Calendar className="w-16 h-16 text-muted-foreground/50 mb-4" />
-              <h2 className="text-2xl font-semibold font-headline">Nenhum evento agendado</h2>
-              <p className="text-muted-foreground mt-2 max-w-sm">
-                Esta empresa não tem eventos futuros no momento.
-              </p>
-            </div>
+             {activeEvents.length > 0 ? (
+                <div className="space-y-4">
+                {activeEvents.map(event => (
+                    <Link key={event.id} href={`/negocio/eventos/${event.id}`} className="block">
+                        <Card className="bg-card border-border/50">
+                            <CardContent className="p-4 flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-lg">
+                                    <Calendar className="h-6 w-6 text-primary"/>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-bold text-foreground">{event.title}</p>
+                                    <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                ))}
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border rounded-lg bg-card">
+                    <Calendar className="w-16 h-16 text-muted-foreground/50 mb-4" />
+                    <h2 className="text-2xl font-semibold font-headline">Nenhum evento agendado</h2>
+                    <p className="text-muted-foreground mt-2 max-w-sm">
+                        Esta empresa não tem eventos futuros no momento.
+                    </p>
+                </div>
+            )}
           </TabsContent>
 
           <TabsContent value="reviews">

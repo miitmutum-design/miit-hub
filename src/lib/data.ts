@@ -96,3 +96,105 @@ export const businesses: Business[] = [
 export const getBusinessById = (id: string): Business | undefined => {
   return businesses.find(b => b.id === id);
 };
+
+export interface Offer {
+  id: string;
+  companyId: string;
+  businessName: string;
+  title: string;
+  validUntil: string;
+  discount: string;
+  description: string;
+  couponCode: string;
+  terms: string;
+  limitPerUser: number;
+}
+
+
+export const businessOffers: Offer[] = [
+  {
+    id: '1',
+    companyId: '1',
+    businessName: 'The Daily Grind',
+    title: 'Café e Croissant por R$15',
+    validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+    discount: '25%',
+    description: 'Comece seu dia com um delicioso café e um croissant fresquinho por um preço especial.',
+    couponCode: 'CAFECOMAMOR',
+    terms: 'Válido de segunda a sexta, das 8h às 11h. Não cumulativo com outras promoções.',
+    limitPerUser: 2,
+  },
+  {
+    id: '2',
+    companyId: '1',
+    businessName: 'The Daily Grind',
+    title: 'Happy Hour: 2x1 em Iced Lattes',
+    validUntil: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+    discount: '50%',
+    description: 'Traga um amigo e aproveite nosso Happy Hour de Iced Lattes.',
+    couponCode: 'DOSELATTES',
+    terms: 'Válido todos os dias, das 16h às 18h.',
+    limitPerUser: 5,
+  },
+  {
+    id: '3',
+    companyId: '4',
+    businessName: 'The Kneaded Loaf',
+    title: 'Bolo do Dia com 20% OFF',
+    validUntil: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(),
+    discount: '20%',
+    description: 'Cada dia um bolo diferente com um preço especial para você.',
+    couponCode: 'BOLODADIA',
+    terms: 'Válido para o bolo do dia. Consultar sabor na loja.',
+    limitPerUser: 1,
+  },
+];
+
+export const getOfferById = (id: string): Offer | undefined => {
+    return businessOffers.find(o => o.id === id);
+}
+
+
+export interface Event {
+    id: string;
+    companyId: string;
+    businessName: string;
+    title: string;
+    date: string;
+    description: string;
+    limitPerUser: number;
+}
+
+export const businessEvents: Event[] = [
+    {
+        id: 'ev1',
+        companyId: '1',
+        businessName: 'The Daily Grind',
+        title: 'Workshop de Latte Art',
+        date: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+        description: 'Aprenda a fazer desenhos incríveis no seu café! Workshop prático com nosso barista chefe. Vagas limitadas.',
+        limitPerUser: 1,
+    },
+    {
+        id: 'ev2',
+        companyId: '2',
+        businessName: 'Page Turners',
+        title: 'Noite de autógrafos com Autor Local',
+        date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
+        description: 'Conheça o autor do novo best-seller local, participe de um bate-papo e pegue seu autógrafo.',
+        limitPerUser: 2,
+    },
+     {
+        id: 'ev3',
+        companyId: '1',
+        businessName: 'The Daily Grind',
+        title: 'Degustação de Cafés Especiais',
+        date: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), // Expired
+        description: 'Uma viagem sensorial pelos melhores grãos do Brasil.',
+        limitPerUser: 1,
+    },
+];
+
+export const getEventById = (id: string): Event | undefined => {
+    return businessEvents.find(e => e.id === id);
+}

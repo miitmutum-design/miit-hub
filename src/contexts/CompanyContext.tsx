@@ -25,6 +25,16 @@ export interface ClaimedOffer {
   claimedAt: string;
 }
 
+// Define the shape of a claimed event ticket
+export interface ClaimedEvent {
+  id: string;
+  companyId: string;
+  businessName: string;
+  title: string;
+  date: string;
+  claimedAt: string;
+}
+
 // Initial mock data for a demo user
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
@@ -72,6 +82,8 @@ interface CompanyContextType {
   isFavorited: (companyId: string) => boolean;
   claimedOffers: ClaimedOffer[];
   claimOffer: (offer: Omit<ClaimedOffer, 'claimedAt'>, limit: number) => void;
+  claimedEvents: ClaimedEvent[];
+  claimEvent: (event: Omit<ClaimedEvent, 'claimedAt'>, limit: number) => void;
 }
 
 // Create the context with a default value
@@ -82,11 +94,13 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile>(initialDemoProfile);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [claimedOffers, setClaimedOffers] = useState<ClaimedOffer[]>([]);
+  const [claimedEvents, setClaimedEvents] = useState<ClaimedEvent[]>([]);
 
   const logoutCompany = () => {
     setCompanyProfile(initialDemoProfile);
     setFavorites([]);
     setClaimedOffers([]);
+    setClaimedEvents([]);
   };
 
   const toggleFavorite = (companyId: string) => {
@@ -115,6 +129,20 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     setClaimedOffers(prev => [...prev, newClaimedOffer]);
   };
 
+  const claimEvent = (event: Omit<ClaimedEvent, 'claimedAt'>, limit: number) => {
+    const timesClaimed = claimedEvents.filter(e => e.id === event.id).length;
+    if (timesClaimed >= limit) {
+      console.warn("Event claim limit reached.");
+      return;
+    }
+    
+    const newClaimedEvent: ClaimedEvent = {
+      ...event,
+      claimedAt: new Date().toISOString(),
+    };
+    setClaimedEvents(prev => [...prev, newClaimedEvent]);
+  }
+
   return (
     <CompanyContext.Provider value={{ 
         companyProfile, 
@@ -124,7 +152,9 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
         toggleFavorite, 
         isFavorited,
         claimedOffers,
-        claimOffer
+        claimOffer,
+        claimedEvents,
+        claimEvent
     }}>
       {children}
     </CompanyContext.Provider>
