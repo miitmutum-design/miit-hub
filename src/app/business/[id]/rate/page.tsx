@@ -77,7 +77,7 @@ export default function RateBusinessPage() {
       </div>
       
       <div className="mt-8">
-        <Button size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
+        <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold">
             Enviar Avaliação
         </Button>
       </div>
