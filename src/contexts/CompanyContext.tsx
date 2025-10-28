@@ -56,6 +56,9 @@ interface CompanyContextType {
   companyProfile: CompanyProfile;
   setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
   logoutCompany: () => void;
+  favorites: string[];
+  toggleFavorite: (companyId: string) => void;
+  isFavorited: (companyId: string) => boolean;
 }
 
 // Create the context with a default value
@@ -64,13 +67,26 @@ const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 // Create the provider component
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile>(initialDemoProfile);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const logoutCompany = () => {
     setCompanyProfile(initialDemoProfile);
   };
 
+  const toggleFavorite = (companyId: string) => {
+    setFavorites(prev => 
+      prev.includes(companyId) 
+        ? prev.filter(id => id !== companyId) 
+        : [...prev, companyId]
+    );
+  };
+
+  const isFavorited = (companyId: string) => {
+    return favorites.includes(companyId);
+  }
+
   return (
-    <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, logoutCompany }}>
+    <CompanyContext.Provider value={{ companyProfile, setCompanyProfile, logoutCompany, favorites, toggleFavorite, isFavorited }}>
       {children}
     </CompanyContext.Provider>
   );

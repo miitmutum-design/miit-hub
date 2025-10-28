@@ -1,18 +1,27 @@
+'use client';
+
 import { getBusinessById } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useCompany } from '@/contexts/CompanyContext';
+import { cn } from '@/lib/utils';
 
-export default function BusinessPage({ params }: { params: { id: string } }) {
-  const business = getBusinessById(params.id);
+export default function BusinessPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const business = getBusinessById(id);
+  const { toggleFavorite, isFavorited } = useCompany();
 
   if (!business) {
     notFound();
   }
+  
+  const isBookmarked = isFavorited(business.id);
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -24,8 +33,13 @@ export default function BusinessPage({ params }: { params: { id: string } }) {
             </Button>
         </Link>
         <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full">
-                <Bookmark />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="bg-black/50 hover:bg-black/70 rounded-full"
+              onClick={() => toggleFavorite(business.id)}
+            >
+                <Bookmark className={cn(isBookmarked && "fill-current")} />
             </Button>
             <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full">
                 <Share2 />
