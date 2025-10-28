@@ -35,7 +35,7 @@ export default function AccountPage() {
         <div className="flex items-center bg-card p-4 rounded-lg">
             <Avatar className="h-16 w-16 mr-4">
                 {companyProfile.logoUrl ? (
-                  <Image src={companyProfile.logoUrl} alt="Logo da Empresa" layout="fill" className="object-cover" />
+                  <Image src={companyProfile.logoUrl} alt="Logo da Empresa" layout="fill" className="object-cover rounded-full" />
                 ) : (
                   <AvatarFallback>UD</AvatarFallback>
                 )}
@@ -49,7 +49,7 @@ export default function AccountPage() {
         {/* Menu Items */}
         <div className="space-y-3">
           <AccountItem href="/account/profile" icon={User} title="Meu Perfil" subtitle="Editar informações pessoais" />
-          <AccountItem icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
+          <AccountItem href="/account/subscription" icon={CreditCard} title="Assinatura" subtitle="Gerenciar plano e pagamentos" />
           <AccountItem icon={Settings} title="Configurações" subtitle="Preferências do aplicativo" />
           <AccountItem icon={LogOut} title="Sair" subtitle="Encerrar sessão" isDestructive />
         </div>

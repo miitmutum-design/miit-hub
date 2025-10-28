@@ -9,6 +9,9 @@ export interface CompanyProfile {
   phone: string;
   logoUrl: string | null;
   backgroundUrl: string | null;
+  plan: 'Prata' | 'Gold';
+  tokens: number;
+  subscriptionEndDate: string; 
 }
 
 // Initial mock data
@@ -18,12 +21,15 @@ const initialCompanyProfile: CompanyProfile = {
   phone: "(65) 99999-9999",
   logoUrl: null,
   backgroundUrl: null,
+  plan: 'Prata',
+  tokens: 15,
+  subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(), // Expires in 15 days
 };
 
 // Define the context shape
 interface CompanyContextType {
   companyProfile: CompanyProfile;
-  setCompanyProfile: (profile: CompanyProfile) => void;
+  setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
 }
 
 // Create the context with a default value
