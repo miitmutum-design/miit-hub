@@ -34,6 +34,7 @@ export interface CompanyProfile {
   logoUrl: string | null;
   backgroundUrl: string | null;
   description: string;
+  products: string[]; // New field for products/services
   plan: 'Prata' | 'Gold';
   tokens: number;
   subscriptionEndDate: string;
@@ -88,6 +89,7 @@ const initialDemoProfile: CompanyProfile = {
   logoUrl: null,
   backgroundUrl: null,
   description: "Este é um perfil de usuário de demonstração. Edite-o para ver as alterações.",
+  products: [],
   plan: 'Prata',
   tokens: 0,
   subscriptionEndDate: new Date().toISOString(),
@@ -113,6 +115,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     logoUrl: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png",
     backgroundUrl: null,
     description: "Líder em construção civil na região.",
+    products: ['Projetos Residenciais', 'Construção Comercial', 'Reformas'],
     plan: 'Gold',
     tokens: 500,
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
@@ -133,6 +136,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     logoUrl: null,
     backgroundUrl: null,
     description: "Empresa Gold: líder de mercado em soluções inovadoras. Oferecemos qualidade e excelência, com foco total na satisfação do cliente. Nossa equipe experiente está pronta para atender suas necessidades com agilidade e profissionalismo, garantindo os melhores resultados para o seu negócio.",
+    products: ['Software', 'Hardware', 'Consultoria de TI'],
     plan: 'Gold',
     tokens: 200,
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
@@ -153,6 +157,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     logoUrl: null,
     backgroundUrl: null,
     description: "Empresa Prata: a solução ideal para o seu dia a dia. Combinamos tradição e modernidade para entregar produtos e serviços de confiança. Nosso compromisso é com a sua satisfação, oferecendo um atendimento personalizado e eficiente para superar suas expectativas.",
+    products: ['Limpeza Profissional', 'Manutenção Predial'],
     plan: 'Prata',
     tokens: 15,
     subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),

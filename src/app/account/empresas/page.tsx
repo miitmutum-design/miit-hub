@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useRef, ChangeEvent, useEffect, useTransition } from 'react';
-import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock, Sparkles, Loader2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { generateCompanyBio } from '@/ai/flows/generate-company-bio';
+import { TagInput } from '@/components/ui/tag-input';
 
 const defaultHours: OperatingHours[] = [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
@@ -40,6 +41,7 @@ export default function EditProfilePage() {
   const initialProfile = {
     ...companyProfile,
     hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
+    products: companyProfile.products || [],
   };
 
   const [originalData, setOriginalData] = useState<CompanyProfile>(initialProfile);
@@ -56,6 +58,7 @@ export default function EditProfilePage() {
      const updatedProfile = {
       ...companyProfile,
       hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
+      products: companyProfile.products || [],
     };
     setOriginalData(updatedProfile);
     setFormData(updatedProfile);
@@ -74,6 +77,10 @@ export default function EditProfilePage() {
     const { id, value } = e.target;
     setFormData(prev => ({...prev, [id]: value}));
   };
+
+  const handleProductsChange = (newProducts: string[]) => {
+    setFormData(prev => ({...prev, products: newProducts}));
+  }
   
   const handleCategoryChange = (value: string) => {
     if (value === 'Outros') {
@@ -460,6 +467,24 @@ export default function EditProfilePage() {
                     </p>
                 </div>
             </div>
+
+            <div className="space-y-2">
+                <label
+                    htmlFor="products"
+                    className="text-sm font-medium text-muted-foreground flex items-center gap-2"
+                >
+                    <Tag className="w-5 h-5"/>
+                    Produtos/Serviços (Separe com vírgula)
+                </label>
+                <TagInput
+                    id="products"
+                    value={formData.products}
+                    onChange={handleProductsChange}
+                    placeholder="Adicione um produto ou serviço..."
+                    className="bg-card border-border/50"
+                />
+            </div>
+
              <div className="pt-6 pb-24">
               <Button
                 size="lg"

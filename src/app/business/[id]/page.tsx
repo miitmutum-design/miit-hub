@@ -5,7 +5,7 @@
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, Zap, ZapOff } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, Zap, ZapOff, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -40,6 +40,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   rating: 0,
   reviews: [],
   description: 'Nenhuma descrição fornecida.',
+  products: [],
   image: { url: '', hint: '' },
   backgroundUrl: null,
   logoUrl: null,
@@ -151,6 +152,7 @@ export default function BusinessPage() {
   const rating = 'rating' in displayData ? displayData.rating : 0;
   const image = ('image' in displayData && displayData.image) ? displayData.image : null;
   const hoursOfOperation = displayData.hoursOfOperation || defaultBusinessData.hoursOfOperation;
+  const products = ('products' in displayData && displayData.products) ? displayData.products : [];
 
 
   return (
@@ -328,16 +330,6 @@ export default function BusinessPage() {
                   </Link>
                 )}
                 
-                {('websiteUrl' in displayData && displayData.websiteUrl) && (
-                  <div className="flex items-start gap-4">
-                      <Globe className="h-5 w-5 text-primary mt-1"/>
-                      <div>
-                          <p className="font-semibold">Site</p>
-                          <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
-                      </div>
-                  </div>
-                )}
-
                 <div className="flex items-start gap-4">
                     <Info className="h-5 w-5 text-primary mt-1"/>
                     <div>
@@ -345,6 +337,31 @@ export default function BusinessPage() {
                         <p className="text-muted-foreground text-sm">{displayData.description || "Nenhuma descrição fornecida."}</p>
                     </div>
                 </div>
+                
+                {products && products.length > 0 && (
+                     <div className="flex items-start gap-4">
+                        <Tag className="h-5 w-5 text-primary mt-1"/>
+                        <div>
+                            <p className="font-semibold">Produtos/Serviços</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {products.map((product, index) => (
+                                    <Badge key={index} variant="secondary">{product}</Badge>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {('websiteUrl' in displayData && displayData.websiteUrl) && (
+                  <div className="flex items-start gap-4">
+                      <Globe className="h-5 w-5 text-primary mt-1"/>
+                      <div>
+                          <p className="font-semibold">Site</p>
+                          <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block hover:underline">Ver o site</Link>
+                      </div>
+                  </div>
+                )}
+
             </div>
           </TabsContent>
           
