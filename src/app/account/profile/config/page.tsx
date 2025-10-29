@@ -78,7 +78,7 @@ export default function ConsumerConfigPage() {
             <div className="p-2 space-y-1">
                 <ConfigItem icon={Gift} title="Ofertas" description="Ofertas especiais para você" href="/account/profile/offers" />
                 <Separator />
-                <ConfigItem icon={Calendar} title="Eventos Salvos" description="Eventos que você pretende ir" href="/account/profile/events" />
+                <ConfigItem icon={Calendar} title="Eventos" description="Eventos que você pretende ir" href="/account/profile/events" />
             </div>
         </CardContent>
       </Card>
