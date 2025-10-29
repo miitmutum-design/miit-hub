@@ -64,6 +64,7 @@ export default function BusinessPage() {
 
   const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
+  const whatsappUrl = `https://wa.me/${business.whatsapp}`;
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -154,13 +155,13 @@ export default function BusinessPage() {
                         <p className="text-muted-foreground">Seg-Sáb: 11h-23h</p>
                     </div>
                 </div>
-                 <div className="flex items-start gap-4">
+                <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
                     <Phone className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Whatsapp</p>
-                        <p className="text-muted-foreground">(65) 99999-9999</p>
+                        <p className="text-muted-foreground group-hover:text-primary group-hover:underline">{business.whatsapp}</p>
                     </div>
-                </div>
+                </Link>
                 <div className="flex items-start gap-4">
                     <Globe className="h-5 w-5 text-primary mt-1"/>
                     <div>

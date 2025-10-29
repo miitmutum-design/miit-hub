@@ -16,6 +16,7 @@ export type Business = {
     x: number;
     y: number;
   };
+  whatsapp: string;
 };
 
 const getImage = (id: string) => {
@@ -42,6 +43,7 @@ export const businesses: Business[] = [
     ],
     image: getImage('business-1'),
     coordinates: { x: 40, y: 70 },
+    whatsapp: '5521999999991',
   },
   {
     id: '2',
@@ -59,6 +61,7 @@ export const businesses: Business[] = [
     ],
     image: getImage('business-2'),
     coordinates: { x: 80, y: 80 },
+    whatsapp: '5521999999992',
   },
   {
     id: '3',
@@ -74,6 +77,7 @@ export const businesses: Business[] = [
     ],
     image: getImage('business-3'),
     coordinates: { x: 65, y: 30 },
+    whatsapp: '5521999999993',
   },
   {
     id: '4',
@@ -90,6 +94,7 @@ export const businesses: Business[] = [
     ],
     image: getImage('business-4'),
     coordinates: { x: 25, y: 45 },
+    whatsapp: '5521999999994',
   },
 ];
 
