@@ -42,7 +42,7 @@ export default function BusinessPage() {
   const handleShare = async () => {
     const shareData = {
       title: displayData.name,
-      text: `Confira ${displayData.name}, com nota ${displayData.rating || 'N/A'}! ${displayData.category ? `Uma ótima opção na categoria ${displayData.category}.` : ''}`,
+      text: `Confira ${displayData.name}, com nota ${(displayData as any).rating || 'N/A'}! ${'category' in displayData && displayData.category ? `Uma ótima opção na categoria ${displayData.category}.` : ''}`,
       url: window.location.href,
     };
 
@@ -74,7 +74,7 @@ export default function BusinessPage() {
   const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
   
-  const whatsapp = (displayData as any).whatsapp || '5521999999999';
+  const whatsapp = ('whatsapp' in displayData && displayData.whatsapp) || '5521999999999';
   const whatsappUrl = `https://wa.me/${whatsapp}`;
   
   const formatPhoneNumber = (phone: string) => {
@@ -88,7 +88,10 @@ export default function BusinessPage() {
   };
 
   const isOpen = true; // Mock status
-  const reviews = (displayData as any).reviews || [];
+  const reviews = ('reviews' in displayData && displayData.reviews) || [];
+  const category = 'category' in displayData ? displayData.category : "Categoria";
+  const distance = 'distance' in displayData ? displayData.distance : null;
+
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -147,14 +150,14 @@ export default function BusinessPage() {
             <h1 className="text-3xl font-bold tracking-tight font-headline">
               {displayData.name || "Nome da Empresa"}
             </h1>
-            <p className="text-muted-foreground mt-1">{displayData.category || "Categoria"}</p>
+            <p className="text-muted-foreground mt-1">{category}</p>
           </div>
           <div className="text-right">
-             {(displayData as any).rating && (
+             {('rating' in displayData && displayData.rating) && (
                 <>
                 <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
                     <Star className="h-4 w-4 fill-white" />
-                    <span>{(displayData as any).rating}</span>
+                    <span>{displayData.rating}</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">{reviews.length * 31} avaliações</p>
                 </>
@@ -164,10 +167,10 @@ export default function BusinessPage() {
 
         <div className="flex items-center gap-4 text-sm mb-6">
           <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
-          {(displayData as any).distance && (
+          {distance && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                <span>{(displayData as any).distance}</span>
+                <span>{distance}</span>
             </div>
           )}
         </div>
@@ -228,12 +231,12 @@ export default function BusinessPage() {
                     </div>
                 )}
                 
-                {(displayData as any).websiteUrl && (
+                {('websiteUrl' in displayData && displayData.websiteUrl) && (
                   <div className="flex items-start gap-4">
                       <Globe className="h-5 w-5 text-primary mt-1"/>
                       <div>
                           <p className="font-semibold">Site</p>
-                          <Link href={`/webview?url=${encodeURIComponent((displayData as any).websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
+                          <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
                       </div>
                   </div>
                 )}
@@ -317,3 +320,5 @@ export default function BusinessPage() {
     </div>
   );
 }
+
+    
