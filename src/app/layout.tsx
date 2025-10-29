@@ -12,12 +12,7 @@ export const metadata: Metadata = {
   description: 'Your guide to local businesses and offers.',
 };
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
-    const headersList = headers();
-    const pathname = headersList.get('x-pathname') || '';
-    
-    const showNav = !pathname.startsWith('/webview');
-
+function LayoutContent({ children, showNav }: { children: React.ReactNode, showNav: boolean }) {
     return (
         <div className="relative flex min-h-screen w-full flex-col">
             <main className={cn("flex-1", showNav && 'pb-32 md:pb-20')}>{children}</main>
@@ -31,6 +26,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = headers();
+  const pathname = headersList.get('x-pathname') || '';
+  const showNav = !pathname.startsWith('/webview');
 
   return (
     <html lang="en" className="dark">
@@ -43,7 +41,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <CompanyProvider>
-          <LayoutContent>{children}</LayoutContent>
+          <LayoutContent showNav={showNav}>{children}</LayoutContent>
           <Toaster />
         </CompanyProvider>
       </body>
