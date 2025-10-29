@@ -1,6 +1,6 @@
 
 import { PlaceHolderImages } from './placeholder-images';
-import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench } from 'lucide-react';
+import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store } from 'lucide-react';
 
 export type Business = {
   id: string;
@@ -213,8 +213,8 @@ export const getEventById = (id: string): Event | undefined => {
 
 
 export const categories = [
-  { name: 'Saúde', count: 12, icon: HeartPulse, href: '/servicos' },
-  { name: 'Imobiliária', count: 8, icon: Home, href: '/servicos' },
+  { name: 'Saúde', count: 12, icon: Wind, href: '/servicos' },
+  { name: 'Imobiliária', count: 8, icon: Store, href: '/servicos' },
   { name: 'Alimentação', count: 24, icon: Utensils, href: '/servicos' },
   { name: 'Serviços', count: 18, icon: Wrench, href: '/servicos' },
   { name: 'Educação', count: 7, icon: Book, href: '/servicos' },
@@ -222,5 +222,3 @@ export const categories = [
   { name: 'Automotivo', count: 11, icon: Car, href: '/servicos' },
   { name: 'Tecnologia', count: 9, icon: Laptop, href: '/servicos' },
 ];
-
-    

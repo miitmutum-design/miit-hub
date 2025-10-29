@@ -9,6 +9,7 @@ import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import SearchBar from '@/components/common/SearchBar';
 import PremiumCarousel from '@/components/common/PremiumCarousel';
+import CategoryCarousel from '@/components/common/CategoryCarousel';
 
 export default function Home() {
   
@@ -32,6 +33,16 @@ export default function Home() {
       <div className="mb-8">
         <PremiumCarousel />
       </div>
+
+      <section className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold font-headline">Categorias</h2>
+              <Link href="/categoria">
+                  <span className="text-sm font-semibold text-primary hover:underline">Ver Todas</span>
+              </Link>
+          </div>
+          <CategoryCarousel />
+      </section>
 
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
