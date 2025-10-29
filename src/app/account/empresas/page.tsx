@@ -24,7 +24,7 @@ import { generateCompanyBio } from '@/ai/flows/generate-company-bio';
 const defaultHours: OperatingHours[] = [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
-    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },-
+    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Quinta', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Sexta', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Sábado', isOpen: false, open: '10:00', close: '16:00' },
@@ -187,7 +187,7 @@ export default function EditProfilePage() {
   const MAX_DESC_LENGTH = 360;
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-40">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto max-w-lg py-6 sm:py-8">
         <header className="relative mb-8 flex items-center justify-center text-center">
           <Link href="/account" className="absolute left-0">
@@ -426,26 +426,27 @@ export default function EditProfilePage() {
                     </p>
                 </div>
             </div>
+             <div className="pt-6 pb-24">
+              <Button
+                size="lg"
+                className={cn(
+                  "w-full h-12 text-lg font-bold transition-colors",
+                  hasChanges
+                    ? "bg-lime-500 hover:bg-lime-600 text-black"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                )}
+                onClick={handleSaveChanges}
+                disabled={!hasChanges}
+              >
+                Publicar Alterações
+              </Button>
+            </div>
         </form>
-      </div>
-
-       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
-          <Button
-            size="lg"
-            className={cn(
-              "w-full max-w-lg mx-auto h-12 text-lg font-bold transition-colors",
-              hasChanges
-                ? "bg-lime-500 hover:bg-lime-600 text-black"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            )}
-            onClick={handleSaveChanges}
-            disabled={!hasChanges}
-          >
-            Publicar Alterações
-          </Button>
       </div>
     </div>
   );
 
     
 }
+
+    
