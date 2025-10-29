@@ -200,7 +200,7 @@ export default function EditProfilePage() {
               <Input
                 id="name"
                 type="text"
-                value={formData.name}
+                value={formData.name || ''}
                 onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
@@ -210,7 +210,7 @@ export default function EditProfilePage() {
                 <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
                     Categoria
                 </label>
-                <Select onValueChange={handleCategoryChange} value={showOtherCategory ? 'Outros' : formData.category}>
+                <Select onValueChange={handleCategoryChange} value={showOtherCategory ? 'Outros' : formData.category || ''}>
                     <SelectTrigger className="bg-card border-border/50 h-12">
                         <SelectValue placeholder="Selecione uma categoria" />
                     </SelectTrigger>
@@ -231,7 +231,7 @@ export default function EditProfilePage() {
                     <Input
                         id="category"
                         type="text"
-                        value={formData.category}
+                        value={formData.category || ''}
                         onChange={handleInputChange}
                         className="bg-card border-border/50 h-12"
                         placeholder='Ex: Restaurante Japonês'
@@ -249,7 +249,7 @@ export default function EditProfilePage() {
               <Input
                 id="address"
                 type="text"
-                value={formData.address}
+                value={formData.address || ''}
                 onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
                 placeholder="Rua, Número, Bairro, Cidade, Estado, CEP"
@@ -266,7 +266,7 @@ export default function EditProfilePage() {
               <Input
                 id="email"
                 type="email"
-                value={formData.email}
+                value={formData.email || ''}
                 onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
@@ -277,11 +277,11 @@ export default function EditProfilePage() {
                 className="text-sm font-medium text-muted-foreground"
               >
                 Telefone
-              </label>
+              </label>misc/inf
               <Input
                 id="phone"
                 type="tel"
-                value={formData.phone}
+                value={formData.phone || ''}
                 onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
@@ -296,7 +296,7 @@ export default function EditProfilePage() {
               </label>
               <Textarea
                 id="description"
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={handleInputChange}
                 className="bg-card border-border/50 min-h-[120px]"
                 maxLength={MAX_DESC_LENGTH}
