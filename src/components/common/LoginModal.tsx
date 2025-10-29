@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCompany } from '@/contexts/CompanyContext';
-import { X, Mail, User, Pencil } from 'lucide-react';
+import { X, Mail, User, Pencil, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +44,9 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
   const { setCompanyProfile } = useCompany();
   const { toast } = useToast();
   const [showEmailLogin, setShowEmailLogin] = useState(false);
+  const [showGoogleSimModal, setShowGoogleSimModal] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   
@@ -69,37 +72,42 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
       return;
     }
     
-    // In a real app, this would involve an actual authentication flow.
-    // Here, we just update the context to a mock logged-in user.
-    setCompanyProfile({
-      id: 'user-logged-in',
-      name: name,
-      email: email,
-      phone: "(11) 91111-2222",
-      logoUrl: avatarUrl,
-      description: "Usuário autenticado.",
-      plan: 'Prata',
-      tokens: 5,
-      subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
-    });
-    onLoginSuccess();
+    setIsAuthenticating(true);
+    setTimeout(() => {
+        setCompanyProfile({
+        id: 'user-logged-in',
+        name: name,
+        email: email,
+        phone: "(11) 91111-2222",
+        logoUrl: avatarUrl,
+        description: "Usuário autenticado.",
+        plan: 'Prata',
+        tokens: 5,
+        subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        });
+        setIsAuthenticating(false);
+        onLoginSuccess();
+    }, 1500);
   };
   
   const handleGoogleLogin = () => {
-    // In a real app, this would trigger the Google OAuth flow.
-    // Here, we just update the context to a mock logged-in user from Google.
-    setCompanyProfile({
-      id: 'user-google-loggedin',
-      name: "Usuário do Google",
-      email: "google.user@example.com",
-      phone: "(11) 93333-4444",
-      logoUrl: 'https://i.pravatar.cc/150?u=google-user', // Mock avatar
-      description: "Usuário autenticado via Google.",
-      plan: 'Prata',
-      tokens: 10,
-      subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
-    });
-    onLoginSuccess();
+    setIsAuthenticating(true);
+    setTimeout(() => {
+        setCompanyProfile({
+        id: 'user-google-loggedin',
+        name: "Usuário do Google",
+        email: "google.user@example.com",
+        phone: "(11) 93333-4444",
+        logoUrl: 'https://i.pravatar.cc/150?u=google-user', // Mock avatar
+        description: "Usuário autenticado via Google.",
+        plan: 'Prata',
+        tokens: 10,
+        subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        });
+        setIsAuthenticating(false);
+        setShowGoogleSimModal(false);
+        onLoginSuccess();
+    }, 1500);
   }
 
   const handleAvatarClick = () => {
@@ -124,7 +132,10 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
+    <>
+    {/* Main Login Modal */}
+    <Dialog open={isOpen && !showGoogleSimModal} onOpenChange={(open) => {
+      if (isAuthenticating) return;
       onOpenChange(open);
       if (!open) {
         resetForm();
@@ -194,13 +205,13 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
                 size="lg" 
                 className={cn(
                   "w-full h-12 text-lg font-bold transition-colors",
-                  isFormValid
+                  isFormValid && !isAuthenticating
                     ? "bg-lime-500 hover:bg-lime-600 text-black"
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 )}
-                disabled={!isFormValid}
+                disabled={!isFormValid || isAuthenticating}
               >
-                Criar Conta
+                {isAuthenticating ? <Loader2 className="animate-spin" /> : 'Criar Conta'}
               </Button>
             </DialogFooter>
              <p className="text-center text-sm">
@@ -212,7 +223,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         ) : (
           // Main Login Options
           <div className="py-4 space-y-4">
-            <Button onClick={handleGoogleLogin} variant="outline" size="lg" className="w-full h-12 text-lg border-border/80">
+            <Button onClick={() => setShowGoogleSimModal(true)} variant="outline" size="lg" className="w-full h-12 text-lg border-border/80">
               <GoogleIcon className="mr-3 h-6 w-6" />
               Continuar com Google
             </Button>
@@ -223,11 +234,40 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
           </div>
         )}
         
+        {!isAuthenticating && (
         <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="h-4 w-4" />
           <span className="sr-only">Fechar</span>
         </DialogClose>
+        )}
       </DialogContent>
     </Dialog>
+
+    {/* Google Simulation Modal */}
+    <Dialog open={showGoogleSimModal} onOpenChange={setShowGoogleSimModal}>
+        <DialogContent className="sm:max-w-md bg-card border-border/50">
+            <DialogHeader>
+                <DialogTitle className="text-center text-2xl font-bold font-headline flex items-center justify-center gap-3">
+                    <GoogleIcon />
+                    Simulação de Login
+                </DialogTitle>
+                <DialogDescription className="text-center text-muted-foreground pt-2">
+                    Clique abaixo para confirmar a autenticação com a conta "Usuário Demo".
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="pt-4">
+                <Button 
+                    onClick={handleGoogleLogin} 
+                    size="lg" 
+                    className="w-full h-12 text-lg bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                    disabled={isAuthenticating}
+                >
+                    {isAuthenticating ? <Loader2 className="animate-spin" /> : "Confirmar Conta Demo"}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    </>
   );
 }
+
