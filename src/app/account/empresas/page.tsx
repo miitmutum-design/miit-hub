@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,14 +20,29 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 
+const defaultHours: OperatingHours[] = [
+    { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quinta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sexta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sábado', isOpen: false, open: '10:00', close: '16:00' },
+    { day: 'Domingo', isOpen: false, open: '10:00', close: '14:00' },
+];
 
 export default function EditProfilePage() {
   const { companyProfile, setCompanyProfile } = useCompany();
   const { toast } = useToast();
   const router = useRouter();
 
-  const [originalData, setOriginalData] = useState<CompanyProfile>(companyProfile);
-  const [formData, setFormData] = useState<CompanyProfile>(companyProfile);
+  // Ensure hoursOfOperation is initialized
+  const initialProfile = {
+    ...companyProfile,
+    hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
+  };
+
+  const [originalData, setOriginalData] = useState<CompanyProfile>(initialProfile);
+  const [formData, setFormData] = useState<CompanyProfile>(initialProfile);
   const [hasChanges, setHasChanges] = useState(false);
   const [showOtherCategory, setShowOtherCategory] = useState(false);
   
@@ -36,8 +51,12 @@ export default function EditProfilePage() {
 
   // Update form if companyProfile from context changes (e.g. after redeeming a key)
   useEffect(() => {
-    setOriginalData(companyProfile);
-    setFormData(companyProfile);
+     const updatedProfile = {
+      ...companyProfile,
+      hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
+    };
+    setOriginalData(updatedProfile);
+    setFormData(updatedProfile);
     if(companyProfile.category && !categories.find(c => c.name === companyProfile.category)) {
       setShowOtherCategory(true);
     }
@@ -303,14 +322,14 @@ export default function EditProfilePage() {
                                 <div className="col-span-2 sm:col-span-2 grid grid-cols-2 gap-2">
                                     <Input
                                         type="time"
-                                        value={day.open}
+                                        value={day.open || ''}
                                         onChange={(e) => handleOperatingHoursChange(index, 'open', e.target.value)}
                                         disabled={!day.isOpen}
                                         className="bg-input border-border/50"
                                     />
                                     <Input
                                         type="time"
-                                        value={day.close}
+                                        value={day.close || ''}
                                         onChange={(e) => handleOperatingHoursChange(index, 'close', e.target.value)}
                                         disabled={!day.isOpen}
                                         className="bg-input border-border/50"
@@ -369,7 +388,7 @@ export default function EditProfilePage() {
                 maxLength={MAX_DESC_LENGTH}
               />
               <p className="text-sm text-right text-muted-foreground">
-                {formData.description?.length || 0} / {MAX_DESC_LENGTH}
+                {(formData.description || '').length} / {MAX_DESC_LENGTH}
               </p>
             </div>
         </form>
@@ -393,3 +412,5 @@ export default function EditProfilePage() {
     </div>
   );
 }
+
+    

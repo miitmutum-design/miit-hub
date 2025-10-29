@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import type { Business } from '@/lib/data';
 import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
+import React from 'react';
 
 // Create a default business structure for placeholder rendering
 const defaultBusinessData: Business & Partial<CompanyProfile> = {
@@ -150,14 +151,14 @@ export default function BusinessPage() {
         {displayData.backgroundUrl ? (
              <Image
                 src={displayData.backgroundUrl}
-                alt={`${displayData.name} background`}
+                alt={`${displayData.name || 'Company'} background`}
                 fill
                 className="object-cover"
             />
         ) : image && image.url ? (
              <Image
                 src={image.url}
-                alt={`${displayData.name} background`}
+                alt={`${displayData.name || 'Company'} background`}
                 fill
                 className="object-cover"
                 data-ai-hint={image.hint}
@@ -372,3 +373,5 @@ export default function BusinessPage() {
     </div>
   );
 }
+
+    
