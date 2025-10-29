@@ -11,7 +11,7 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { companyProfile } = useCompany();
   
-  const isCompany = companyProfile.id !== 'user-demo';
+  const isCompany = companyProfile.id.startsWith('company-');
 
   const navItems = [
     { href: '/', icon: Home, label: 'Home' },
