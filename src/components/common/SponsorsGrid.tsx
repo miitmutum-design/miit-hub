@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { sponsors, type Sponsor, businesses } from '@/lib/data';
+import { sponsors, type Sponsor } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
@@ -25,8 +25,8 @@ const SponsorCard = ({ sponsor }: { sponsor: Sponsor }) => {
     let logoUrl: string | null = null;
     if (sponsor.isOccupied && sponsor.link.startsWith('/business/')) {
         const businessId = sponsor.link.split('/')[2];
-        const profile = mockCompanyProfiles[businessId as keyof typeof mockCompanyProfiles] || businesses.find(b => b.id === businessId);
-        if (profile && 'logoUrl' in profile) {
+        const profile = mockCompanyProfiles[businessId as keyof typeof mockCompanyProfiles];
+        if (profile && profile.logoUrl) {
             logoUrl = profile.logoUrl;
         }
     }
