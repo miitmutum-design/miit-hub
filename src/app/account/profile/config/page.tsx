@@ -92,7 +92,7 @@ export default function ConsumerConfigPage() {
                 <Separator />
                 <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" />
                 <Separator />
-                <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" onClick={() => handleFeatureClick('Termos de Uso')} />
+                <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" href="/account/profile/config/terms-of-use" />
             </div>
         </CardContent>
       </Card>
