@@ -191,7 +191,7 @@ export default function BusinessPage() {
                     <Globe className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Site</p>
-                        <Link href={`/webview?url=${encodeURIComponent(business.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site →</Link>
+                        <Link href={`/webview?url=${encodeURIComponent(business.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
