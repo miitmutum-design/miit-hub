@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import type { Business } from '@/lib/data';
-import type { CompanyProfile } from '@/contexts/CompanyContext';
+import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
 
 // Create a default business structure for placeholder rendering
 const defaultBusinessData: Business & Partial<CompanyProfile> = {
@@ -34,6 +34,15 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   whatsapp: '00000000000',
   websiteUrl: '',
   isAvailable: true,
+  hoursOfOperation: [
+    { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quinta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sexta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sábado', isOpen: false, open: '10:00', close: '16:00' },
+    { day: 'Domingo', isOpen: false, open: '10:00', close: '14:00' },
+  ]
 };
 
 export default function BusinessPage() {
@@ -110,6 +119,7 @@ export default function BusinessPage() {
   const distance = 'distance' in displayData ? displayData.distance : null;
   const rating = 'rating' in displayData ? displayData.rating : 0;
   const image = ('image' in displayData && displayData.image) ? displayData.image : null;
+  const hoursOfOperation = displayData.hoursOfOperation || defaultBusinessData.hoursOfOperation;
 
 
   return (
@@ -236,14 +246,22 @@ export default function BusinessPage() {
                         </Link>
                     </div>
                 </div>
-                 <div className="flex items-start gap-4">
+                <div className="flex items-start gap-4">
                     <Clock className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Horário</p>
-                        <p className={cn(
-                          "text-muted-foreground",
-                          isAvailable && "text-primary"
-                        )}>Seg-Sáb: 11h-23h</p>
+                        <div className="space-y-1 mt-1">
+                            {hoursOfOperation?.map(day => (
+                                <div key={day.day} className="flex items-center justify-between text-sm">
+                                    <span className="text-muted-foreground w-20">{day.day}</span>
+                                    {day.isOpen ? (
+                                        <span className="text-foreground font-medium">{day.open} - {day.close}</span>
+                                    ) : (
+                                        <span className="text-orange-500 font-medium">Fechado</span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 
@@ -252,7 +270,7 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-primary mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-primary group-hover:underline">{formatPhoneNumber(whatsapp)}</p>
+                            <p className="text-primary group-hover:underline">{formatPhoneNumber(displayData.phone)}</p>
                         </div>
                     </Link>
                 ) : (
@@ -260,7 +278,7 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-muted-foreground mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-muted-foreground">{formatPhoneNumber(whatsapp)}</p>
+                            <p className="text-muted-foreground">{formatPhoneNumber(displayData.phone)}</p>
                         </div>
                     </div>
                 )}

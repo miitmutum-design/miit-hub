@@ -10,6 +10,15 @@ export interface NotificationSettings {
   events: boolean;
 }
 
+// Define the shape for one day of the week's hours
+export interface OperatingHours {
+  day: string;
+  isOpen: boolean;
+  open: string;
+  close: string;
+}
+
+
 // Define the shape of the user profile data
 export interface CompanyProfile {
   id: string;
@@ -27,6 +36,7 @@ export interface CompanyProfile {
   userType: 'Consumer' | 'Company';
   notificationSettings: NotificationSettings;
   isAvailable: boolean; // Master availability switch
+  hoursOfOperation?: OperatingHours[];
 }
 
 // Define the shape of a claimed offer
@@ -50,6 +60,17 @@ export interface ClaimedEvent {
   claimedAt: string;
 }
 
+const defaultHours: OperatingHours[] = [
+    { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quinta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sexta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Sábado', isOpen: false, open: '10:00', close: '16:00' },
+    { day: 'Domingo', isOpen: false, open: '10:00', close: '14:00' },
+];
+
+
 // Initial mock data for a demo user (visitor)
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
@@ -71,6 +92,7 @@ const initialDemoProfile: CompanyProfile = {
     events: true,
   },
   isAvailable: true,
+  hoursOfOperation: defaultHours,
 };
 
 // Mock data for company profiles that can be redeemed
@@ -91,6 +113,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
     isAvailable: true,
+    hoursOfOperation: defaultHours,
   },
   'company-silver': {
     id: 'company-silver',
@@ -108,6 +131,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
     isAvailable: true,
+    hoursOfOperation: defaultHours,
   }
 };
 

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, Pencil, Building, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,11 +11,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useCompany } from '@/contexts/CompanyContext';
-import type { CompanyProfile } from '@/contexts/CompanyContext';
+import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { categories } from '@/lib/data';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
 
 
 export default function EditProfilePage() {
@@ -61,6 +64,17 @@ export default function EditProfilePage() {
     }
   };
 
+  const handleOperatingHoursChange = (
+    index: number,
+    field: keyof OperatingHours,
+    value: string | boolean
+  ) => {
+    const updatedHours = [...(formData.hoursOfOperation || [])];
+    const dayToUpdate = { ...updatedHours[index], [field]: value };
+    updatedHours[index] = dayToUpdate;
+    setFormData(prev => ({ ...prev, hoursOfOperation: updatedHours }));
+  };
+
   const handleLogoClick = () => {
     logoInputRef.current?.click();
   };
@@ -82,6 +96,18 @@ export default function EditProfilePage() {
   
   const handleSaveChanges = () => {
     if (!hasChanges) return;
+
+    // Validation for operating hours
+    const invalidDay = formData.hoursOfOperation?.find(day => day.isOpen && (!day.open || !day.close));
+    if (invalidDay) {
+        toast({
+            variant: "destructive",
+            title: "Horário Inválido",
+            description: `Por favor, preencha o horário de abertura e fechamento para ${invalidDay.day}.`,
+        });
+        return;
+    }
+
 
     // Update the context with the new form data
     setCompanyProfile(formData);
@@ -255,6 +281,47 @@ export default function EditProfilePage() {
                 placeholder="Rua, Número, Bairro, Cidade, Estado, CEP"
               />
             </div>
+            
+             {/* Horário de Funcionamento */}
+            <div className="space-y-4">
+                <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Clock className="w-5 h-5"/>
+                    Horário de Funcionamento
+                </label>
+                <div className="bg-card p-4 rounded-lg space-y-4">
+                    {formData.hoursOfOperation?.map((day, index) => (
+                        <React.Fragment key={day.day}>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 items-center gap-4">
+                                <div className="col-span-1 sm:col-span-2 flex items-center gap-3">
+                                    <Switch
+                                        id={`is-open-${day.day}`}
+                                        checked={day.isOpen}
+                                        onCheckedChange={(checked) => handleOperatingHoursChange(index, 'isOpen', checked)}
+                                    />
+                                    <Label htmlFor={`is-open-${day.day}`} className="font-semibold">{day.day}</Label>
+                                </div>
+                                <div className="col-span-2 sm:col-span-2 grid grid-cols-2 gap-2">
+                                    <Input
+                                        type="time"
+                                        value={day.open}
+                                        onChange={(e) => handleOperatingHoursChange(index, 'open', e.target.value)}
+                                        disabled={!day.isOpen}
+                                        className="bg-input border-border/50"
+                                    />
+                                    <Input
+                                        type="time"
+                                        value={day.close}
+                                        onChange={(e) => handleOperatingHoursChange(index, 'close', e.target.value)}
+                                        disabled={!day.isOpen}
+                                        className="bg-input border-border/50"
+                                    />
+                                </div>
+                            </div>
+                            {index < (formData.hoursOfOperation?.length || 0) -1 && <Separator />}
+                        </React.Fragment>
+                    ))}
+                </div>
+            </div>
 
             <div className="space-y-2">
               <label
@@ -277,7 +344,7 @@ export default function EditProfilePage() {
                 className="text-sm font-medium text-muted-foreground"
               >
                 Telefone
-              </label>misc/inf
+              </label>
               <Input
                 id="phone"
                 type="tel"
