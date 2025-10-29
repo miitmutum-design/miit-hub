@@ -8,6 +8,7 @@ import HomeHeader from '@/components/common/HomeHeader';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import SearchBar from '@/components/common/SearchBar';
+import PremiumCarousel from '@/components/common/PremiumCarousel';
 
 export default function Home() {
   
@@ -24,8 +25,12 @@ export default function Home() {
     <div className="container mx-auto max-w-3xl py-6 sm:py-8">
       <HomeHeader />
 
-      <div className="relative mb-8">
+      <div className="relative mb-6">
         <SearchBar />
+      </div>
+
+      <div className="mb-8">
+        <PremiumCarousel />
       </div>
 
       <section>
