@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ import { X, Mail, User, Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { useToast } from "@/hooks/use-toast";
+import { cn } from '@/lib/utils';
 
 
 // Simple SVG for Google Icon
@@ -49,10 +50,18 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    if (showEmailLogin) {
+      const isValid = !!(avatarUrl && name.trim() && email.trim() && password.trim());
+      setIsFormValid(isValid);
+    }
+  }, [avatarUrl, name, email, password, showEmailLogin]);
 
   const handleLogin = () => {
     if (showEmailLogin) {
-      if (!avatarUrl || !name || !email || !password) {
+      if (!isFormValid) {
         toast({
           variant: "destructive",
           title: "Campos Incompletos",
@@ -96,6 +105,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
       setName('');
       setEmail('');
       setPassword('');
+      setIsFormValid(false);
   }
 
   return (
@@ -164,7 +174,17 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
                 <Input id="password" type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <DialogFooter className='pt-4'>
-              <Button onClick={handleLogin} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
+              <Button 
+                onClick={handleLogin} 
+                size="lg" 
+                className={cn(
+                  "w-full h-12 text-lg font-bold transition-colors",
+                  isFormValid
+                    ? "bg-lime-500 hover:bg-lime-600 text-black"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                )}
+                disabled={!isFormValid}
+              >
                 Criar Conta
               </Button>
             </DialogFooter>
