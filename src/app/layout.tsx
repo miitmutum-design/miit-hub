@@ -5,6 +5,7 @@ import BottomNav from "@/components/common/BottomNav";
 import { cn } from '@/lib/utils';
 import { CompanyProvider } from '@/contexts/CompanyContext';
 import { headers } from 'next/headers';
+import React, { Suspense } from 'react';
 
 
 export const metadata: Metadata = {
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
   description: 'Your guide to local businesses and offers.',
 };
 
-function LayoutContent({ children, showNav }: { children: React.ReactNode, showNav: boolean }) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
+    const headersList = headers();
+    const pathname = headersList.get('x-pathname') || '';
+    const showNav = !pathname.startsWith('/webview');
+
     return (
         <div className="relative flex min-h-screen w-full flex-col">
             <main className={cn("flex-1", showNav && 'pb-32 md:pb-20')}>{children}</main>
@@ -26,10 +31,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = headers();
-  const pathname = headersList.get('x-pathname') || '';
-  const showNav = !pathname.startsWith('/webview');
-
   return (
     <html lang="en" className="dark">
       <head>
@@ -41,7 +42,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <CompanyProvider>
-          <LayoutContent showNav={showNav}>{children}</LayoutContent>
+          <Suspense fallback={<div>Loading...</div>}>
+            <LayoutContent>{children}</LayoutContent>
+          </Suspense>
           <Toaster />
         </CompanyProvider>
       </body>
