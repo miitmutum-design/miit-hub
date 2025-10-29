@@ -14,11 +14,11 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
+import LoginModal from '@/components/common/LoginModal';
 
 // Mock data - in a real app, you'd fetch this based on offerId
 const mockOfferDetails = {
@@ -37,9 +37,13 @@ const mockOfferDetails = {
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
   const offer = mockOfferDetails; // Using mock data
   const { toast } = useToast();
-  const { claimedOffers, claimOffer } = useCompany();
+  const { companyProfile, claimedOffers, claimOffer } = useCompany();
+  
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
+
+  const isDemoUser = companyProfile.id === 'user-demo';
 
   useEffect(() => {
     setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));
@@ -53,9 +57,22 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
 
   const handleGenerateOffer = () => {
     if (isExpired || isLimitReached) return;
-    claimOffer(offer, offer.limitPerUser);
+
+    if (isDemoUser) {
+      setIsLoginModalOpen(true);
+    } else {
+      claimOffer(offer, offer.limitPerUser);
+      setIsQrModalOpen(true);
+    }
   };
   
+  const handleLoginSuccess = () => {
+    setIsLoginModalOpen(false);
+    // After login, proceed to generate the offer
+    claimOffer(offer, offer.limitPerUser);
+    setIsQrModalOpen(true);
+  }
+
   const handleSaveToWallet = () => {
     toast({
       title: "Salvo com Sucesso!",
@@ -69,7 +86,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
     offerTitle: offer.title,
     validUntil: formattedDate,
     couponCode: offer.couponCode,
-    consumerId: 'user-demo-id-12345',
+    consumerId: companyProfile.id,
   });
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
@@ -135,29 +152,35 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
                 </div>
             </div>
 
+            {/* Login Wall Logic */}
+            <LoginModal 
+              isOpen={isLoginModalOpen}
+              onOpenChange={setIsLoginModalOpen}
+              onLoginSuccess={handleLoginSuccess}
+            />
+
+            {/* QR Code Modal */}
             <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
-                <DialogTrigger asChild>
-                    <Button 
-                      onClick={handleGenerateOffer} 
-                      size="lg" 
-                      className={cn(
-                        "w-full h-12 text-lg font-bold transition-colors",
-                        isLimitReached
-                          ? "bg-muted text-muted-foreground cursor-not-allowed"
-                          : "bg-lime-500 hover:bg-lime-600 text-black"
-                      )}
-                      disabled={isLimitReached}
-                    >
-                        {isLimitReached ? (
-                          'Limite de uso atingido'
-                        ) : (
-                          <>
-                            <QrCode className="mr-2 h-5 w-5"/>
-                            Gerar Oferta
-                          </>
-                        )}
-                    </Button>
-                </DialogTrigger>
+                <Button 
+                  onClick={handleGenerateOffer} 
+                  size="lg" 
+                  className={cn(
+                    "w-full h-12 text-lg font-bold transition-colors",
+                    isLimitReached
+                      ? "bg-muted text-muted-foreground cursor-not-allowed"
+                      : "bg-lime-500 hover:bg-lime-600 text-black"
+                  )}
+                  disabled={isLimitReached}
+                >
+                    {isLimitReached ? (
+                      'Limite de uso atingido'
+                    ) : (
+                      <>
+                        <QrCode className="mr-2 h-5 w-5"/>
+                        Gerar Oferta
+                      </>
+                    )}
+                </Button>
                 <DialogContent className="sm:max-w-md bg-card border-border/50">
                     <DialogHeader>
                         <DialogTitle className="text-center text-2xl font-bold font-headline">Sua Oferta Digital</DialogTitle>
