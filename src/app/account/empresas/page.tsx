@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { generateCompanyBio } from '@/ai/flows/generate-company-bio';
+import { generateSearchTerms } from '@/ai/flows/generate-search-terms';
 import { TagInput } from '@/components/ui/tag-input';
 
 const defaultHours: OperatingHours[] = [
@@ -42,13 +43,15 @@ export default function EditProfilePage() {
     ...companyProfile,
     hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
     products: companyProfile.products || [],
+    searchTerms: companyProfile.searchTerms || [],
   };
 
   const [originalData, setOriginalData] = useState<CompanyProfile>(initialProfile);
   const [formData, setFormData] = useState<CompanyProfile>(initialProfile);
   const [hasChanges, setHasChanges] = useState(false);
   const [showOtherCategory, setShowOtherCategory] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isGeneratingBio, startBioGeneration] = useTransition();
+  const [isSaving, setIsSaving] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +62,7 @@ export default function EditProfilePage() {
       ...companyProfile,
       hoursOfOperation: companyProfile.hoursOfOperation || defaultHours,
       products: companyProfile.products || [],
+      searchTerms: companyProfile.searchTerms || [],
     };
     setOriginalData(updatedProfile);
     setFormData(updatedProfile);
@@ -122,8 +126,8 @@ export default function EditProfilePage() {
     }
   };
   
-  const handleSaveChanges = () => {
-    if (!hasChanges) return;
+  const handleSaveChanges = async () => {
+    if (!hasChanges || isSaving) return;
 
     // Validation for operating hours
     const invalidDay = formData.hoursOfOperation?.find(day => day.isOpen && (!day.open || !day.close));
@@ -136,23 +140,54 @@ export default function EditProfilePage() {
         return;
     }
 
-    // Update the context with the new form data
-    setCompanyProfile(formData);
-    
-    // Update the original data state to match the newly saved data
-    setOriginalData(formData);
-
-    // Reset the hasChanges state
-    setHasChanges(false);
-
+    setIsSaving(true);
     toast({
-      title: "Sucesso!",
-      description: "Seu perfil foi atualizado.",
+        title: "Publicando Alterações...",
+        description: "A IA está gerando termos de busca para otimizar seu perfil. Isso pode levar um momento.",
     });
 
-    // Redirect to the business page
-    if(formData.id) {
-        router.push(`/business/${formData.id}`);
+    try {
+        const searchTerms = await generateSearchTerms({
+            companyName: formData.name,
+            category: formData.category,
+            description: formData.description,
+            products: formData.products,
+        });
+
+        const finalData = { ...formData, searchTerms };
+        
+        // Update the context with the new form data
+        setCompanyProfile(finalData);
+        
+        // Update the original data state to match the newly saved data
+        setOriginalData(finalData);
+
+        // Reset the hasChanges state
+        setHasChanges(false);
+
+        toast({
+          title: "Sucesso!",
+          description: "Seu perfil foi atualizado e otimizado para busca.",
+        });
+
+        // Redirect to the business page
+        if(formData.id) {
+            router.push(`/business/${formData.id}`);
+        }
+
+    } catch (error: any) {
+        console.error("Error saving profile:", error);
+        toast({
+            variant: "destructive",
+            title: "Falha ao Salvar",
+            description: error.message || "Ocorreu um erro ao salvar o perfil. Tente novamente.",
+        });
+        // On failure, we still update the context with the user's manual changes
+        setCompanyProfile(formData);
+        setOriginalData(formData);
+        setHasChanges(false);
+    } finally {
+        setIsSaving(false);
     }
   };
 
@@ -165,7 +200,7 @@ export default function EditProfilePage() {
         });
         return;
     }
-    startTransition(async () => {
+    startBioGeneration(async () => {
         try {
             const result = await generateCompanyBio({
                 companyName: formData.name,
@@ -456,10 +491,10 @@ export default function EditProfilePage() {
                         variant="outline"
                         size="sm"
                         onClick={handleGenerateBio}
-                        disabled={isPending}
+                        disabled={isGeneratingBio}
                         className="gap-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary"
                     >
-                        {isPending ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                        {isGeneratingBio ? <Loader2 className="animate-spin" /> : <Sparkles />}
                         Gerar com IA
                     </Button>
                     <p className="text-sm text-right text-muted-foreground">
@@ -490,14 +525,14 @@ export default function EditProfilePage() {
                 size="lg"
                 className={cn(
                   "w-full h-12 text-lg font-bold transition-colors",
-                  hasChanges
+                  hasChanges && !isSaving
                     ? "bg-lime-500 hover:bg-lime-600 text-black"
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 )}
                 onClick={handleSaveChanges}
-                disabled={!hasChanges}
+                disabled={!hasChanges || isSaving}
               >
-                Publicar Alterações
+                {isSaving ? <Loader2 className="animate-spin" /> : 'Publicar Alterações'}
               </Button>
             </div>
         </form>
