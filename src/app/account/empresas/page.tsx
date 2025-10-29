@@ -238,6 +238,23 @@ export default function EditProfilePage() {
                     />
                 </div>
             )}
+            
+            <div className="space-y-2">
+              <label
+                htmlFor="address"
+                className="text-sm font-medium text-muted-foreground"
+              >
+                Endereço Completo
+              </label>
+              <Input
+                id="address"
+                type="text"
+                value={formData.address}
+                onChange={handleInputChange}
+                className="bg-card border-border/50 h-12"
+                placeholder="Rua, Número, Bairro, Cidade, Estado, CEP"
+              />
+            </div>
 
             <div className="space-y-2">
               <label
@@ -309,5 +326,3 @@ export default function EditProfilePage() {
     </div>
   );
 }
-
-    

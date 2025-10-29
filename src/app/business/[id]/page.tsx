@@ -23,6 +23,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   id: 'placeholder',
   name: 'Nome da Empresa',
   category: 'Categoria',
+  address: 'Endereço não informado',
   distance: 'N/A',
   rating: 0,
   reviews: [],
@@ -87,8 +88,8 @@ export default function BusinessPage() {
     }
   };
 
-  const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
-  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
+  const address = ('address' in displayData && displayData.address) || 'Endereço não informado';
+  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
   
   const whatsapp = ('whatsapp' in displayData && displayData.whatsapp) || '5521999999999';
   const whatsappUrl = `https://wa.me/${whatsapp}`;
@@ -223,7 +224,7 @@ export default function BusinessPage() {
                     <MapPin className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Endereço</p>
-                        <p className="text-muted-foreground">Rua das Flores, 123 - Centro</p>
+                        <p className="text-muted-foreground">{address}</p>
                         <Link 
                           href={mapsUrl} 
                           target="_blank" 

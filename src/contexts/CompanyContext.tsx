@@ -15,6 +15,7 @@ export interface CompanyProfile {
   id: string;
   name: string;
   category: string;
+  address: string;
   email: string;
   phone: string;
   logoUrl: string | null;
@@ -54,6 +55,7 @@ const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
   name: "Visitante",
   category: "Consumidor",
+  address: "Rua Fictícia, 123, Cidade Exemplo, Estado Exemplo",
   email: "demo@example.com",
   phone: "(65) 99999-9999",
   logoUrl: null,
@@ -77,6 +79,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     id: 'company-gold',
     name: "Empresa Gold",
     category: "Tecnologia",
+    address: "Avenida Principal, 456, Centro, São Paulo, SP",
     email: "contato@gold.com",
     phone: "(11) 98765-4321",
     logoUrl: null,
@@ -93,6 +96,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     id: 'company-silver',
     name: "Empresa Prata",
     category: "Serviços",
+    address: "Rua Secundária, 789, Bairro Feliz, Rio de Janeiro, RJ",
     email: "contato@prata.com",
     phone: "(21) 91234-5678",
     logoUrl: null,
