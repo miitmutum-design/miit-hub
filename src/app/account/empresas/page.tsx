@@ -1,8 +1,8 @@
 
 'use client';
 
-import React, { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock } from 'lucide-react';
+import React, { useState, useRef, ChangeEvent, useEffect, useTransition } from 'react';
+import { ArrowLeft, Pencil, Building, Image as ImageIcon, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,6 +19,7 @@ import { categories } from '@/lib/data';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { generateCompanyBio } from '@/app/actions';
 
 const defaultHours: OperatingHours[] = [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
@@ -45,6 +46,7 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState<CompanyProfile>(initialProfile);
   const [hasChanges, setHasChanges] = useState(false);
   const [showOtherCategory, setShowOtherCategory] = useState(false);
+  const [isPending, startTransition] = useTransition();
   
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -146,6 +148,25 @@ export default function EditProfilePage() {
     if(formData.id) {
         router.push(`/business/${formData.id}`);
     }
+  };
+
+  const handleGenerateBio = () => {
+    startTransition(async () => {
+      const { bio, error } = await generateCompanyBio(formData.name, formData.category);
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Falha na Geração",
+          description: error,
+        });
+      } else if (bio) {
+        setFormData(prev => ({ ...prev, description: bio }));
+        toast({
+          title: "Descrição Gerada!",
+          description: "O campo 'Sobre' foi preenchido com o texto da IA."
+        });
+      }
+    });
   };
   
   const MAX_DESC_LENGTH = 360;
@@ -373,9 +394,22 @@ export default function EditProfilePage() {
                 className="bg-card border-border/50 min-h-[120px]"
                 maxLength={MAX_DESC_LENGTH}
               />
-              <p className="text-sm text-right text-muted-foreground">
-                {(formData.description || '').length} / {MAX_DESC_LENGTH}
-              </p>
+                <div className="flex justify-between items-center">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGenerateBio}
+                        disabled={isPending || !formData.name || !formData.category}
+                        className="gap-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary"
+                    >
+                        {isPending ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                        Gerar com IA
+                    </Button>
+                    <p className="text-sm text-right text-muted-foreground">
+                        {(formData.description || '').length} / {MAX_DESC_LENGTH}
+                    </p>
+                </div>
             </div>
         </form>
       </div>
@@ -399,3 +433,4 @@ export default function EditProfilePage() {
   );
 
     
+}

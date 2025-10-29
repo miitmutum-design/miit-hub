@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import { analyzeBusinessReviews } from '@/ai/flows/analyze-business-reviews';
+import { generateCompanyBio as generateCompanyBioFlow } from '@/ai/flows/generate-company-bio';
 
 export type FormState = {
   message: string;
@@ -46,4 +47,22 @@ export async function handleReviewAnalysis(
     console.error(error);
     return { message: 'An unexpected error occurred during analysis.' };
   }
+}
+
+
+export async function generateCompanyBio(companyName: string, category: string): Promise<{bio: string | null, error: string | null}> {
+    if (!companyName || !category) {
+        return { bio: null, error: "Nome da empresa e categoria são necessários." };
+    }
+
+    try {
+        const result = await generateCompanyBioFlow({ companyName, category });
+        if (result && result.bio) {
+            return { bio: result.bio, error: null };
+        }
+        return { bio: null, error: "A IA não conseguiu gerar uma descrição." };
+    } catch (error) {
+        console.error("Error generating company bio:", error);
+        return { bio: null, error: "Ocorreu um erro ao contatar a IA. Tente novamente." };
+    }
 }
