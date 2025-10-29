@@ -2,7 +2,7 @@
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
-import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,9 @@ export default function BusinessPage() {
         }
     }
   };
+
+  const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
+  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -133,7 +136,15 @@ export default function BusinessPage() {
                     <div>
                         <p className="font-semibold">Endereço</p>
                         <p className="text-muted-foreground">Rua das Flores, 123 - Centro</p>
-                        <Link href="#" className="text-primary font-semibold text-sm mt-1 inline-block">Ver no mapa &rarr;</Link>
+                        <Link 
+                          href={mapsUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-primary font-semibold text-sm mt-1 inline-flex items-center gap-1.5"
+                        >
+                          <Navigation className="h-4 w-4" />
+                          Ver no mapa &rarr;
+                        </Link>
                     </div>
                 </div>
                  <div className="flex items-start gap-4">
