@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -35,13 +36,17 @@ export default function NotificationSettingsPage() {
     const { companyProfile, setCompanyProfile } = useCompany();
     const { toast } = useToast();
 
-    const [originalSettings, setOriginalSettings] = useState<NotificationSettings>(companyProfile.notificationSettings);
-    const [currentSettings, setCurrentSettings] = useState<NotificationSettings>(companyProfile.notificationSettings);
+    const defaultSettings: NotificationSettings = { newBusiness: false, offers: false, events: false };
+
+    const [originalSettings, setOriginalSettings] = useState<NotificationSettings>(companyProfile.notificationSettings || defaultSettings);
+    const [currentSettings, setCurrentSettings] = useState<NotificationSettings>(companyProfile.notificationSettings || defaultSettings);
     const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
-        setOriginalSettings(companyProfile.notificationSettings);
-        setCurrentSettings(companyProfile.notificationSettings);
+        if (companyProfile.notificationSettings) {
+            setOriginalSettings(companyProfile.notificationSettings);
+            setCurrentSettings(companyProfile.notificationSettings);
+        }
     }, [companyProfile.notificationSettings]);
 
     useEffect(() => {
