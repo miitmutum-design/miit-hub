@@ -157,7 +157,7 @@ export default function BusinessPage() {
                  <div className="flex items-start gap-4">
                     <Phone className="h-5 w-5 text-primary mt-1"/>
                     <div>
-                        <p className="font-semibold">Telefone</p>
+                        <p className="font-semibold">Whatsapp</p>
                         <p className="text-muted-foreground">(65) 99999-9999</p>
                     </div>
                 </div>
@@ -247,5 +247,3 @@ export default function BusinessPage() {
     </div>
   );
 }
-
-    
