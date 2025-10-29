@@ -45,7 +45,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
 
-  const isUserAuthenticated = companyProfile.userType === 'Consumer' && companyProfile.id !== 'user-demo';
+  const isUserAuthenticated = companyProfile.id !== 'user-demo';
 
   useEffect(() => {
     setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));

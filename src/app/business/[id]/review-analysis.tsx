@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { Star, MessageSquarePlus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import LoginModal from '@/components/common/LoginModal';
+import { useCompany } from '@/contexts/CompanyContext';
 
 type Review = {
     id: number;
@@ -26,12 +29,37 @@ const mockReviews: Review[] = [
 
 export default function ReviewAnalysis({ initialReviews }: { initialReviews: string[] }) {
     const params = useParams();
-    const id = params.id;
+    const router = useRouter();
+    const id = params.id as string;
+    
+    const { companyProfile } = useCompany();
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    
+    const isUserAuthenticated = companyProfile.id !== 'user-demo';
+
     // We can use initialReviews later if we want to integrate the existing data
     const reviewsToDisplay = mockReviews;
 
+    const handleAddReviewClick = (e: React.MouseEvent) => {
+        if (!isUserAuthenticated) {
+            e.preventDefault();
+            setIsLoginModalOpen(true);
+        }
+    };
+
+    const handleLoginSuccess = () => {
+        setIsLoginModalOpen(false);
+        router.push(`/business/${id}/rate`);
+    };
+
     return (
         <div className="space-y-4">
+             <LoginModal 
+              isOpen={isLoginModalOpen}
+              onOpenChange={setIsLoginModalOpen}
+              onLoginSuccess={handleLoginSuccess}
+            />
+
             {reviewsToDisplay.map((review) => (
                 <Card key={review.id} className="bg-card border-border/50">
                     <CardContent className="p-4">
@@ -58,7 +86,7 @@ export default function ReviewAnalysis({ initialReviews }: { initialReviews: str
             ))}
 
             <div className="fixed bottom-20 left-0 right-0 p-4 bg-background border-t border-border/50 md:static md:bg-transparent md:border-t-0 md:p-0">
-                 <Link href={`/business/${id}/rate`} className="w-full">
+                 <Link href={`/business/${id}/rate`} onClick={handleAddReviewClick} className="w-full">
                     <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white">
                         <MessageSquarePlus className="mr-2 h-5 w-5" />
                         Adicionar Avaliação
