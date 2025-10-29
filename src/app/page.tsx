@@ -31,7 +31,6 @@ export default function Home() {
       </div>
 
       <section>
-        <h2 className="text-2xl font-semibold tracking-tight mb-4 font-headline">Featured Businesses</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {availableBusinesses.map((business) => (
             <Link key={business.id} href={`/business/${business.id}`} className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
