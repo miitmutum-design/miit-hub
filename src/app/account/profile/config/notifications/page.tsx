@@ -123,7 +123,7 @@ export default function NotificationSettingsPage() {
                     className={cn(
                         "w-full h-12 text-lg font-bold transition-colors",
                         hasChanges
-                            ? "bg-lime-500 hover:bg-lime-600 text-black"
+                            ? "bg-lime-400 hover:bg-lime-500 text-black"
                             : "bg-muted text-muted-foreground cursor-not-allowed"
                     )}
                     onClick={handleSaveChanges}
