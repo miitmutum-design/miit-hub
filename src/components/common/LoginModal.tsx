@@ -63,13 +63,17 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold font-headline">Acesse sua Conta</DialogTitle>
           <DialogDescription className="text-center text-muted-foreground pt-2">
-            {showEmailLogin ? 'Entre com seu email e senha para continuar' : 'Para continuar, faça login ou crie uma conta.'}
+            {showEmailLogin ? 'Crie sua conta para continuar' : 'Para continuar, faça login ou crie uma conta.'}
           </DialogDescription>
         </DialogHeader>
 
         {showEmailLogin ? (
           // Email Login Form
           <div className="py-4 space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input id="name" type="text" placeholder="Seu nome completo" />
+            </div>
             <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" placeholder="seu@email.com" />
@@ -80,7 +84,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
             </div>
             <DialogFooter className='pt-4'>
               <Button onClick={handleLogin} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
-                Entrar
+                Criar Conta
               </Button>
             </DialogFooter>
              <p className="text-center text-sm">
