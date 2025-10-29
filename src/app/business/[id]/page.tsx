@@ -40,7 +40,6 @@ export default function BusinessPage() {
       if (navigator.share && window.isSecureContext) {
         await navigator.share(shareData);
       } else {
-        // This will be caught by the catch block
         throw new Error("Web Share API not supported.");
       }
     } catch (error) {
@@ -169,13 +168,25 @@ export default function BusinessPage() {
                         )}>Seg-Sáb: 11h-23h</p>
                     </div>
                 </div>
-                <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
-                    <Phone className="h-5 w-5 text-primary mt-1"/>
-                    <div>
-                        <p className="font-semibold">Whatsapp</p>
-                        <p className="text-primary group-hover:underline">{formatPhoneNumber(business.whatsapp)}</p>
+                
+                {isOpen ? (
+                    <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
+                        <Phone className="h-5 w-5 text-primary mt-1"/>
+                        <div>
+                            <p className="font-semibold">Whatsapp</p>
+                            <p className="text-primary group-hover:underline">{formatPhoneNumber(business.whatsapp)}</p>
+                        </div>
+                    </Link>
+                ) : (
+                    <div className="flex items-start gap-4 opacity-50">
+                        <Phone className="h-5 w-5 text-muted-foreground mt-1"/>
+                        <div>
+                            <p className="font-semibold">Whatsapp</p>
+                            <p className="text-muted-foreground">{formatPhoneNumber(business.whatsapp)}</p>
+                        </div>
                     </div>
-                </Link>
+                )}
+                
                 <div className="flex items-start gap-4">
                     <Globe className="h-5 w-5 text-primary mt-1"/>
                     <div>
