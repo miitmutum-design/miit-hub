@@ -29,7 +29,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="container mx-auto max-w-3xl py-6 sm:py-8">
+    <div className="container mx-auto max-w-3xl pt-6 sm:pt-8">
       <HomeHeader />
 
       <div className="relative mb-6">
@@ -54,7 +54,7 @@ export default function Home() {
           <SponsorsGrid />
       </section>
 
-      <section className="mb-8">
+      <section>
         <VideoPlayer />
       </section>
 
