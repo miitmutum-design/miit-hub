@@ -81,8 +81,8 @@ export default function EditProfilePage() {
     });
 
     // Redirect to the business page
-    if(companyProfile.id) {
-        router.push(`/business/${companyProfile.id}`);
+    if(formData.id) {
+        router.push(`/business/${formData.id}`);
     }
   };
   

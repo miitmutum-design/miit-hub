@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -29,7 +29,7 @@ export default function BusinessPage() {
 
   // Use companyProfile from context if the ID matches, otherwise use static business data
   const displayData = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company'
-    ? { ...business, ...companyProfile }
+    ? companyProfile
     : business;
   
   const isBookmarked = isFavorited(displayData.id);
@@ -123,9 +123,9 @@ export default function BusinessPage() {
         <div className="absolute -bottom-16 left-4">
             <Avatar className="h-32 w-32 border-4 border-background">
                 {displayData.logoUrl ? (
-                    <Image src={displayData.logoUrl} alt={`Logo de ${displayData.name}`} fill className="object-cover" />
+                    <AvatarImage src={displayData.logoUrl} alt={`Logo de ${displayData.name}`} />
                 ) : (
-                    <AvatarFallback className="bg-card rounded-none">
+                    <AvatarFallback className="bg-card">
                         <Building className="h-16 w-16 text-muted-foreground/50" />
                     </AvatarFallback>
                 )}
