@@ -75,8 +75,6 @@ export default function ConsumerConfigPage() {
       <Card className="bg-card">
         <CardContent className="p-0">
             <div className="p-2 space-y-1">
-                <ConfigItem icon={Bookmark} title="Empresas Favoritadas" description="Veja seus locais salvos" href="/account/profile/favorites" />
-                <Separator />
                 <ConfigItem icon={Gift} title="Minhas Ofertas" description="Ofertas especiais para você" href="/account/profile/offers" />
                 <Separator />
                 <ConfigItem icon={Calendar} title="Eventos Salvos" description="Eventos que você pretende ir" href="/account/profile/events" />
