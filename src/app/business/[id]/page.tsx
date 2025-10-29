@@ -1,9 +1,9 @@
 'use client';
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,24 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
+import type { Business } from '@/lib/data';
+import type { CompanyProfile } from '@/contexts/CompanyContext';
 
+// Create a default business structure for placeholder rendering
+const defaultBusinessData: Business & Partial<CompanyProfile> = {
+  id: 'placeholder',
+  name: 'Nome da Empresa',
+  category: 'Categoria',
+  distance: 'N/A',
+  rating: 0,
+  reviews: [],
+  description: 'Nenhuma descrição fornecida.',
+  image: { url: '', hint: '' },
+  backgroundUrl: null,
+  logoUrl: null,
+  whatsapp: '00000000000',
+  websiteUrl: '',
+};
 
 export default function BusinessPage() {
   const params = useParams();
@@ -26,14 +43,9 @@ export default function BusinessPage() {
 
   // Prioritize companyProfile if it's a company and IDs match
   const isViewingOwnProfile = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company';
-  const displayData = isViewingOwnProfile ? companyProfile : businessFromStaticData;
   
-  if (!displayData) {
-    // Instead of notFound(), you could render a skeleton or a "Profile not found" page
-    // For now, we'll stick with notFound() if no data source is available.
-    // The key change is prioritizing the context.
-    notFound();
-  }
+  // Use the available data, or fall back to the default placeholder structure
+  const displayData = isViewingOwnProfile ? companyProfile : (businessFromStaticData || defaultBusinessData);
   
   const isBookmarked = isFavorited(displayData.id);
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
