@@ -29,6 +29,7 @@ export interface CompanyProfile {
   address: string | null;
   email: string;
   phone: string;
+  instagram?: string;
   logoUrl: string | null;
   backgroundUrl: string | null;
   description: string;
@@ -81,6 +82,7 @@ const initialDemoProfile: CompanyProfile = {
   address: "Rua Fictícia, 123, Cidade Exemplo, Estado Exemplo",
   email: "demo@example.com",
   phone: "(65) 99999-9999",
+  instagram: "@seuinstagram",
   logoUrl: null,
   backgroundUrl: null,
   description: "Este é um perfil de usuário de demonstração. Edite-o para ver as alterações.",
@@ -116,6 +118,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     notificationSettings: { newBusiness: true, offers: true, events: true },
     availabilityStatus: 'AUTO',
     hoursOfOperation: defaultHours,
+    instagram: '@uniaoconstrutora'
   },
   'company-gold': {
     id: 'company-gold',
@@ -134,6 +137,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     notificationSettings: { newBusiness: true, offers: true, events: true },
     availabilityStatus: 'AUTO',
     hoursOfOperation: defaultHours,
+    instagram: '@empresagold'
   },
   'company-silver': {
     id: 'company-silver',
@@ -152,6 +156,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     notificationSettings: { newBusiness: true, offers: true, events: true },
     availabilityStatus: 'AUTO',
     hoursOfOperation: defaultHours,
+    instagram: '@empresaprata'
   }
 };
 

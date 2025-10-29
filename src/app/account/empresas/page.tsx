@@ -397,6 +397,23 @@ export default function EditProfilePage() {
             
             <div className="space-y-2">
               <label
+                htmlFor="instagram"
+                className="text-sm font-medium text-muted-foreground"
+              >
+                Instagram
+              </label>
+              <Input
+                id="instagram"
+                type="text"
+                value={formData.instagram || ''}
+                onChange={handleInputChange}
+                className="bg-card border-border/50 h-12"
+                placeholder="@seuinstagram"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
                 htmlFor="description"
                 className="text-sm font-medium text-muted-foreground"
               >
@@ -448,5 +465,3 @@ export default function EditProfilePage() {
 
     
 }
-
-    

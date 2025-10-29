@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
@@ -20,6 +21,14 @@ import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
 import React from 'react';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+    </svg>
+);
+
 
 // Create a default business structure for placeholder rendering
 const defaultBusinessData: Business & Partial<CompanyProfile> = {
@@ -35,6 +44,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   backgroundUrl: null,
   logoUrl: null,
   phone: '00000000000',
+  instagram: '@seuinstagram',
   whatsapp: '00000000000',
   websiteUrl: '',
   availabilityStatus: 'AUTO',
@@ -108,6 +118,9 @@ export default function BusinessPage() {
   
   const whatsappNumber = displayData.phone || '';
   const whatsappUrl = `https://wa.me/55${whatsappNumber.replace(/\D/g, '')}`;
+
+  const instagramHandle = displayData.instagram?.replace('@', '') || '';
+  const instagramUrl = `https://instagram.com/${instagramHandle}`;
   
   const formatPhoneNumber = (phone: string | undefined) => {
     if (!phone) return "Telefone não informado";
@@ -297,6 +310,16 @@ export default function BusinessPage() {
                             <p className="text-muted-foreground">{formatPhoneNumber(displayData.phone)}</p>
                         </div>
                     </div>
+                )}
+
+                {instagramHandle && (
+                  <Link href={instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
+                      <InstagramIcon className="h-5 w-5 text-primary mt-1"/>
+                      <div>
+                          <p className="font-semibold">Instagram</p>
+                          <p className="text-primary group-hover:underline">@{instagramHandle}</p>
+                      </div>
+                  </Link>
                 )}
                 
                 {('websiteUrl' in displayData && displayData.websiteUrl) && (
