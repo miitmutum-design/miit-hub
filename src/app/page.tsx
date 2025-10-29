@@ -10,6 +10,7 @@ import { isCompanyActuallyOpen } from '@/lib/availability';
 import SearchBar from '@/components/common/SearchBar';
 import PremiumCarousel from '@/components/common/PremiumCarousel';
 import CategoryCarousel from '@/components/common/CategoryCarousel';
+import SponsorsGrid from '@/components/common/SponsorsGrid';
 
 export default function Home() {
   
@@ -42,6 +43,10 @@ export default function Home() {
               </Link>
           </div>
           <CategoryCarousel />
+      </section>
+
+      <section className="mb-8">
+          <SponsorsGrid />
       </section>
 
       <section>
