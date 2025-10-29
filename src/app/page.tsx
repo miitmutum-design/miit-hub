@@ -2,13 +2,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Search } from 'lucide-react';
 import BusinessCard from '@/components/BusinessCard';
-import { Input } from '@/components/ui/input';
 import { businesses } from '@/lib/data';
 import HomeHeader from '@/components/common/HomeHeader';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import { isCompanyActuallyOpen } from '@/lib/availability';
+import SearchBar from '@/components/common/SearchBar';
 
 export default function Home() {
   
@@ -26,8 +25,7 @@ export default function Home() {
       <HomeHeader />
 
       <div className="relative mb-8">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input placeholder="Search coffee shops, bookstores..." className="pl-10 h-12 text-base" />
+        <SearchBar />
       </div>
 
       <section>
