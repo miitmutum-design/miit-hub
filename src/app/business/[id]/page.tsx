@@ -106,7 +106,7 @@ export default function BusinessPage() {
   const category = 'category' in displayData ? displayData.category : "Categoria";
   const distance = 'distance' in displayData ? displayData.distance : null;
   const rating = 'rating' in displayData ? displayData.rating : 0;
-  const image = 'image' in displayData ? displayData.image : null;
+  const image = ('image' in displayData && displayData.image) ? displayData.image : null;
 
 
   return (
@@ -141,7 +141,7 @@ export default function BusinessPage() {
                 fill
                 className="object-cover"
             />
-        ) : image ? (
+        ) : image && image.url ? (
              <Image
                 src={image.url}
                 alt={`${displayData.name} background`}
