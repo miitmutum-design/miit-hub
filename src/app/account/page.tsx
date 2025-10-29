@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter } from "next/navigation";
 
 
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick, disabled = false }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void, disabled?: boolean }) => {
@@ -105,6 +106,7 @@ const finalizeKeyRedemptionMockAPI = (key: string) => {
 export default function AccountPage() {
   const { companyProfile, setCompanyProfile, logoutCompany } = useCompany();
   const { toast } = useToast();
+  const router = useRouter();
   
   const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
   const [isSelectCompanyModalOpen, setIsSelectCompanyModalOpen] = useState(false);
@@ -162,6 +164,7 @@ export default function AccountPage() {
             });
             setIsRedeemModalOpen(false);
             setAccessKey('');
+            router.push('/account/subscription');
         }
       } else if (result.companies) {
         // Multiple companies case
@@ -195,6 +198,7 @@ export default function AccountPage() {
         });
         setIsSelectCompanyModalOpen(false);
         setAccessKey('');
+        router.push('/account/subscription');
     }
   };
 
