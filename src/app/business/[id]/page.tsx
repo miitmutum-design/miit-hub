@@ -75,6 +75,8 @@ export default function BusinessPage() {
     return phone;
   };
 
+  const isOpen = true; // Mock status
+
   return (
     <div className="bg-background min-h-screen text-foreground">
       {/* Header */}
@@ -161,7 +163,10 @@ export default function BusinessPage() {
                     <Clock className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Horário</p>
-                        <p className="text-muted-foreground">Seg-Sáb: 11h-23h</p>
+                        <p className={cn(
+                          "text-muted-foreground",
+                          isOpen && "text-primary"
+                        )}>Seg-Sáb: 11h-23h</p>
                     </div>
                 </div>
                 <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
