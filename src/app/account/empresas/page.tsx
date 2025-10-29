@@ -334,6 +334,7 @@ export default function EditProfilePage() {
                                         disabled={!day.isOpen}
                                         className="bg-input border-border/50"
                                     />
+
                                 </div>
                             </div>
                             {index < (formData.hoursOfOperation?.length || 0) -1 && <Separator />}
@@ -342,6 +343,22 @@ export default function EditProfilePage() {
                 </div>
             </div>
 
+            <div className="space-y-2">
+              <label
+                htmlFor="phone"
+                className="text-sm font-medium text-muted-foreground"
+              >
+                Telefone (WhatsApp)
+              </label>
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone || ''}
+                onChange={handleInputChange}
+                className="bg-card border-border/50 h-12"
+              />
+            </div>
+            
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -357,22 +374,7 @@ export default function EditProfilePage() {
                 className="bg-card border-border/50 h-12"
               />
             </div>
-            <div className="space-y-2">
-              <label
-                htmlFor="phone"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Telefone
-              </label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone || ''}
-                onChange={handleInputChange}
-                className="bg-card border-border/50 h-12"
-              />
-            </div>
-            
+
             <div className="space-y-2">
               <label
                 htmlFor="description"
@@ -411,6 +413,3 @@ export default function EditProfilePage() {
       </div>
     </div>
   );
-}
-
-    
