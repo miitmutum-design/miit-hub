@@ -77,7 +77,7 @@ const redeemAccessKeyMockAPI = (key: string): Promise<{ success: boolean; messag
 export default function AccountPage() {
   const { companyProfile, setCompanyProfile, logoutCompany } = useCompany();
   const { toast } = useToast();
-  const [accessKey, setAccessKey] = useState('');
+  const [accessKey, setAccessKey] = useState('ABCD-EFGH-IJKL');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRedeeming, setIsRedeeming] = useState(false);
   
