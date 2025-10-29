@@ -4,6 +4,7 @@ import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { ArrowLeft, Pencil, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -35,7 +36,7 @@ export default function EditProfilePage() {
     setHasChanges(changes);
   }, [formData, originalData]);
   
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({...prev, [id]: value}));
   };
@@ -72,6 +73,8 @@ export default function EditProfilePage() {
       description: "Seu perfil foi atualizado.",
     });
   };
+  
+  const MAX_DESC_LENGTH = 360;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -170,6 +173,25 @@ export default function EditProfilePage() {
                 onChange={handleInputChange}
                 className="bg-card border-border/50 h-12"
               />
+            </div>
+            
+            <div className="space-y-2">
+              <label
+                htmlFor="description"
+                className="text-sm font-medium text-muted-foreground"
+              >
+                Sobre
+              </label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="bg-card border-border/50 min-h-[120px]"
+                maxLength={MAX_DESC_LENGTH}
+              />
+              <p className="text-sm text-right text-muted-foreground">
+                {formData.description?.length || 0} / {MAX_DESC_LENGTH}
+              </p>
             </div>
 
             <div className="pt-4">
