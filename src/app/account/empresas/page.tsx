@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
-import { ArrowLeft, Pencil, Building } from 'lucide-react';
+import { ArrowLeft, Pencil, Building, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,17 +12,20 @@ import { cn } from '@/lib/utils';
 import { useCompany } from '@/contexts/CompanyContext';
 import type { CompanyProfile } from '@/contexts/CompanyContext';
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from 'next/navigation';
 
 
 export default function EditProfilePage() {
   const { companyProfile, setCompanyProfile } = useCompany();
   const { toast } = useToast();
+  const router = useRouter();
 
   const [originalData, setOriginalData] = useState<CompanyProfile>(companyProfile);
   const [formData, setFormData] = useState<CompanyProfile>(companyProfile);
   const [hasChanges, setHasChanges] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
 
   // Update form if companyProfile from context changes (e.g. after redeeming a key)
   useEffect(() => {
@@ -44,10 +47,14 @@ export default function EditProfilePage() {
   const handleLogoClick = () => {
     logoInputRef.current?.click();
   };
+  
+  const handleBackgroundClick = () => {
+    backgroundInputRef.current?.click();
+  }
 
   const handleFileChange = (
     event: ChangeEvent<HTMLInputElement>,
-    field: 'logoUrl'
+    field: 'logoUrl' | 'backgroundUrl'
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -72,12 +79,17 @@ export default function EditProfilePage() {
       title: "Sucesso!",
       description: "Seu perfil foi atualizado.",
     });
+
+    // Redirect to the business page
+    if(companyProfile.id) {
+        router.push(`/business/${companyProfile.id}`);
+    }
   };
   
   const MAX_DESC_LENGTH = 360;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground pb-24">
       <div className="container mx-auto max-w-lg py-6 sm:py-8">
         <header className="relative mb-8 flex items-center justify-center text-center">
           <Link href="/account" className="absolute left-0">
@@ -91,44 +103,76 @@ export default function EditProfilePage() {
           </h1>
         </header>
 
-        <div className="flex flex-col items-center space-y-8">
-          <div className="space-y-6 text-center">
-            <div className="relative inline-block">
-              <Avatar className="h-32 w-32 border-2 border-dashed border-border">
-                {formData.logoUrl ? (
-                  <Image
-                    src={formData.logoUrl}
-                    alt="Logo da Empresa"
-                    fill
-                    className="object-cover rounded-full"
+        <form className="w-full space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="flex flex-col items-center space-y-2">
+                <p className="text-sm font-medium text-muted-foreground self-start">
+                  Logo da Empresa
+                </p>
+                <div className="relative inline-block">
+                  <Avatar className="h-32 w-32 border-2 border-dashed border-border">
+                    {formData.logoUrl ? (
+                      <Image
+                        src={formData.logoUrl}
+                        alt="Logo da Empresa"
+                        fill
+                        className="object-cover rounded-full"
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-card">
+                        <Building className="h-16 w-16 text-muted-foreground/50" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <Button
+                    size="icon"
+                    type="button"
+                    className="absolute bottom-2 right-2 h-9 w-9 bg-lime-500 hover:bg-lime-600 rounded-full"
+                    onClick={handleLogoClick}
+                  >
+                    <Pencil className="h-5 w-5 text-black" />
+                  </Button>
+                  <input
+                    type="file"
+                    ref={logoInputRef}
+                    onChange={(e) => handleFileChange(e, 'logoUrl')}
+                    className="hidden"
+                    accept="image/*"
                   />
-                ) : (
-                  <AvatarFallback className="bg-card">
-                    <Building className="h-16 w-16 text-muted-foreground/50" />
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <Button
-                size="icon"
-                className="absolute bottom-2 right-2 h-9 w-9 bg-lime-500 hover:bg-lime-600 rounded-full"
-                onClick={handleLogoClick}
-              >
-                <Pencil className="h-5 w-5 text-black" />
-              </Button>
-              <input
-                type="file"
-                ref={logoInputRef}
-                onChange={(e) => handleFileChange(e, 'logoUrl')}
-                className="hidden"
-                accept="image/*"
-              />
+                </div>
             </div>
-            <p className="text-sm font-medium text-muted-foreground">
-              Logo da Empresa
-            </p>
-          </div>
 
-          <form className="w-full space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="flex flex-col items-center space-y-2">
+                <p className="text-sm font-medium text-muted-foreground self-start">
+                    Imagem de Fundo
+                </p>
+                <button
+                    type="button"
+                    onClick={handleBackgroundClick}
+                    className="relative w-full h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
+                >
+                    {formData.backgroundUrl ? (
+                        <Image
+                            src={formData.backgroundUrl}
+                            alt="Imagem de Fundo"
+                            fill
+                            className="object-cover rounded-lg"
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center gap-2">
+                            <ImageIcon className="h-8 w-8" />
+                            <span>Fazer upload de imagem de fundo</span>
+                        </div>
+                    )}
+                </button>
+                <input
+                    type="file"
+                    ref={backgroundInputRef}
+                    onChange={(e) => handleFileChange(e, 'backgroundUrl')}
+                    className="hidden"
+                    accept="image/*"
+                />
+            </div>
+            
             <div className="space-y-2">
               <label
                 htmlFor="name"
@@ -193,24 +237,23 @@ export default function EditProfilePage() {
                 {formData.description?.length || 0} / {MAX_DESC_LENGTH}
               </p>
             </div>
+        </form>
+      </div>
 
-            <div className="pt-4">
-              <Button
-                size="lg"
-                className={cn(
-                  "w-full h-12 text-lg font-bold transition-colors",
-                  hasChanges
-                    ? "bg-lime-500 hover:bg-lime-600 text-black"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                )}
-                onClick={handleSaveChanges}
-                disabled={!hasChanges}
-              >
-                Salvar Alterações
-              </Button>
-            </div>
-          </form>
-        </div>
+       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
+          <Button
+            size="lg"
+            className={cn(
+              "w-full max-w-lg mx-auto h-12 text-lg font-bold transition-colors",
+              hasChanges
+                ? "bg-lime-500 hover:bg-lime-600 text-black"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            )}
+            onClick={handleSaveChanges}
+            disabled={!hasChanges}
+          >
+            Salvar Alterações
+          </Button>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ export interface CompanyProfile {
   email: string;
   phone: string;
   logoUrl: string | null;
+  backgroundUrl: string | null;
   description: string;
   plan: 'Prata' | 'Gold';
   tokens: number;
@@ -52,6 +53,7 @@ const initialDemoProfile: CompanyProfile = {
   email: "demo@example.com",
   phone: "(65) 99999-9999",
   logoUrl: null,
+  backgroundUrl: null,
   description: "Este é um perfil de usuário de demonstração. Edite-o para ver as alterações.",
   plan: 'Prata',
   tokens: 0,
@@ -72,6 +74,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     email: "contato@gold.com",
     phone: "(11) 98765-4321",
     logoUrl: null,
+    backgroundUrl: null,
     description: "Empresa Gold: líder de mercado em soluções inovadoras. Oferecemos qualidade e excelência, com foco total na satisfação do cliente. Nossa equipe experiente está pronta para atender suas necessidades com agilidade e profissionalismo, garantindo os melhores resultados para o seu negócio.",
     plan: 'Gold',
     tokens: 200,
@@ -85,6 +88,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     email: "contato@prata.com",
     phone: "(21) 91234-5678",
     logoUrl: null,
+    backgroundUrl: null,
     description: "Empresa Prata: a solução ideal para o seu dia a dia. Combinamos tradição e modernidade para entregar produtos e serviços de confiança. Nosso compromisso é com a sua satisfação, oferecendo um atendimento personalizado e eficiente para superar suas expectativas.",
     plan: 'Prata',
     tokens: 15,

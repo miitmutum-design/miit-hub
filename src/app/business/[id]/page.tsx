@@ -2,7 +2,8 @@
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { notFound, useParams } from 'next/navigation';
-import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation } from 'lucide-react';
+import Image from 'next/image';
+import { Star, MapPin, Clock, Phone, Utensils, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -18,21 +20,26 @@ export default function BusinessPage() {
   const params = useParams();
   const id = params.id as string;
   const business = getBusinessById(id);
-  const { toggleFavorite, isFavorited } = useCompany();
+  const { toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
 
   if (!business) {
     notFound();
   }
+
+  // Use companyProfile from context if the ID matches, otherwise use static business data
+  const displayData = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company'
+    ? { ...business, ...companyProfile }
+    : business;
   
-  const isBookmarked = isFavorited(business.id);
+  const isBookmarked = isFavorited(displayData.id);
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
   const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
 
   const handleShare = async () => {
     const shareData = {
-      title: business.name,
-      text: `Confira ${business.name}, com nota ${business.rating}! Uma ótima opção na categoria ${business.category}.`,
+      title: displayData.name,
+      text: `Confira ${displayData.name}, com nota ${displayData.rating}! Uma ótima opção na categoria ${displayData.category}.`,
       url: window.location.href,
     };
 
@@ -63,7 +70,7 @@ export default function BusinessPage() {
 
   const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
-  const whatsappUrl = `https://wa.me/${business.whatsapp}`;
+  const whatsappUrl = `https://wa.me/${displayData.whatsapp}`;
   
   const formatPhoneNumber = (phone: string) => {
     const cleaned = ('' + phone).replace(/\D/g, '');
@@ -79,47 +86,68 @@ export default function BusinessPage() {
   return (
     <div className="bg-background min-h-screen text-foreground">
       {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4">
-        <Link href="/">
-            <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full">
-                <ArrowLeft />
-            </Button>
-        </Link>
-        <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="bg-black/50 hover:bg-black/70 rounded-full"
-              onClick={() => toggleFavorite(business.id)}
-            >
-                <Bookmark className={cn(isBookmarked && "fill-current")} />
-            </Button>
-            <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full" onClick={handleShare}>
-                <Share2 />
-            </Button>
-        </div>
-      </header>
-      
-      {/* Icon */}
-      <div className="flex justify-center items-center h-56 w-full bg-card">
-        <Utensils className="w-24 h-24 text-muted-foreground/50" />
-      </div>
+      <div className="relative h-64 w-full">
+        <header className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4">
+            <Link href="/">
+                <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full">
+                    <ArrowLeft />
+                </Button>
+            </Link>
+            <div className="flex items-center gap-2">
+                <Button 
+                variant="ghost" 
+                size="icon" 
+                className="bg-black/50 hover:bg-black/70 rounded-full"
+                onClick={() => toggleFavorite(displayData.id)}
+                >
+                    <Bookmark className={cn(isBookmarked && "fill-current")} />
+                </Button>
+                <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full" onClick={handleShare}>
+                    <Share2 />
+                </Button>
+            </div>
+        </header>
 
-      <div className="p-4 sm:p-6">
+        {displayData.backgroundUrl ? (
+             <Image
+                src={displayData.backgroundUrl}
+                alt={`${displayData.name} background`}
+                fill
+                className="object-cover"
+            />
+        ) : (
+             <div className="w-full h-full bg-card" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+        
+        <div className="absolute -bottom-16 left-4">
+            <Avatar className="h-32 w-32 border-4 border-background">
+                {displayData.logoUrl ? (
+                    <Image src={displayData.logoUrl} alt={`Logo de ${displayData.name}`} fill className="object-cover" />
+                ) : (
+                    <AvatarFallback className="bg-card rounded-none">
+                        <Building className="h-16 w-16 text-muted-foreground/50" />
+                    </AvatarFallback>
+                )}
+            </Avatar>
+        </div>
+      </div>
+      
+      <div className="p-4 sm:p-6 mt-16">
         {/* Business Info */}
         <div className="grid grid-cols-3 items-start mb-4">
           <div className="col-span-2">
             <h1 className="text-3xl font-bold tracking-tight font-headline">
-              {business.name}
+              {displayData.name}
             </h1>
-            <p className="text-muted-foreground mt-1">{business.category}</p>
+            <p className="text-muted-foreground mt-1">{displayData.category}</p>
           </div>
           <div className="text-right">
              <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
                 <Star className="h-4 w-4 fill-white" />
-                <span>{business.rating}</span>
+                <span>{displayData.rating}</span>
              </div>
-             <p className="text-xs text-muted-foreground mt-1">{business.reviews.length * 31} avaliações</p>
+             <p className="text-xs text-muted-foreground mt-1">{displayData.reviews.length * 31} avaliações</p>
           </div>
         </div>
 
@@ -127,7 +155,7 @@ export default function BusinessPage() {
           <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <MapPin className="h-4 w-4" />
-            <span>{business.distance}</span>
+            <span>{displayData.distance}</span>
           </div>
         </div>
 
@@ -174,7 +202,7 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-primary mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-primary group-hover:underline">{formatPhoneNumber(business.whatsapp)}</p>
+                            <p className="text-primary group-hover:underline">{formatPhoneNumber(displayData.whatsapp)}</p>
                         </div>
                     </Link>
                 ) : (
@@ -182,7 +210,7 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-muted-foreground mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-muted-foreground">{formatPhoneNumber(business.whatsapp)}</p>
+                            <p className="text-muted-foreground">{formatPhoneNumber(displayData.whatsapp)}</p>
                         </div>
                     </div>
                 )}
@@ -191,14 +219,14 @@ export default function BusinessPage() {
                     <Globe className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Site</p>
-                        <Link href={`/webview?url=${encodeURIComponent(business.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
+                        <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
                     <Info className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Sobre</p>
-                        <p className="text-muted-foreground text-sm">{business.description}</p>
+                        <p className="text-muted-foreground text-sm">{displayData.description}</p>
                     </div>
                 </div>
             </div>
@@ -266,7 +294,7 @@ export default function BusinessPage() {
           </TabsContent>
 
           <TabsContent value="reviews">
-            <ReviewAnalysis initialReviews={business.reviews} />
+            <ReviewAnalysis initialReviews={displayData.reviews} />
           </TabsContent>
         </Tabs>
       </div>
