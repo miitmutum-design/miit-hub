@@ -1,0 +1,144 @@
+
+'use client';
+
+import { useState } from 'react';
+import { ArrowLeft, Calendar, Gift, Tag, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
+
+// Mock data for offers
+const mockOffers = [
+    { id: 1, title: '20% OFF em Cafés', description: 'Qualquer café do cardápio com 20% de desconto.', startDate: '2024-07-01', endDate: '2024-07-31', status: 'Vigente' },
+    { id: 2, title: 'Compre 1 Leve 2 em Salgados', description: 'Na compra de qualquer salgado, o segundo é por nossa conta.', startDate: '2024-08-01', endDate: '2024-08-15', status: 'Vigente' },
+    { id: 3, title: 'Promoção Dia dos Pais', description: 'Traga seu pai e o café dele é de graça.', startDate: '2024-06-10', endDate: '2024-06-16', status: 'Expirada' },
+    { id: 4, title: 'Desconto de Aniversário', description: '15% de desconto no mês do seu aniversário.', startDate: '2024-01-01', endDate: '2024-12-31', status: 'Vigente' },
+    { id: 5, title: 'Oferta de Inverno', description: 'Chocolate quente por apenas R$10.', startDate: '2024-05-20', endDate: '2024-07-20', status: 'Expirada' },
+];
+
+
+const OfferCard = ({ offer, onDelete }: { offer: typeof mockOffers[0], onDelete: (id: number) => void }) => {
+    const isExpired = new Date(offer.endDate) < new Date();
+    return (
+        <Card className="bg-card border-border/50">
+            <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                        <h3 className="font-bold text-foreground flex items-center gap-2">
+                           {offer.title}
+                        </h3>
+                         <p className="text-xs text-muted-foreground">{offer.description}</p>
+                    </div>
+                     <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                             <Button variant="ghost" size="icon" className="text-destructive/70 hover:text-destructive hover:bg-destructive/10 h-8 w-8">
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Esta ação não pode ser desfeita. Isso excluirá permanentemente a oferta.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => onDelete(offer.id)} className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                </div>
+                <div className="flex items-center justify-between mt-4 text-sm">
+                    <div className="flex items-center gap-4">
+                       <Badge variant={isExpired ? 'destructive' : 'default'} className={isExpired ? 'bg-orange-600/20 text-orange-400 border-none' : 'bg-green-600/20 text-green-300 border-none'}>
+                            {isExpired ? 'Expirada' : 'Vigente'}
+                       </Badge>
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Calendar className="w-4 h-4" />
+                            <span>{new Date(offer.startDate).toLocaleDateString()} - {new Date(offer.endDate).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
+
+export default function OfferHistoryPage() {
+    const [offers, setOffers] = useState(mockOffers);
+
+    const handleDelete = (id: number) => {
+        setOffers(prev => prev.filter(offer => offer.id !== id));
+    };
+
+    const activeOffers = offers.filter(o => new Date(o.endDate) >= new Date());
+    const expiredOffers = offers.filter(o => new Date(o.endDate) < new Date());
+
+  return (
+    <div className="container mx-auto max-w-lg py-6 sm:py-8">
+      <header className="relative mb-4 flex items-center justify-center text-center">
+        <Link href="/account/profile/offers" className="absolute left-0">
+          <Button variant="ghost" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Voltar</span>
+          </Button>
+        </Link>
+        <h1 className="text-xl font-bold text-foreground font-headline">
+          Histórico de Ofertas
+        </h1>
+      </header>
+      
+      <Tabs defaultValue="presente" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-card mb-6">
+            <TabsTrigger value="presente">Presente</TabsTrigger>
+            <TabsTrigger value="passado">Passado</TabsTrigger>
+        </TabsList>
+        <TabsContent value="presente">
+            <div className="space-y-4">
+                {activeOffers.length > 0 ? (
+                    activeOffers.map(offer => <OfferCard key={offer.id} offer={offer} onDelete={handleDelete} />)
+                ) : (
+                    <div className="text-center p-8 border-2 border-dashed rounded-lg bg-card text-muted-foreground">
+                       <CheckCircle className="mx-auto w-12 h-12 mb-4 opacity-50" />
+                       <h3 className="font-semibold text-lg text-foreground">Tudo em dia!</h3>
+                       <p>Nenhuma oferta vigente no momento.</p>
+                    </div>
+                )}
+            </div>
+        </TabsContent>
+        <TabsContent value="passado">
+             <div className="space-y-4">
+                {expiredOffers.length > 0 ? (
+                    expiredOffers.map(offer => <OfferCard key={offer.id} offer={offer} onDelete={handleDelete} />)
+                ) : (
+                    <div className="text-center p-8 border-2 border-dashed rounded-lg bg-card text-muted-foreground">
+                        <XCircle className="mx-auto w-12 h-12 mb-4 opacity-50" />
+                       <h3 className="font-semibold text-lg text-foreground">Nenhum registro</h3>
+                       <p>Nenhuma oferta expirada encontrada.</p>
+                    </div>
+                )}
+            </div>
+        </TabsContent>
+        </Tabs>
+
+
+    </div>
+  );
+}
