@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Rss, Gift, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -7,6 +8,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useCompany } from '@/contexts/CompanyContext';
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import type { NotificationSettings } from '@/contexts/CompanyContext';
 
 const NotificationItem = ({ icon: Icon, title, description, id, checked, onCheckedChange }: { icon: React.ElementType, title: string, description: string, id: string, checked: boolean, onCheckedChange: (checked: boolean) => void }) => {
     return (
@@ -28,11 +32,42 @@ const NotificationItem = ({ icon: Icon, title, description, id, checked, onCheck
 };
 
 export default function NotificationSettingsPage() {
-    const { companyProfile, updateNotificationSettings } = useCompany();
-    const { notificationSettings } = companyProfile;
+    const { companyProfile, setCompanyProfile } = useCompany();
+    const { toast } = useToast();
 
-    const handleSettingChange = (id: keyof typeof notificationSettings) => (checked: boolean) => {
-        updateNotificationSettings({ [id]: checked });
+    const [originalSettings, setOriginalSettings] = useState<NotificationSettings>(companyProfile.notificationSettings);
+    const [currentSettings, setCurrentSettings] = useState<NotificationSettings>(companyProfile.notificationSettings);
+    const [hasChanges, setHasChanges] = useState(false);
+
+    useEffect(() => {
+        setOriginalSettings(companyProfile.notificationSettings);
+        setCurrentSettings(companyProfile.notificationSettings);
+    }, [companyProfile.notificationSettings]);
+
+    useEffect(() => {
+        const changes = JSON.stringify(currentSettings) !== JSON.stringify(originalSettings);
+        setHasChanges(changes);
+    }, [currentSettings, originalSettings]);
+
+    const handleSettingChange = (id: keyof NotificationSettings) => (checked: boolean) => {
+        setCurrentSettings(prev => ({ ...prev, [id]: checked }));
+    };
+
+    const handleSaveChanges = () => {
+        if (!hasChanges) return;
+
+        setCompanyProfile(prev => ({
+            ...prev,
+            notificationSettings: currentSettings
+        }));
+
+        setOriginalSettings(currentSettings); // Update the original state to the new saved state
+        setHasChanges(false);
+
+        toast({
+            title: "Sucesso!",
+            description: "Suas preferências de notificação foram salvas.",
+        });
     };
 
     return (
@@ -57,7 +92,7 @@ export default function NotificationSettingsPage() {
                             title="Novas Empresas"
                             description="Receba alertas de novos cadastros"
                             id="newBusiness"
-                            checked={notificationSettings.newBusiness}
+                            checked={currentSettings.newBusiness}
                             onCheckedChange={handleSettingChange('newBusiness')}
                         />
                         <Separator />
@@ -66,7 +101,7 @@ export default function NotificationSettingsPage() {
                             title="Ofertas"
                             description="Receba alertas de novas promoções"
                             id="offers"
-                            checked={notificationSettings.offers}
+                            checked={currentSettings.offers}
                             onCheckedChange={handleSettingChange('offers')}
                         />
                         <Separator />
@@ -75,12 +110,28 @@ export default function NotificationSettingsPage() {
                             title="Eventos"
                             description="Receba alertas sobre novos eventos"
                             id="events"
-                            checked={notificationSettings.events}
+                            checked={currentSettings.events}
                             onCheckedChange={handleSettingChange('events')}
                         />
                     </div>
                 </CardContent>
             </Card>
+
+            <div className="mt-8">
+                <Button
+                    size="lg"
+                    className={cn(
+                        "w-full h-12 text-lg font-bold transition-colors",
+                        hasChanges
+                            ? "bg-lime-500 hover:bg-lime-600 text-black"
+                            : "bg-muted text-muted-foreground cursor-not-allowed"
+                    )}
+                    onClick={handleSaveChanges}
+                    disabled={!hasChanges}
+                >
+                    Salvar Preferências
+                </Button>
+            </div>
         </div>
     );
 }

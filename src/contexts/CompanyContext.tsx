@@ -99,7 +99,6 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
 interface CompanyContextType {
   companyProfile: CompanyProfile;
   setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
-  updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   logoutCompany: () => void;
   favorites: string[];
   toggleFavorite: (companyId: string) => void;
@@ -175,21 +174,10 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     setClaimedEvents(prev => [...prev, newClaimedEvent]);
   }
 
-  const updateNotificationSettings = (settings: Partial<NotificationSettings>) => {
-    setCompanyProfile(prev => ({
-        ...prev,
-        notificationSettings: {
-            ...prev.notificationSettings,
-            ...settings
-        }
-    }));
-  };
-
   return (
     <CompanyContext.Provider value={{ 
         companyProfile, 
         setCompanyProfile, 
-        updateNotificationSettings,
         logoutCompany, 
         favorites, 
         toggleFavorite, 
