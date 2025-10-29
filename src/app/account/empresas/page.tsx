@@ -361,22 +361,6 @@ export default function EditProfilePage() {
             
             <div className="space-y-2">
               <label
-                htmlFor="email"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Email de Contato
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email || ''}
-                onChange={handleInputChange}
-                className="bg-card border-border/50 h-12"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label
                 htmlFor="description"
                 className="text-sm font-medium text-muted-foreground"
               >
@@ -413,3 +397,5 @@ export default function EditProfilePage() {
       </div>
     </div>
   );
+
+    
