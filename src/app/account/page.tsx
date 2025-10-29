@@ -81,7 +81,7 @@ export default function AccountPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRedeeming, setIsRedeeming] = useState(false);
   
-  const isCompany = companyProfile.id !== 'user-demo';
+  const isCompany = companyProfile.userType === 'Company';
   const profileHref = isCompany ? '/account/empresas' : '/account/profile';
   const settingsHref = isCompany ? '#' : '/account/profile/config'; // TODO: Add company settings page
 

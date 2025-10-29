@@ -84,6 +84,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         plan: 'Prata',
         tokens: 5,
         subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        userType: 'Consumer',
         });
         setIsAuthenticating(false);
         onLoginSuccess();
@@ -103,6 +104,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         plan: 'Prata',
         tokens: 10,
         subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        userType: 'Consumer',
         });
         setIsAuthenticating(false);
         setShowGoogleSimModal(false);

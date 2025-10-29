@@ -44,7 +44,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
 
-  const isDemoUser = companyProfile.id === 'user-demo';
+  const isUserAuthenticated = companyProfile.userType === 'Consumer' && companyProfile.id !== 'user-demo';
 
   useEffect(() => {
     setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));
@@ -59,7 +59,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const handleGenerateOffer = () => {
     if (isExpired || isLimitReached) return;
 
-    if (isDemoUser) {
+    if (!isUserAuthenticated) {
       setIsLoginModalOpen(true);
     } else {
       // User is already logged in, proceed to claim
@@ -161,28 +161,30 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
               onLoginSuccess={handleLoginSuccess}
             />
 
-            {/* QR Code Modal */}
+            {/* QR Code Modal Trigger */}
             <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
-                 <Button 
-                  onClick={handleGenerateOffer} 
-                  size="lg" 
-                  className={cn(
-                    "w-full h-12 text-lg font-bold transition-colors",
-                    isLimitReached
-                      ? "bg-muted text-muted-foreground cursor-not-allowed"
-                      : "bg-lime-500 hover:bg-lime-600 text-black"
-                  )}
-                  disabled={isLimitReached}
-                >
-                    {isLimitReached ? (
-                      'Limite de uso atingido'
-                    ) : (
-                      <>
-                        <QrCode className="mr-2 h-5 w-5"/>
-                        Gerar Oferta
-                      </>
-                    )}
-                </Button>
+                <DialogTrigger asChild>
+                     <Button 
+                      onClick={handleGenerateOffer} 
+                      size="lg" 
+                      className={cn(
+                        "w-full h-12 text-lg font-bold transition-colors",
+                        isLimitReached
+                          ? "bg-muted text-muted-foreground cursor-not-allowed"
+                          : "bg-lime-500 hover:bg-lime-600 text-black"
+                      )}
+                      disabled={isLimitReached}
+                    >
+                        {isLimitReached ? (
+                          'Limite de uso atingido'
+                        ) : (
+                          <>
+                            <QrCode className="mr-2 h-5 w-5"/>
+                            Gerar Oferta
+                          </>
+                        )}
+                    </Button>
+                </DialogTrigger>
                 <DialogContent className="sm:max-w-md bg-card border-border/50">
                     <DialogHeader>
                         <DialogTitle className="text-center text-2xl font-bold font-headline">Sua Oferta Digital</DialogTitle>

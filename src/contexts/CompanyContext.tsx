@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-// Define the shape of the company profile data
+// Define the shape of the user profile data
 export interface CompanyProfile {
   id: string;
   name: string;
@@ -12,7 +12,8 @@ export interface CompanyProfile {
   description: string;
   plan: 'Prata' | 'Gold';
   tokens: number;
-  subscriptionEndDate: string; 
+  subscriptionEndDate: string;
+  userType: 'Consumer' | 'Company';
 }
 
 // Define the shape of a claimed offer
@@ -36,7 +37,7 @@ export interface ClaimedEvent {
   claimedAt: string;
 }
 
-// Initial mock data for a demo user
+// Initial mock data for a demo user (visitor)
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
   name: "Visitante",
@@ -47,6 +48,7 @@ const initialDemoProfile: CompanyProfile = {
   plan: 'Prata',
   tokens: 0,
   subscriptionEndDate: new Date().toISOString(),
+  userType: 'Consumer',
 };
 
 // Mock data for company profiles that can be redeemed
@@ -61,6 +63,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     plan: 'Gold',
     tokens: 200,
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+    userType: 'Company',
   },
   'company-silver': {
     id: 'company-silver',
@@ -72,6 +75,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     plan: 'Prata',
     tokens: 15,
     subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+    userType: 'Company',
   }
 };
 
