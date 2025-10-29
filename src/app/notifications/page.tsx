@@ -31,7 +31,7 @@ export default function NotificationsPage() {
 
       <section className="space-y-6">
         <div>
-            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2 text-primary">
                 <Rss className="w-6 h-6 text-primary"/>
                 Novas Empresas
             </h2>
@@ -45,14 +45,14 @@ export default function NotificationsPage() {
         </div>
         
         <div>
-            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2 text-primary">
                 <Gift className="w-6 h-6 text-yellow-400"/>
                 Novas Ofertas
             </h2>
              <div className="space-y-4">
                 {newOffers.map(offer => (
-                    <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
-                        <Card className="bg-card border-border/50">
+                    <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
+                        <Card className="bg-card border-border/50 transition-all duration-300 hover:border-primary/70 hover:shadow-lg hover:shadow-primary/20">
                             <CardContent className="p-4">
                                 <p className="text-sm text-muted-foreground">{offer.businessName}</p>
                                 <p className="font-bold text-foreground mt-1">{offer.title}</p>
@@ -64,14 +64,14 @@ export default function NotificationsPage() {
         </div>
 
         <div>
-            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold font-headline mb-4 flex items-center gap-2 text-primary">
                 <Calendar className="w-6 h-6 text-cyan-400"/>
                 Novos Eventos
             </h2>
              <div className="space-y-4">
                 {newEvents.map(event => (
-                    <Link key={event.id} href={`/negocio/eventos/${event.id}`} className="block">
-                        <Card className="bg-card border-border/50">
+                    <Link key={event.id} href={`/negocio/eventos/${event.id}`} className="block focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
+                        <Card className="bg-card border-border/50 transition-all duration-300 hover:border-primary/70 hover:shadow-lg hover:shadow-primary/20">
                             <CardContent className="p-4">
                                 <p className="text-sm text-muted-foreground">{event.businessName}</p>
                                 <p className="font-bold text-foreground mt-1">{event.title}</p>
