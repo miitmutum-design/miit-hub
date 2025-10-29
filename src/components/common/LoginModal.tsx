@@ -18,6 +18,7 @@ import { useCompany } from '@/contexts/CompanyContext';
 import { X, Mail, User, Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
+import { useToast } from "@/hooks/use-toast";
 
 
 // Simple SVG for Google Icon
@@ -40,18 +41,33 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: LoginModalProps) {
   const { setCompanyProfile } = useCompany();
+  const { toast } = useToast();
   const [showEmailLogin, setShowEmailLogin] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // Mock login function
   const handleLogin = () => {
+    if (showEmailLogin) {
+      if (!avatarUrl || !name || !email || !password) {
+        toast({
+          variant: "destructive",
+          title: "Campos Incompletos",
+          description: "Por favor, preencha todos os campos, incluindo a foto de perfil.",
+        });
+        return;
+      }
+    }
+
     // In a real app, this would involve an actual authentication flow.
     // Here, we just update the context to a mock logged-in user.
     setCompanyProfile({
       id: 'user-logged-in',
-      name: "João Silva",
-      email: "joao.silva@email.com",
+      name: name || "João Silva",
+      email: email || "joao.silva@email.com",
       phone: "(11) 91111-2222",
       logoUrl: avatarUrl,
       description: "Usuário autenticado.",
@@ -74,12 +90,19 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     }
   };
 
+  const resetForm = () => {
+      setShowEmailLogin(false);
+      setAvatarUrl(null);
+      setName('');
+      setEmail('');
+      setPassword('');
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       onOpenChange(open);
       if (!open) {
-        setShowEmailLogin(false);
-        setAvatarUrl(null);
+        resetForm();
       }
     }}>
       <DialogContent className="sm:max-w-md bg-card border-border/50">
@@ -129,15 +152,15 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
 
             <div className="space-y-2">
                 <Label htmlFor="name">Nome</Label>
-                <Input id="name" type="text" placeholder="Seu nome completo" />
+                <Input id="name" type="text" placeholder="Seu nome completo" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="seu@email.com" />
+                <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
-                <Input id="password" type="password" placeholder="********" />
+                <Input id="password" type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <DialogFooter className='pt-4'>
               <Button onClick={handleLogin} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
