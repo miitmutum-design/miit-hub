@@ -48,8 +48,9 @@ export default function BusinessPage() {
       }
     } catch (error) {
       console.error('Erro ao compartilhar:', error);
-      // Fallback in case of error during share
-       try {
+      // Fallback robusto: se o compartilhamento falhar por qualquer motivo (incluindo cancelamento pelo usuário),
+      // tente copiar para a área de transferência.
+      try {
         await navigator.clipboard.writeText(shareData.url);
         toast({
           title: "Link Copiado!",
@@ -240,3 +241,5 @@ export default function BusinessPage() {
     </div>
   );
 }
+
+    
