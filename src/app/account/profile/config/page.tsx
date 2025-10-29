@@ -7,13 +7,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useToast } from "@/hooks/use-toast";
 
-const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href }: { icon: React.ElementType, title: string, description: string, hasSwitch?: boolean, href?: string }) => {
+const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href, onClick }: { icon: React.ElementType, title: string, description: string, hasSwitch?: boolean, href?: string, onClick?: () => void }) => {
     const content = (
-        <div className={cn(
-            "flex items-center justify-between p-4 transition-all duration-300",
-            href && "group-hover:bg-primary/5"
-        )}>
+        <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
                 <Icon className="w-6 h-6 text-primary" />
                 <div>
@@ -24,13 +22,23 @@ const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href }:
             {hasSwitch && <Switch />}
         </div>
     );
+    
+    const wrapperClasses = "block group rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 hover:shadow-lg hover:shadow-lime-400/20 hover:border-lime-400/50 border border-transparent";
 
     if (href) {
         return (
-            <Link href={href} className="block group rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 border border-transparent">
+            <Link href={href} className={wrapperClasses}>
                 {content}
             </Link>
         );
+    }
+    
+    if (onClick) {
+        return (
+            <button onClick={onClick} className={cn(wrapperClasses, "w-full text-left")}>
+                {content}
+            </button>
+        )
     }
 
     return (
@@ -41,6 +49,15 @@ const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href }:
 };
 
 export default function ConsumerConfigPage() {
+  const { toast } = useToast();
+
+  const handleFeatureClick = (featureName: string) => {
+    toast({
+      title: "Funcionalidade em Breve",
+      description: `A tela para "${featureName}" ainda não foi implementada.`,
+    });
+  };
+
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
@@ -73,9 +90,9 @@ export default function ConsumerConfigPage() {
             <div className="p-2 space-y-1">
                 <ConfigItem icon={Bell} title="Notificações Push" description="Receber alertas de ofertas" href="/account/profile/config/notifications" />
                 <Separator />
-                <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" />
+                <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" onClick={() => handleFeatureClick('Seleção de Idioma')} />
                 <Separator />
-                <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" />
+                <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" onClick={() => handleFeatureClick('Termos de Uso')} />
             </div>
         </CardContent>
       </Card>
