@@ -99,6 +99,24 @@ const initialDemoProfile: CompanyProfile = {
 
 // Mock data for company profiles that can be redeemed
 export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
+  '1': {
+    id: '1',
+    name: "União Construtora",
+    category: "Construção",
+    address: "Avenida das Torres, 123, Nova Mutum, MT",
+    email: "contato@uniaoconstrutora.com",
+    phone: "(65) 91234-5678",
+    logoUrl: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png",
+    backgroundUrl: null,
+    description: "Líder em construção civil na região.",
+    plan: 'Gold',
+    tokens: 500,
+    subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+    userType: 'Company',
+    notificationSettings: { newBusiness: true, offers: true, events: true },
+    availabilityStatus: 'AUTO',
+    hoursOfOperation: defaultHours,
+  },
   'company-gold': {
     id: 'company-gold',
     name: "Empresa Gold",
