@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCompany } from '@/contexts/CompanyContext';
-import { X, Mail } from 'lucide-react';
+import { X, Mail, User, Pencil } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
+
 
 // Simple SVG for Google Icon
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -38,6 +41,8 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: LoginModalProps) {
   const { setCompanyProfile } = useCompany();
   const [showEmailLogin, setShowEmailLogin] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Mock login function
   const handleLogin = () => {
@@ -48,7 +53,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
       name: "João Silva",
       email: "joao.silva@email.com",
       phone: "(11) 91111-2222",
-      logoUrl: null,
+      logoUrl: avatarUrl,
       description: "Usuário autenticado.",
       plan: 'Prata', // or 'Gold' depending on subscription
       tokens: 5,
@@ -57,8 +62,26 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     onLoginSuccess();
   };
 
+  const handleAvatarClick = () => {
+    avatarInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const placeholderUrl = URL.createObjectURL(file);
+      setAvatarUrl(placeholderUrl);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      onOpenChange(open);
+      if (!open) {
+        setShowEmailLogin(false);
+        setAvatarUrl(null);
+      }
+    }}>
       <DialogContent className="sm:max-w-md bg-card border-border/50">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold font-headline">Acesse sua Conta</DialogTitle>
@@ -70,6 +93,40 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         {showEmailLogin ? (
           // Email Login Form
           <div className="py-4 space-y-4">
+            <div className="flex flex-col items-center space-y-4">
+                <div className="relative inline-block">
+                <Avatar className="h-24 w-24 border-2 border-dashed border-border">
+                    {avatarUrl ? (
+                    <Image
+                        src={avatarUrl}
+                        alt="Foto do Perfil"
+                        fill
+                        className="object-cover rounded-full"
+                    />
+                    ) : (
+                    <AvatarFallback className="bg-input">
+                        <User className="h-12 w-12 text-muted-foreground/50" />
+                    </AvatarFallback>
+                    )}
+                </Avatar>
+                <Button
+                    size="icon"
+                    type="button"
+                    className="absolute bottom-1 right-1 h-8 w-8 bg-lime-500 hover:bg-lime-600 rounded-full"
+                    onClick={handleAvatarClick}
+                >
+                    <Pencil className="h-4 w-4 text-black" />
+                </Button>
+                <input
+                    type="file"
+                    ref={avatarInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                />
+                </div>
+            </div>
+
             <div className="space-y-2">
                 <Label htmlFor="name">Nome</Label>
                 <Input id="name" type="text" placeholder="Seu nome completo" />
