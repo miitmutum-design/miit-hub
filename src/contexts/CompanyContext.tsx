@@ -2,6 +2,13 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// Define the shape of notification preferences
+export interface NotificationSettings {
+  newBusiness: boolean;
+  offers: boolean;
+  events: boolean;
+}
+
 // Define the shape of the user profile data
 export interface CompanyProfile {
   id: string;
@@ -14,6 +21,7 @@ export interface CompanyProfile {
   tokens: number;
   subscriptionEndDate: string;
   userType: 'Consumer' | 'Company';
+  notificationSettings: NotificationSettings;
 }
 
 // Define the shape of a claimed offer
@@ -49,6 +57,11 @@ const initialDemoProfile: CompanyProfile = {
   tokens: 0,
   subscriptionEndDate: new Date().toISOString(),
   userType: 'Consumer',
+  notificationSettings: {
+    newBusiness: true,
+    offers: true,
+    events: true,
+  },
 };
 
 // Mock data for company profiles that can be redeemed
@@ -64,6 +77,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     tokens: 200,
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
     userType: 'Company',
+    notificationSettings: { newBusiness: true, offers: true, events: true },
   },
   'company-silver': {
     id: 'company-silver',
@@ -76,6 +90,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     tokens: 15,
     subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
     userType: 'Company',
+    notificationSettings: { newBusiness: true, offers: true, events: true },
   }
 };
 
@@ -84,6 +99,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
 interface CompanyContextType {
   companyProfile: CompanyProfile;
   setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
+  updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   logoutCompany: () => void;
   favorites: string[];
   toggleFavorite: (companyId: string) => void;
@@ -159,10 +175,21 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     setClaimedEvents(prev => [...prev, newClaimedEvent]);
   }
 
+  const updateNotificationSettings = (settings: Partial<NotificationSettings>) => {
+    setCompanyProfile(prev => ({
+        ...prev,
+        notificationSettings: {
+            ...prev.notificationSettings,
+            ...settings
+        }
+    }));
+  };
+
   return (
     <CompanyContext.Provider value={{ 
         companyProfile, 
         setCompanyProfile, 
+        updateNotificationSettings,
         logoutCompany, 
         favorites, 
         toggleFavorite, 

@@ -71,7 +71,7 @@ export default function ConsumerConfigPage() {
       <Card className="bg-card">
         <CardContent className="p-0">
             <div className="p-2 space-y-1">
-                <ConfigItem icon={Bell} title="Notificações Push" description="Receber alertas de ofertas" hasSwitch />
+                <ConfigItem icon={Bell} title="Notificações Push" description="Receber alertas de ofertas" href="/account/profile/config/notifications" />
                 <Separator />
                 <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" />
                 <Separator />
