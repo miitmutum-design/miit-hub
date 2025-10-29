@@ -56,12 +56,19 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
 
 // Mock database of access keys
 const accessKeysDB = [
-    { key: 'ABCD-EFGH-IJKL', isUsed: false, companyId: 'company-gold' },
-    { key: '1234-5678-9012', isUsed: true, companyId: 'company-silver' },
-    { key: 'QWER-TYUI-OPAS', isUsed: false, companyId: 'company-silver' },
+    { key: 'ABCD-EFGH-IJKL', isUsed: false, companyIds: ['company-gold', 'company-silver'] },
+    { key: '1234-5678-9012', isUsed: true, companyIds: ['company-silver'] },
+    { key: 'QWER-TYUI-OPAS', isUsed: false, companyIds: ['company-silver'] },
 ];
 
-const redeemAccessKeyMockAPI = (key: string): Promise<{ success: boolean; message: string; companyId?: string }> => {
+type RedeemResult = {
+  success: boolean;
+  message: string;
+  companyId?: string;
+  companies?: { id: string; name: string }[];
+};
+
+const redeemAccessKeyMockAPI = (key: string): Promise<RedeemResult> => {
     return new Promise((resolve) => {
         setTimeout(() => {
             const dbKey = accessKeysDB.find(k => k.key === key);
@@ -70,21 +77,43 @@ const redeemAccessKeyMockAPI = (key: string): Promise<{ success: boolean; messag
             } else if (dbKey.isUsed) {
                 resolve({ success: false, message: 'Chave de acesso já utilizada.' });
             } else {
-                // Mark key as used in the mock DB
-                dbKey.isUsed = true;
-                resolve({ success: true, message: 'Chave resgatada com sucesso!', companyId: dbKey.companyId });
+                if (dbKey.companyIds.length === 1) {
+                    // Mark key as used for single company keys
+                    dbKey.isUsed = true;
+                    resolve({ success: true, message: 'Chave resgatada com sucesso!', companyId: dbKey.companyIds[0] });
+                } else {
+                    // For multiple companies, return the list to choose from
+                    const companies = dbKey.companyIds.map(id => ({
+                      id,
+                      name: mockCompanyProfiles[id as keyof typeof mockCompanyProfiles].name
+                    }));
+                    resolve({ success: true, message: 'Selecione uma empresa.', companies });
+                }
             }
         }, 1000); // Simulate network delay
     });
 };
 
+const finalizeKeyRedemptionMockAPI = (key: string) => {
+    const dbKey = accessKeysDB.find(k => k.key === key);
+    if (dbKey) {
+        dbKey.isUsed = true;
+    }
+}
+
 
 export default function AccountPage() {
   const { companyProfile, setCompanyProfile, logoutCompany } = useCompany();
   const { toast } = useToast();
-  const [accessKey, setAccessKey] = useState('ABCD-EFGH-IJKL');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
+  const [isSelectCompanyModalOpen, setIsSelectCompanyModalOpen] = useState(false);
   const [isRedeeming, setIsRedeeming] = useState(false);
+  
+  const [accessKey, setAccessKey] = useState('ABCD-EFGH-IJKL');
+  const [companiesToSelect, setCompaniesToSelect] = useState<{id: string, name: string}[]>([]);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+
   
   const isCompany = companyProfile.userType === 'Company';
   const profileHref = isCompany ? '/account/empresas' : '/account/profile';
@@ -121,7 +150,9 @@ export default function AccountPage() {
     const result = await redeemAccessKeyMockAPI(accessKey);
     setIsRedeeming(false);
 
-    if (result.success && result.companyId) {
+    if (result.success) {
+      if (result.companyId) {
+        // Single company case
         const newProfile = mockCompanyProfiles[result.companyId as keyof typeof mockCompanyProfiles];
         if (newProfile) {
             setCompanyProfile(newProfile);
@@ -129,9 +160,16 @@ export default function AccountPage() {
                 title: "Bem-vindo!",
                 description: "Chave resgatada com sucesso. Seu painel foi ativado.",
             });
-            setIsModalOpen(false);
+            setIsRedeemModalOpen(false);
             setAccessKey('');
         }
+      } else if (result.companies) {
+        // Multiple companies case
+        setCompaniesToSelect(result.companies);
+        setSelectedCompanyId(result.companies[0]?.id || null);
+        setIsRedeemModalOpen(false);
+        setIsSelectCompanyModalOpen(true);
+      }
     } else {
         toast({
             variant: "destructive",
@@ -140,6 +178,26 @@ export default function AccountPage() {
         });
     }
   }
+
+  const handleSelectCompany = () => {
+    if (!selectedCompanyId) {
+        toast({ variant: "destructive", title: "Nenhuma empresa selecionada." });
+        return;
+    }
+
+    const newProfile = mockCompanyProfiles[selectedCompanyId as keyof typeof mockCompanyProfiles];
+    if (newProfile) {
+        setCompanyProfile(newProfile);
+        finalizeKeyRedemptionMockAPI(accessKey); // Mark key as used
+        toast({
+            title: "Bem-vindo!",
+            description: `Painel para ${newProfile.name} ativado com sucesso.`,
+        });
+        setIsSelectCompanyModalOpen(false);
+        setAccessKey('');
+    }
+  };
+
 
   const handleLogout = () => {
     logoutCompany();
@@ -253,7 +311,7 @@ export default function AccountPage() {
 
         {/* Business CTA - Only show if not a company */}
         {!isCompany && (
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <Dialog open={isRedeemModalOpen} onOpenChange={setIsRedeemModalOpen}>
                 <DialogTrigger asChild>
                     <div className="bg-gradient-to-br from-green-900/40 via-green-800/30 to-card p-6 rounded-lg mt-8 text-center cursor-pointer">
                         <h3 className="text-2xl font-bold font-headline text-white">Empresa?</h3>
@@ -295,6 +353,36 @@ export default function AccountPage() {
             </Dialog>
         )}
       </div>
+
+       {/* Company Selection Modal */}
+      <Dialog open={isSelectCompanyModalOpen} onOpenChange={setIsSelectCompanyModalOpen}>
+        <DialogContent className="sm:max-w-md bg-card border-border/50">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold font-headline">Selecione sua Empresa</DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground pt-2">
+              Esta chave de acesso está vinculada a várias empresas. Escolha qual painel você deseja acessar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup value={selectedCompanyId || ''} onValueChange={setSelectedCompanyId} className="space-y-2">
+              {companiesToSelect.map(company => (
+                <Label key={company.id} htmlFor={company.id} className="flex items-center gap-3 p-3 rounded-md border border-border/50 has-[:checked]:border-primary has-[:checked]:bg-primary/10 cursor-pointer">
+                  <RadioGroupItem value={company.id} id={company.id} />
+                  <span>{company.name}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSelectCompany} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
+              Confirmar Empresa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
+
+    
