@@ -35,35 +35,30 @@ export default function BusinessPage() {
       text: `Confira ${business.name}, com nota ${business.rating}! Uma ótima opção na categoria ${business.category}.`,
       url: window.location.href,
     };
+
     try {
-      if (navigator.share) {
+      if (navigator.share && window.isSecureContext) {
         await navigator.share(shareData);
       } else {
-        // Fallback for browsers that don't support navigator.share
-        await navigator.clipboard.writeText(shareData.url);
-        toast({
-          title: "Link Copiado!",
-          description: "O link da empresa foi copiado para a área de transferência.",
-        });
+        // This will be caught by the catch block
+        throw new Error("Web Share API not supported.");
       }
     } catch (error) {
-      console.error('Erro ao compartilhar:', error);
-      // Fallback robusto: se o compartilhamento falhar por qualquer motivo (incluindo cancelamento pelo usuário),
-      // tente copiar para a área de transferência.
-      try {
-        await navigator.clipboard.writeText(shareData.url);
-        toast({
-          title: "Link Copiado!",
-          description: "O link da empresa foi copiado para a área de transferência.",
-        });
-      } catch (copyError) {
-        console.error('Erro ao copiar para a área de transferência:', copyError);
-        toast({
-          variant: "destructive",
-          title: "Oops!",
-          description: "Não foi possível compartilhar ou copiar o link.",
-        });
-      }
+        console.warn("Web Share API failed, falling back to clipboard.", error);
+        try {
+            await navigator.clipboard.writeText(shareData.url);
+            toast({
+              title: "Link Copiado!",
+              description: "O link da empresa foi copiado para a área de transferência.",
+            });
+        } catch (copyError) {
+            console.error("Failed to copy to clipboard.", copyError);
+            toast({
+              variant: "destructive",
+              title: "Oops!",
+              description: "Não foi possível compartilhar ou copiar o link.",
+            });
+        }
     }
   };
 
