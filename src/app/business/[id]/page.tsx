@@ -18,11 +18,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import type { Business } from '@/lib/data';
 import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
@@ -64,6 +64,7 @@ export default function BusinessPage() {
   const id = params.id as string;
   const { toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
   const businessFromStaticData = getBusinessById(id);
 
@@ -76,7 +77,11 @@ export default function BusinessPage() {
     : (businessFromStaticData || defaultBusinessData);
   
   const isBookmarked = isFavorited(displayData.id || '');
-  const isAvailable = isCompanyActuallyOpen(displayData);
+  
+  useEffect(() => {
+    setIsAvailable(isCompanyActuallyOpen(displayData));
+  }, [displayData]);
+
 
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
   const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
@@ -228,13 +233,14 @@ export default function BusinessPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-sm mb-6">
-          {isAvailable ? (
+        <div className="flex items-center gap-4 text-sm mb-6 h-5">
+          {isAvailable === true && (
             <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none items-center gap-1.5">
               <Zap className="h-3.5 w-3.5"/>
               Aberto agora
             </Badge>
-          ): (
+          )}
+          {isAvailable === false && (
             <Badge variant="destructive" className="bg-orange-600/20 text-orange-400 border-none items-center gap-1.5">
                 <ZapOff className="h-3.5 w-3.5"/>
                 Fechada no Momento
