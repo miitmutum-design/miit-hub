@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
@@ -13,6 +14,7 @@ export interface NotificationSettings {
 export interface CompanyProfile {
   id: string;
   name: string;
+  category: string;
   email: string;
   phone: string;
   logoUrl: string | null;
@@ -50,6 +52,7 @@ export interface ClaimedEvent {
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
   name: "Visitante",
+  category: "Consumidor",
   email: "demo@example.com",
   phone: "(65) 99999-9999",
   logoUrl: null,
@@ -71,6 +74,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
   'company-gold': {
     id: 'company-gold',
     name: "Empresa Gold",
+    category: "Tecnologia",
     email: "contato@gold.com",
     phone: "(11) 98765-4321",
     logoUrl: null,
@@ -85,6 +89,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
   'company-silver': {
     id: 'company-silver',
     name: "Empresa Prata",
+    category: "Serviços",
     email: "contato@prata.com",
     phone: "(21) 91234-5678",
     logoUrl: null,
@@ -206,3 +211,5 @@ export const useCompany = () => {
   }
   return context;
 };
+
+    

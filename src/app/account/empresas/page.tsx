@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
@@ -13,6 +14,8 @@ import { useCompany } from '@/contexts/CompanyContext';
 import type { CompanyProfile } from '@/contexts/CompanyContext';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { categories } from '@/lib/data';
 
 
 export default function EditProfilePage() {
@@ -23,6 +26,7 @@ export default function EditProfilePage() {
   const [originalData, setOriginalData] = useState<CompanyProfile>(companyProfile);
   const [formData, setFormData] = useState<CompanyProfile>(companyProfile);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showOtherCategory, setShowOtherCategory] = useState(false);
   
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -31,6 +35,9 @@ export default function EditProfilePage() {
   useEffect(() => {
     setOriginalData(companyProfile);
     setFormData(companyProfile);
+    if(companyProfile.category && !categories.find(c => c.name === companyProfile.category)) {
+      setShowOtherCategory(true);
+    }
   }, [companyProfile]);
 
   // Check for changes between form data and the original data from context
@@ -42,6 +49,16 @@ export default function EditProfilePage() {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({...prev, [id]: value}));
+  };
+  
+  const handleCategoryChange = (value: string) => {
+    if (value === 'Outros') {
+      setShowOtherCategory(true);
+      setFormData(prev => ({...prev, category: ''}));
+    } else {
+      setShowOtherCategory(false);
+      setFormData(prev => ({...prev, category: value}));
+    }
   };
 
   const handleLogoClick = () => {
@@ -188,6 +205,40 @@ export default function EditProfilePage() {
                 className="bg-card border-border/50 h-12"
               />
             </div>
+            
+            <div className="space-y-2">
+                <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
+                    Categoria
+                </label>
+                <Select onValueChange={handleCategoryChange} value={showOtherCategory ? 'Outros' : formData.category}>
+                    <SelectTrigger className="bg-card border-border/50 h-12">
+                        <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {categories.map((cat) => (
+                            <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                        ))}
+                        <SelectItem value="Outros">Outros</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            
+            {showOtherCategory && (
+                <div className="space-y-2">
+                    <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
+                        Qual categoria?
+                    </label>
+                    <Input
+                        id="category"
+                        type="text"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        className="bg-card border-border/50 h-12"
+                        placeholder='Ex: Restaurante Japonês'
+                    />
+                </div>
+            )}
+
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -258,3 +309,5 @@ export default function EditProfilePage() {
     </div>
   );
 }
+
+    
