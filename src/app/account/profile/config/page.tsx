@@ -42,7 +42,7 @@ const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href, o
     }
 
     return (
-        <div className="border border-transparent">
+        <div className={cn(wrapperClasses, "cursor-default")}>
             {content}
         </div>
     );
@@ -90,7 +90,7 @@ export default function ConsumerConfigPage() {
             <div className="p-2 space-y-1">
                 <ConfigItem icon={Bell} title="Notificações Push" description="Receber alertas de ofertas" href="/account/profile/config/notifications" />
                 <Separator />
-                <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" onClick={() => handleFeatureClick('Seleção de Idioma')} />
+                <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" />
                 <Separator />
                 <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" onClick={() => handleFeatureClick('Termos de Uso')} />
             </div>
