@@ -18,13 +18,15 @@ export interface OperatingHours {
   close: string;
 }
 
+export type AvailabilityStatus = 'AUTO' | 'OPEN' | 'CLOSED';
+
 
 // Define the shape of the user profile data
 export interface CompanyProfile {
   id: string;
   name: string;
   category: string;
-  address: string;
+  address: string | null;
   email: string;
   phone: string;
   logoUrl: string | null;
@@ -35,7 +37,7 @@ export interface CompanyProfile {
   subscriptionEndDate: string;
   userType: 'Consumer' | 'Company';
   notificationSettings: NotificationSettings;
-  isAvailable: boolean; // Master availability switch
+  availabilityStatus: AvailabilityStatus; // Master availability control
   hoursOfOperation?: OperatingHours[];
 }
 
@@ -91,7 +93,7 @@ const initialDemoProfile: CompanyProfile = {
     offers: true,
     events: true,
   },
-  isAvailable: true,
+  availabilityStatus: 'AUTO',
   hoursOfOperation: defaultHours,
 };
 
@@ -112,7 +114,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
-    isAvailable: true,
+    availabilityStatus: 'AUTO',
     hoursOfOperation: defaultHours,
   },
   'company-silver': {
@@ -130,7 +132,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
-    isAvailable: true,
+    availabilityStatus: 'AUTO',
     hoursOfOperation: defaultHours,
   }
 };

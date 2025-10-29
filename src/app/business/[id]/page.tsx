@@ -4,7 +4,7 @@
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, ZapOff } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, Zap, ZapOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { Business } from '@/lib/data';
 import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
 import React from 'react';
+import { isCompanyActuallyOpen } from '@/lib/availability';
+
 
 // Create a default business structure for placeholder rendering
 const defaultBusinessData: Business & Partial<CompanyProfile> = {
@@ -34,7 +36,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   logoUrl: null,
   whatsapp: '00000000000',
   websiteUrl: '',
-  isAvailable: true,
+  availabilityStatus: 'AUTO',
   hoursOfOperation: [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
@@ -63,6 +65,8 @@ export default function BusinessPage() {
     : (businessFromStaticData || defaultBusinessData);
   
   const isBookmarked = isFavorited(displayData.id || '');
+  const isAvailable = isCompanyActuallyOpen(displayData);
+
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
   const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
 
@@ -114,7 +118,6 @@ export default function BusinessPage() {
     return phone;
   };
 
-  const isAvailable = displayData.isAvailable ?? true;
   const reviews = ('reviews' in displayData && displayData.reviews) || [];
   const category = 'category' in displayData ? displayData.category : "Categoria";
   const distance = 'distance' in displayData ? displayData.distance : null;
@@ -205,7 +208,10 @@ export default function BusinessPage() {
 
         <div className="flex items-center gap-4 text-sm mb-6">
           {isAvailable ? (
-            <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
+            <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5"/>
+              Aberto agora
+            </Badge>
           ): (
             <Badge variant="destructive" className="bg-orange-600/20 text-orange-400 border-none items-center gap-1.5">
                 <ZapOff className="h-3.5 w-3.5"/>
@@ -373,5 +379,3 @@ export default function BusinessPage() {
     </div>
   );
 }
-
-    

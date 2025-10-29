@@ -8,13 +8,18 @@ import { Input } from '@/components/ui/input';
 import { businesses } from '@/lib/data';
 import HomeHeader from '@/components/common/HomeHeader';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
+import { isCompanyActuallyOpen } from '@/lib/availability';
 
 export default function Home() {
   
   // This is a mock implementation. In a real app, this data would be fetched
   // and we would need to check the 'isAvailable' status of each company profile.
-  // For now, we'll assume all static businesses are available.
-  const availableBusinesses = businesses;
+  const availableBusinesses = businesses.filter(business => {
+    // This is a mock join, in a real app this would be a single data source
+    const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
+    const fullProfile = { ...business, ...profile };
+    return isCompanyActuallyOpen(fullProfile);
+  });
 
   return (
     <div className="container mx-auto max-w-3xl py-6 sm:py-8">

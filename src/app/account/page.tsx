@@ -1,21 +1,21 @@
 
 'use client';
 
-import { User, CreditCard, Settings, LogOut, ChevronRight, X, Building, Zap } from "lucide-react";
+import { User, CreditCard, Settings, LogOut, ChevronRight, X, Building, Zap, Power, PowerOff, Sparkles } from "lucide-react";
 import Header from "@/components/common/Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React, { useState } from 'react';
-import { useCompany, CompanyProfile, mockCompanyProfiles } from "@/contexts/CompanyContext";
+import { useCompany, CompanyProfile, mockCompanyProfiles, AvailabilityStatus } from "@/contexts/CompanyContext";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick, disabled = false }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void, disabled?: boolean }) => {
@@ -149,14 +149,31 @@ export default function AccountPage() {
     });
   }
 
-  const handleAvailabilityToggle = (isAvailable: boolean) => {
-    setCompanyProfile(prev => ({ ...prev, isAvailable }));
-    if (!isAvailable) {
-        toast({
-            title: "Visibilidade Pausada",
-            description: "Sua empresa não aparecerá em buscas até que seja reativada.",
-            duration: 5000,
-        });
+  const handleAvailabilityChange = (status: AvailabilityStatus) => {
+    setCompanyProfile(prev => ({ ...prev, availabilityStatus: status }));
+    const messages = {
+      'OPEN': { title: "Sempre Aberto", description: "Sua empresa aparecerá como 'Aberto' para todos, independente do horário.", duration: 5000 },
+      'CLOSED': { title: "Pausado Manualmente", description: "Sua empresa ficará invisível em buscas até que você altere o status.", duration: 5000 },
+      'AUTO': { title: "Modo Automático", description: "Sua visibilidade será controlada pelo seu horário de funcionamento cadastrado.", duration: 5000 }
+    }
+    toast(messages[status]);
+  }
+
+  const availabilityOptions = {
+    'AUTO': {
+      label: 'Automático',
+      description: 'Visibilidade baseada no seu horário.',
+      icon: Sparkles
+    },
+    'OPEN': {
+      label: 'Sempre Aberto',
+      description: 'Forçar visibilidade como "Aberto".',
+      icon: Power
+    },
+    'CLOSED': {
+      label: 'Sempre Fechado',
+      description: 'Pausar visibilidade manualmente.',
+      icon: PowerOff
     }
   }
 
@@ -182,27 +199,48 @@ export default function AccountPage() {
 
         {/* Availability Switch */}
         {isCompany && (
-            <Card className="bg-card">
-                <div className="flex items-center justify-between p-4">
-                    <Label htmlFor="availability-switch" className="flex-grow">
-                        <div className="flex items-center gap-3">
-                           <Zap className={cn("w-6 h-6", companyProfile.isAvailable ? "text-green-500" : "text-muted-foreground")} />
-                           <div>
-                            <h3 className="font-semibold text-lg">Disponibilidade</h3>
-                            <p className={cn("text-sm", companyProfile.isAvailable ? "text-green-400" : "text-orange-500")}>
-                                {companyProfile.isAvailable ? 'Sua empresa está visível' : 'Sua empresa está invisível'}
-                            </p>
-                           </div>
-                        </div>
-                    </Label>
-                    <Switch
-                        id="availability-switch"
-                        checked={companyProfile.isAvailable}
-                        onCheckedChange={handleAvailabilityToggle}
-                        className="data-[state=checked]:bg-green-500"
-                    />
-                </div>
-            </Card>
+          <Card className="bg-card">
+              <div className="p-4 space-y-4">
+                  <Label>
+                      <div className="flex items-center gap-3 mb-4">
+                         <Zap className="w-6 h-6 text-primary" />
+                         <div>
+                          <h3 className="font-semibold text-lg">Visibilidade da Empresa</h3>
+                          <p className="text-sm text-muted-foreground">
+                              Controle manual de como sua empresa aparece para clientes.
+                          </p>
+                         </div>
+                      </div>
+                  </Label>
+                  <RadioGroup
+                    value={companyProfile.availabilityStatus}
+                    onValueChange={(value: AvailabilityStatus) => handleAvailabilityChange(value)}
+                    className="grid grid-cols-1 gap-2"
+                  >
+                    {Object.entries(availabilityOptions).map(([key, option]) => (
+                       <Label key={key}
+                         className={cn(
+                          "flex items-center gap-4 rounded-lg border p-3 cursor-pointer transition-colors",
+                          companyProfile.availabilityStatus === key 
+                            ? "border-primary bg-primary/10" 
+                            : "border-border/50 hover:bg-muted/50"
+                         )}
+                       >
+                         <RadioGroupItem value={key} id={key} className="h-5 w-5" />
+                         <div className="flex-1">
+                           <p className="font-semibold text-foreground">{option.label}</p>
+                           <p className="text-xs text-muted-foreground">{option.description}</p>
+                         </div>
+                         <option.icon className={cn("w-5 h-5",
+                          companyProfile.availabilityStatus === key && key === 'OPEN' && 'text-green-500',
+                          companyProfile.availabilityStatus === key && key === 'CLOSED' && 'text-orange-500',
+                          companyProfile.availabilityStatus === key && key === 'AUTO' && 'text-cyan-400',
+                         )} />
+                       </Label>
+                    ))}
+                  </RadioGroup>
+              </div>
+          </Card>
         )}
 
         {/* Menu Items */}
@@ -228,6 +266,7 @@ export default function AccountPage() {
                 <DialogContent className="sm:max-w-md bg-card border-border/50">
                     <DialogHeader>
                         <DialogTitle className="text-center text-2xl font-bold font-headline">Resgatar Chave de Acesso</DialogTitle>
+
                         <DialogDescription className="text-center text-muted-foreground pt-2">
                             Insira a chave de 12 caracteres que você recebeu para acessar o painel da sua empresa.
                         </DialogDescription>
