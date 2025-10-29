@@ -73,9 +73,9 @@ const SponsorCard = ({ sponsor }: { sponsor: Sponsor }) => {
 
 
 const SponsorsGrid: React.FC = () => {
-    // Ensure there are always 9 items to render for the grid
+    // Ensure there are always 6 items to render for the grid
     const gridItems = [...sponsors];
-    while (gridItems.length < 9) {
+    while (gridItems.length < 6) {
         gridItems.push({
             id: `placeholder-${gridItems.length}`,
             name: 'Anuncie aqui',
@@ -91,7 +91,7 @@ const SponsorsGrid: React.FC = () => {
         <div>
             <h2 className="text-xl font-bold font-headline mb-4">Patrocinadores</h2>
             <div className="grid grid-cols-3 gap-3">
-                {gridItems.slice(0, 9).map((sponsor) => (
+                {gridItems.slice(0, 6).map((sponsor) => (
                     <SponsorCard key={sponsor.id} sponsor={sponsor} />
                 ))}
             </div>
