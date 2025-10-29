@@ -24,7 +24,7 @@ import { generateCompanyBio } from '@/ai/flows/generate-company-bio';
 const defaultHours: OperatingHours[] = [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Terça', isOpen: true, open: '09:00', close: '18:00' },
-    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },
+    { day: 'Quarta', isOpen: true, open: '09:00', close: '18:00' },-
     { day: 'Quinta', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Sexta', isOpen: true, open: '09:00', close: '18:00' },
     { day: 'Sábado', isOpen: false, open: '10:00', close: '16:00' },
@@ -441,7 +441,7 @@ export default function EditProfilePage() {
             onClick={handleSaveChanges}
             disabled={!hasChanges}
           >
-            Salvar Alterações
+            Publicar Alterações
           </Button>
       </div>
     </div>
