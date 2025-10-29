@@ -1,6 +1,6 @@
 
 import { PlaceHolderImages } from './placeholder-images';
-import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare } from 'lucide-react';
+import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building } from 'lucide-react';
 
 export type Business = {
   id: string;
@@ -234,12 +234,12 @@ export type Sponsor = {
 };
 
 export const sponsors: Sponsor[] = [
-  { id: 's1', name: 'União Construtora', icon: Globe, link: '/business/1', linkType: 'internal', isOccupied: true },
-  { id: 's2', name: 'Flor de Lótus Móveis', icon: Camera, link: '/business/3', linkType: 'internal', isOccupied: true },
-  { id: 's3', name: 'Instituto Marina Feld', icon: MessageSquare, link: 'https://instagram.com', linkType: 'external', isOccupied: true },
-  { id: 's4', name: 'Bellinha Kids', icon: Camera, link: '/business/2', linkType: 'internal', isOccupied: true },
+  { id: 's1', name: 'União Construtora', icon: Building, link: '/business/1', linkType: 'internal', isOccupied: true },
+  { id: 's2', name: 'Flor de Lótus Móveis', icon: Sparkles, link: '/business/3', linkType: 'internal', isOccupied: true },
+  { id: 's3', name: 'Instituto Marina Feld', icon: HeartPulse, link: 'https://instagram.com', linkType: 'external', isOccupied: true },
+  { id: 's4', name: 'Bellinha Kids', icon: Car, link: '/business/2', linkType: 'internal', isOccupied: true },
   { id: 's5', name: 'Nova Negócios', icon: Globe, link: 'https://google.com', linkType: 'internal', isOccupied: true },
-  { id: 's6', name: 'Clínica Acolher Life', icon: MessageSquare, link: '/business/1', linkType: 'internal', isOccupied: true },
+  { id: 's6', name: 'Clínica Acolher Life', icon: HeartPulse, link: '/business/1', linkType: 'internal', isOccupied: true },
   { id: 's7', name: 'Anuncie Aqui', icon: 'div', link: '#', linkType: 'internal', isOccupied: false },
   { id: 's8', name: 'Anuncie Aqui', icon: 'div', link: '#', linkType: 'internal', isOccupied: false },
   { id: 's9', name: 'Anuncie Aqui', icon: 'div', link: '#', linkType: 'internal', isOccupied: false },
