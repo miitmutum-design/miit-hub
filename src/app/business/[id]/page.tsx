@@ -143,7 +143,7 @@ export default function BusinessPage() {
                           className="text-primary font-semibold text-sm mt-1 inline-flex items-center gap-1.5"
                         >
                           <Navigation className="h-4 w-4" />
-                          Ver no mapa &rarr;
+                          Ver no mapa
                         </Link>
                     </div>
                 </div>
