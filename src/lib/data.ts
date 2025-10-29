@@ -32,24 +32,6 @@ const getImage = (id: string) => {
 
 export const businesses: Business[] = [
   {
-    id: '1',
-    name: 'The Daily Grind',
-    category: 'Coffee Shop',
-    distance: '0.2 mi',
-    rating: 4.5,
-    description: 'A cozy spot for your daily dose of caffeine. We serve locally roasted beans and freshly baked pastries.',
-    reviews: [
-      'Amazing atmosphere and the best cold brew in town!',
-      'Pastries are a bit overpriced, but the coffee is worth it.',
-      'A bit crowded in the mornings, but the service is fast.',
-      'I love their loyalty program. Great place to work from.',
-    ],
-    image: getImage('business-1'),
-    coordinates: { x: 40, y: 70 },
-    whatsapp: '5521999999991',
-    websiteUrl: 'https://example.com/daily-grind'
-  },
-  {
     id: '2',
     name: 'Page Turners',
     category: 'Bookstore',
