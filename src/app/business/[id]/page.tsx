@@ -1,9 +1,10 @@
+
 'use client';
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, ZapOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ReviewAnalysis from './review-analysis';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   logoUrl: null,
   whatsapp: '00000000000',
   websiteUrl: '',
+  isAvailable: true,
 };
 
 export default function BusinessPage() {
@@ -101,7 +103,7 @@ export default function BusinessPage() {
     return phone;
   };
 
-  const isOpen = true; // Mock status
+  const isAvailable = displayData.isAvailable ?? true;
   const reviews = ('reviews' in displayData && displayData.reviews) || [];
   const category = 'category' in displayData ? displayData.category : "Categoria";
   const distance = 'distance' in displayData ? displayData.distance : null;
@@ -190,7 +192,14 @@ export default function BusinessPage() {
         </div>
 
         <div className="flex items-center gap-4 text-sm mb-6">
-          <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
+          {isAvailable ? (
+            <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
+          ): (
+            <Badge variant="destructive" className="bg-orange-600/20 text-orange-400 border-none items-center gap-1.5">
+                <ZapOff className="h-3.5 w-3.5"/>
+                Fechada no Momento
+            </Badge>
+          )}
           {distance && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="h-4 w-4" />
@@ -232,12 +241,12 @@ export default function BusinessPage() {
                         <p className="font-semibold">Horário</p>
                         <p className={cn(
                           "text-muted-foreground",
-                          isOpen && "text-primary"
+                          isAvailable && "text-primary"
                         )}>Seg-Sáb: 11h-23h</p>
                     </div>
                 </div>
                 
-                {isOpen ? (
+                {isAvailable ? (
                     <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
                         <Phone className="h-5 w-5 text-primary mt-1"/>
                         <div>
@@ -276,7 +285,7 @@ export default function BusinessPage() {
           </TabsContent>
           
           <TabsContent value="offers">
-            {activeOffers.length > 0 ? (
+            {activeOffers.length > 0 && isAvailable ? (
                 <div className="space-y-4">
                 {activeOffers.map(offer => (
                     <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
@@ -307,7 +316,7 @@ export default function BusinessPage() {
           </TabsContent>
 
           <TabsContent value="events">
-             {activeEvents.length > 0 ? (
+             {activeEvents.length > 0 && isAvailable ? (
                 <div className="space-y-4">
                 {activeEvents.map(event => (
                     <Link key={event.id} href={`/negocio/eventos/${event.id}`} className="block">

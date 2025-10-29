@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -6,8 +7,15 @@ import BusinessCard from '@/components/BusinessCard';
 import { Input } from '@/components/ui/input';
 import { businesses } from '@/lib/data';
 import HomeHeader from '@/components/common/HomeHeader';
+import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 
 export default function Home() {
+  
+  // This is a mock implementation. In a real app, this data would be fetched
+  // and we would need to check the 'isAvailable' status of each company profile.
+  // For now, we'll assume all static businesses are available.
+  const availableBusinesses = businesses;
+
   return (
     <div className="container mx-auto max-w-3xl py-6 sm:py-8">
       <HomeHeader />
@@ -20,7 +28,7 @@ export default function Home() {
       <section>
         <h2 className="text-2xl font-semibold tracking-tight mb-4 font-headline">Featured Businesses</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {businesses.map((business) => (
+          {availableBusinesses.map((business) => (
             <Link key={business.id} href={`/business/${business.id}`} className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
               <BusinessCard business={business} />
             </Link>

@@ -1,6 +1,7 @@
+
 'use client';
 
-import { User, CreditCard, Settings, LogOut, ChevronRight, X, Building } from "lucide-react";
+import { User, CreditCard, Settings, LogOut, ChevronRight, X, Building, Zap } from "lucide-react";
 import Header from "@/components/common/Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+
 
 const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = false, onClick, disabled = false }: { icon: React.ElementType, title: string, subtitle: string, href?: string, isDestructive?: boolean, onClick?: () => void, disabled?: boolean }) => {
     const content = (
@@ -144,6 +149,17 @@ export default function AccountPage() {
     });
   }
 
+  const handleAvailabilityToggle = (isAvailable: boolean) => {
+    setCompanyProfile(prev => ({ ...prev, isAvailable }));
+    if (!isAvailable) {
+        toast({
+            title: "Visibilidade Pausada",
+            description: "Sua empresa não aparecerá em buscas até que seja reativada.",
+            duration: 5000,
+        });
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header title="Minha Conta" />
@@ -163,6 +179,31 @@ export default function AccountPage() {
                 <p className="text-muted-foreground">{companyProfile.email}</p>
             </div>
         </div>
+
+        {/* Availability Switch */}
+        {isCompany && (
+            <Card className="bg-card">
+                <div className="flex items-center justify-between p-4">
+                    <Label htmlFor="availability-switch" className="flex-grow">
+                        <div className="flex items-center gap-3">
+                           <Zap className={cn("w-6 h-6", companyProfile.isAvailable ? "text-green-500" : "text-muted-foreground")} />
+                           <div>
+                            <h3 className="font-semibold text-lg">Disponibilidade</h3>
+                            <p className={cn("text-sm", companyProfile.isAvailable ? "text-green-400" : "text-orange-500")}>
+                                {companyProfile.isAvailable ? 'Sua empresa está visível' : 'Sua empresa está invisível'}
+                            </p>
+                           </div>
+                        </div>
+                    </Label>
+                    <Switch
+                        id="availability-switch"
+                        checked={companyProfile.isAvailable}
+                        onCheckedChange={handleAvailabilityToggle}
+                        className="data-[state=checked]:bg-green-500"
+                    />
+                </div>
+            </Card>
+        )}
 
         {/* Menu Items */}
         <div className="space-y-3">

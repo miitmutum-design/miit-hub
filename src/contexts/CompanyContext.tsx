@@ -25,6 +25,7 @@ export interface CompanyProfile {
   subscriptionEndDate: string;
   userType: 'Consumer' | 'Company';
   notificationSettings: NotificationSettings;
+  isAvailable: boolean; // Master availability switch
 }
 
 // Define the shape of a claimed offer
@@ -67,6 +68,7 @@ const initialDemoProfile: CompanyProfile = {
     offers: true,
     events: true,
   },
+  isAvailable: true,
 };
 
 // Mock data for company profiles that can be redeemed
@@ -85,6 +87,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     subscriptionEndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
+    isAvailable: true,
   },
   'company-silver': {
     id: 'company-silver',
@@ -100,6 +103,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
     subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
     userType: 'Company',
     notificationSettings: { newBusiness: true, offers: true, events: true },
+    isAvailable: true,
   }
 };
 
@@ -211,5 +215,3 @@ export const useCompany = () => {
   }
   return context;
 };
-
-    
