@@ -1,9 +1,10 @@
 
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import BusinessCard from '@/components/BusinessCard';
-import { businesses } from '@/lib/data';
+import { businesses, type Business } from '@/lib/data';
 import HomeHeader from '@/components/common/HomeHeader';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import { isCompanyActuallyOpen } from '@/lib/availability';
@@ -13,15 +14,18 @@ import CategoryCarousel from '@/components/common/CategoryCarousel';
 import SponsorsGrid from '@/components/common/SponsorsGrid';
 
 export default function Home() {
-  
-  // This is a mock implementation. In a real app, this data would be fetched
-  // and we would need to check the 'isAvailable' status of each company profile.
-  const availableBusinesses = businesses.filter(business => {
-    // This is a mock join, in a real app this would be a single data source
-    const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
-    const fullProfile = { ...business, ...profile };
-    return isCompanyActuallyOpen(fullProfile);
-  });
+  const [availableBusinesses, setAvailableBusinesses] = useState<Business[]>([]);
+
+  // This logic now runs only on the client, after hydration, preventing the error.
+  useEffect(() => {
+    const filtered = businesses.filter(business => {
+      // This is a mock join, in a real app this would be a single data source
+      const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
+      const fullProfile = { ...business, ...profile };
+      return isCompanyActuallyOpen(fullProfile);
+    });
+    setAvailableBusinesses(filtered);
+  }, []);
 
   return (
     <div className="container mx-auto max-w-3xl py-6 sm:py-8">
