@@ -45,9 +45,11 @@ export default function BusinessPage() {
   const isViewingOwnProfile = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company';
   
   // Use the available data, or fall back to the default placeholder structure
-  const displayData = isViewingOwnProfile ? companyProfile : (businessFromStaticData || defaultBusinessData);
+  const displayData: Partial<CompanyProfile & Business> = isViewingOwnProfile 
+    ? companyProfile 
+    : (businessFromStaticData || defaultBusinessData);
   
-  const isBookmarked = isFavorited(displayData.id);
+  const isBookmarked = isFavorited(displayData.id || '');
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
   const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
 
@@ -89,7 +91,7 @@ export default function BusinessPage() {
   const whatsapp = ('whatsapp' in displayData && displayData.whatsapp) || '5521999999999';
   const whatsappUrl = `https://wa.me/${whatsapp}`;
   
-  const formatPhoneNumber = (phone: string) => {
+  const formatPhoneNumber = (phone: string | undefined) => {
     if (!phone) return "Telefone não informado";
     const cleaned = ('' + phone).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
@@ -103,6 +105,8 @@ export default function BusinessPage() {
   const reviews = ('reviews' in displayData && displayData.reviews) || [];
   const category = 'category' in displayData ? displayData.category : "Categoria";
   const distance = 'distance' in displayData ? displayData.distance : null;
+  const rating = 'rating' in displayData ? displayData.rating : 0;
+  const image = 'image' in displayData ? displayData.image : null;
 
 
   return (
@@ -120,7 +124,7 @@ export default function BusinessPage() {
                 variant="ghost" 
                 size="icon" 
                 className="bg-black/50 hover:bg-black/70 rounded-full"
-                onClick={() => toggleFavorite(displayData.id)}
+                onClick={() => toggleFavorite(displayData.id || '')}
                 >
                     <Bookmark className={cn(isBookmarked && "fill-current")} />
                 </Button>
@@ -137,6 +141,14 @@ export default function BusinessPage() {
                 fill
                 className="object-cover"
             />
+        ) : image ? (
+             <Image
+                src={image.url}
+                alt={`${displayData.name} background`}
+                fill
+                className="object-cover"
+                data-ai-hint={image.hint}
+             />
         ) : (
              <div className="w-full h-full bg-card" />
         )}
@@ -165,11 +177,11 @@ export default function BusinessPage() {
             <p className="text-muted-foreground mt-1">{category}</p>
           </div>
           <div className="text-right">
-             {('rating' in displayData && displayData.rating) && (
+             {rating > 0 && (
                 <>
                 <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
                     <Star className="h-4 w-4 fill-white" />
-                    <span>{displayData.rating}</span>
+                    <span>{rating}</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">{reviews.length * 31} avaliações</p>
                 </>
@@ -332,5 +344,3 @@ export default function BusinessPage() {
     </div>
   );
 }
-
-    
