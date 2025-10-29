@@ -414,6 +414,23 @@ export default function EditProfilePage() {
 
             <div className="space-y-2">
               <label
+                htmlFor="websiteUrl"
+                className="text-sm font-medium text-muted-foreground"
+              >
+                Site
+              </label>
+              <Input
+                id="websiteUrl"
+                type="url"
+                value={formData.websiteUrl || ''}
+                onChange={handleInputChange}
+                className="bg-card border-border/50 h-12"
+                placeholder="https://seusite.com"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
                 htmlFor="description"
                 className="text-sm font-medium text-muted-foreground"
               >
