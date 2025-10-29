@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Bell } from 'lucide-react';
@@ -19,7 +20,7 @@ export default function HomeHeader() {
   return (
     <header className="mb-8 flex items-center justify-between">
       <div className="text-left">
-        <h1 className="text-4xl sm:text-5xl font-bold text-primary font-headline">Local Hub</h1>
+        
         <p className="text-muted-foreground mt-2 text-lg">Discover the best businesses near you</p>
       </div>
       <div className="relative">
