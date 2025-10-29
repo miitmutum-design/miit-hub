@@ -65,6 +65,15 @@ export default function BusinessPage() {
   const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
   const whatsappUrl = `https://wa.me/${business.whatsapp}`;
+  
+  const formatPhoneNumber = (phone: string) => {
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
+    if (match) {
+        return `(${match[2]}) ${match[3]}-${match[4]}`;
+    }
+    return phone;
+  };
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -159,7 +168,7 @@ export default function BusinessPage() {
                     <Phone className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Whatsapp</p>
-                        <p className="text-muted-foreground group-hover:text-primary group-hover:underline">{business.whatsapp}</p>
+                        <p className="text-muted-foreground group-hover:text-primary group-hover:underline">{formatPhoneNumber(business.whatsapp)}</p>
                     </div>
                 </Link>
                 <div className="flex items-start gap-4">
