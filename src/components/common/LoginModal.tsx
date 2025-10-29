@@ -80,11 +80,15 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         email: email,
         phone: "(11) 91111-2222",
         logoUrl: avatarUrl,
-        description: "Usuário autenticado.",
-        plan: 'Prata',
-        tokens: 5,
-        subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        category: 'Consumer',
+        address: 'Rua do Consumidor, 123',
+        description: "Usuário autenticado via e-mail.",
+        plan: 'Prata', // N/A for consumer
+        tokens: 0,
+        subscriptionEndDate: new Date().toISOString(),
         userType: 'Consumer',
+        availabilityStatus: 'AUTO',
+        notificationSettings: { newBusiness: true, offers: true, events: true },
         });
         setIsAuthenticating(false);
         onLoginSuccess();
@@ -100,11 +104,15 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         email: "google.user@example.com",
         phone: "(11) 93333-4444",
         logoUrl: 'https://i.pravatar.cc/150?u=google-user', // Mock avatar
+        category: 'Consumer',
+        address: 'Avenida Brasil, 456',
         description: "Usuário autenticado via Google.",
-        plan: 'Prata',
-        tokens: 10,
-        subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+        plan: 'Prata', // N/A for consumer
+        tokens: 0,
+        subscriptionEndDate: new Date().toISOString(),
         userType: 'Consumer',
+        availabilityStatus: 'AUTO',
+        notificationSettings: { newBusiness: true, offers: true, events: true },
         });
         setIsAuthenticating(false);
         setShowGoogleSimModal(false);
@@ -272,5 +280,3 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     </>
   );
 }
-
-    

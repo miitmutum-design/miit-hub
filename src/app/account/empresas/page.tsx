@@ -19,7 +19,7 @@ import { categories } from '@/lib/data';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { generateCompanyBio } from '@/app/actions';
+import { generateCompanyBio } from '@/ai/flows/generate-company-bio';
 
 const defaultHours: OperatingHours[] = [
     { day: 'Segunda', isOpen: true, open: '09:00', close: '18:00' },
@@ -129,7 +129,6 @@ export default function EditProfilePage() {
         return;
     }
 
-
     // Update the context with the new form data
     setCompanyProfile(formData);
     
@@ -151,21 +150,37 @@ export default function EditProfilePage() {
   };
 
   const handleGenerateBio = () => {
+    if (!formData.name || !formData.category) {
+        toast({
+            variant: "destructive",
+            title: "Faltam Informações",
+            description: "Preencha o nome e a categoria da empresa para gerar a descrição.",
+        });
+        return;
+    }
     startTransition(async () => {
-      const { bio, error } = await generateCompanyBio(formData.name, formData.category);
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Falha na Geração",
-          description: error,
-        });
-      } else if (bio) {
-        setFormData(prev => ({ ...prev, description: bio }));
-        toast({
-          title: "Descrição Gerada!",
-          description: "O campo 'Sobre' foi preenchido com o texto da IA."
-        });
-      }
+        try {
+            const result = await generateCompanyBio({
+                companyName: formData.name,
+                category: formData.category,
+            });
+            if (result && result.bio) {
+                setFormData(prev => ({...prev, description: result.bio}));
+                toast({
+                    title: "Descrição Gerada!",
+                    description: "O campo 'Sobre' foi preenchido com o texto da IA."
+                });
+            } else {
+                throw new Error("A IA não conseguiu gerar uma descrição.");
+            }
+        } catch (error: any) {
+            console.error("Error generating company bio:", error);
+            toast({
+                variant: "destructive",
+                title: "Falha na Geração",
+                description: error.message || "Ocorreu um erro ao contatar a IA. Tente novamente.",
+            });
+        }
     });
   };
   
@@ -400,7 +415,7 @@ export default function EditProfilePage() {
                         variant="outline"
                         size="sm"
                         onClick={handleGenerateBio}
-                        disabled={isPending || !formData.name || !formData.category}
+                        disabled={isPending}
                         className="gap-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary"
                     >
                         {isPending ? <Loader2 className="animate-spin" /> : <Sparkles />}
@@ -414,7 +429,7 @@ export default function EditProfilePage() {
         </form>
       </div>
 
-       <div className="fixed bottom-16 md:bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
+       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
           <Button
             size="lg"
             className={cn(

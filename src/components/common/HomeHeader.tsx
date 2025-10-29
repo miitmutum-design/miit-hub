@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Bell } from 'lucide-react';
+import { Bell, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useRouter } from 'next/navigation';
@@ -11,17 +11,20 @@ export default function HomeHeader() {
   const router = useRouter();
 
   const handleNotificationClick = () => {
-    // In a real app, this would open a notification modal/page
-    // For now, we navigate to a dedicated notifications page
     router.push('/notifications');
     clearNotifications();
   };
 
   return (
     <header className="mb-8 flex items-center justify-between">
-      <div className="text-left">
-        
-        
+      <div className="flex items-center gap-3">
+        <div className="bg-primary/10 p-3 rounded-full">
+            <MapPin className="h-6 w-6 text-primary" />
+        </div>
+        <div className="text-left">
+            <p className="text-muted-foreground text-sm">Sua Localização</p>
+            <p className="font-bold text-lg text-foreground">Nova Mutum</p>
+        </div>
       </div>
       <div className="relative">
         <Button
