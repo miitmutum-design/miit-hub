@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function BusinessPage() {
@@ -18,6 +19,7 @@ export default function BusinessPage() {
   const id = params.id as string;
   const business = getBusinessById(id);
   const { toggleFavorite, isFavorited } = useCompany();
+  const { toast } = useToast();
 
   if (!business) {
     notFound();
@@ -26,6 +28,43 @@ export default function BusinessPage() {
   const isBookmarked = isFavorited(business.id);
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
   const activeEvents = businessEvents.filter(event => new Date(event.date) > new Date() && event.companyId === id);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: business.name,
+      text: `Confira ${business.name}, com nota ${business.rating}! Uma ótima opção na categoria ${business.category}.`,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback for browsers that don't support navigator.share
+        await navigator.clipboard.writeText(shareData.url);
+        toast({
+          title: "Link Copiado!",
+          description: "O link da empresa foi copiado para a área de transferência.",
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar:', error);
+      // Fallback in case of error during share
+       try {
+        await navigator.clipboard.writeText(shareData.url);
+        toast({
+          title: "Link Copiado!",
+          description: "O link da empresa foi copiado para a área de transferência.",
+        });
+      } catch (copyError) {
+        console.error('Erro ao copiar para a área de transferência:', copyError);
+        toast({
+          variant: "destructive",
+          title: "Oops!",
+          description: "Não foi possível compartilhar ou copiar o link.",
+        });
+      }
+    }
+  };
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -45,7 +84,7 @@ export default function BusinessPage() {
             >
                 <Bookmark className={cn(isBookmarked && "fill-current")} />
             </Button>
-            <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full">
+            <Button variant="ghost" size="icon" className="bg-black/50 hover:bg-black/70 rounded-full" onClick={handleShare}>
                 <Share2 />
             </Button>
         </div>
