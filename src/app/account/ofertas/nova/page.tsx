@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -10,10 +10,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useCompany } from '@/contexts/CompanyContext';
 
 export default function CreateNewOfferPage() {
     const { toast } = useToast();
     const router = useRouter();
+    const { companyProfile } = useCompany();
     
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -47,7 +49,16 @@ export default function CreateNewOfferPage() {
         }
 
         // Here you would typically send the data to your backend
-        console.log({ title, description, discount, startDate, endDate, imageUrl });
+        console.log({ 
+            companyId: companyProfile.id,
+            companyName: companyProfile.name,
+            title, 
+            description, 
+            discount, 
+            startDate, 
+            endDate, 
+            imageUrl 
+        });
 
         toast({
             title: 'Oferta Criada!',
@@ -73,6 +84,14 @@ export default function CreateNewOfferPage() {
       </header>
       
       <div className="space-y-6">
+        <div className="space-y-2">
+            <label htmlFor="company" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Building className="w-5 h-5"/>
+                Vincular Oferta à Empresa
+            </label>
+            <Input id="company" value={companyProfile.name} disabled className="bg-card border-border/50 h-12" />
+        </div>
+
         <div className="space-y-2">
           <label htmlFor="title" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <Tag className="w-5 h-5"/>
