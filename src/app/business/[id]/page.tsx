@@ -19,18 +19,21 @@ import { useToast } from '@/hooks/use-toast';
 export default function BusinessPage() {
   const params = useParams();
   const id = params.id as string;
-  const business = getBusinessById(id);
   const { toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
 
-  if (!business) {
+  const businessFromStaticData = getBusinessById(id);
+
+  // Prioritize companyProfile if it's a company and IDs match
+  const isViewingOwnProfile = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company';
+  const displayData = isViewingOwnProfile ? companyProfile : businessFromStaticData;
+  
+  if (!displayData) {
+    // Instead of notFound(), you could render a skeleton or a "Profile not found" page
+    // For now, we'll stick with notFound() if no data source is available.
+    // The key change is prioritizing the context.
     notFound();
   }
-
-  // Use companyProfile from context if the ID matches, otherwise use static business data
-  const displayData = companyProfile && companyProfile.id === id && companyProfile.userType === 'Company'
-    ? companyProfile
-    : business;
   
   const isBookmarked = isFavorited(displayData.id);
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
@@ -39,7 +42,7 @@ export default function BusinessPage() {
   const handleShare = async () => {
     const shareData = {
       title: displayData.name,
-      text: `Confira ${displayData.name}, com nota ${displayData.rating}! Uma ótima opção na categoria ${displayData.category}.`,
+      text: `Confira ${displayData.name}, com nota ${displayData.rating || 'N/A'}! ${displayData.category ? `Uma ótima opção na categoria ${displayData.category}.` : ''}`,
       url: window.location.href,
     };
 
@@ -70,9 +73,12 @@ export default function BusinessPage() {
 
   const destinationAddress = "Rua Haddock Lobo, 210, Tijuca, Rio de Janeiro, RJ";
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}`;
-  const whatsappUrl = `https://wa.me/${displayData.whatsapp}`;
+  
+  const whatsapp = (displayData as any).whatsapp || '5521999999999';
+  const whatsappUrl = `https://wa.me/${whatsapp}`;
   
   const formatPhoneNumber = (phone: string) => {
+    if (!phone) return "Telefone não informado";
     const cleaned = ('' + phone).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
     if (match) {
@@ -82,6 +88,7 @@ export default function BusinessPage() {
   };
 
   const isOpen = true; // Mock status
+  const reviews = (displayData as any).reviews || [];
 
   return (
     <div className="bg-background min-h-screen text-foreground">
@@ -138,25 +145,31 @@ export default function BusinessPage() {
         <div className="grid grid-cols-3 items-start mb-4">
           <div className="col-span-2">
             <h1 className="text-3xl font-bold tracking-tight font-headline">
-              {displayData.name}
+              {displayData.name || "Nome da Empresa"}
             </h1>
-            <p className="text-muted-foreground mt-1">{displayData.category}</p>
+            <p className="text-muted-foreground mt-1">{displayData.category || "Categoria"}</p>
           </div>
           <div className="text-right">
-             <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
-                <Star className="h-4 w-4 fill-white" />
-                <span>{displayData.rating}</span>
-             </div>
-             <p className="text-xs text-muted-foreground mt-1">{displayData.reviews.length * 31} avaliações</p>
+             {(displayData as any).rating && (
+                <>
+                <div className="inline-flex items-center gap-1.5 bg-orange-600 text-white font-bold py-1 px-3 rounded-lg">
+                    <Star className="h-4 w-4 fill-white" />
+                    <span>{(displayData as any).rating}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{reviews.length * 31} avaliações</p>
+                </>
+             )}
           </div>
         </div>
 
         <div className="flex items-center gap-4 text-sm mb-6">
           <Badge variant="secondary" className="bg-green-600/20 text-green-300 border-none">Aberto agora</Badge>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <span>{displayData.distance}</span>
-          </div>
+          {(displayData as any).distance && (
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span>{(displayData as any).distance}</span>
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
@@ -202,7 +215,7 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-primary mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-primary group-hover:underline">{formatPhoneNumber(displayData.whatsapp)}</p>
+                            <p className="text-primary group-hover:underline">{formatPhoneNumber(whatsapp)}</p>
                         </div>
                     </Link>
                 ) : (
@@ -210,23 +223,26 @@ export default function BusinessPage() {
                         <Phone className="h-5 w-5 text-muted-foreground mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
-                            <p className="text-muted-foreground">{formatPhoneNumber(displayData.whatsapp)}</p>
+                            <p className="text-muted-foreground">{formatPhoneNumber(whatsapp)}</p>
                         </div>
                     </div>
                 )}
                 
-                <div className="flex items-start gap-4">
-                    <Globe className="h-5 w-5 text-primary mt-1"/>
-                    <div>
-                        <p className="font-semibold">Site</p>
-                        <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
-                    </div>
-                </div>
+                {(displayData as any).websiteUrl && (
+                  <div className="flex items-start gap-4">
+                      <Globe className="h-5 w-5 text-primary mt-1"/>
+                      <div>
+                          <p className="font-semibold">Site</p>
+                          <Link href={`/webview?url=${encodeURIComponent((displayData as any).websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block">Ver o site</Link>
+                      </div>
+                  </div>
+                )}
+
                 <div className="flex items-start gap-4">
                     <Info className="h-5 w-5 text-primary mt-1"/>
                     <div>
                         <p className="font-semibold">Sobre</p>
-                        <p className="text-muted-foreground text-sm">{displayData.description}</p>
+                        <p className="text-muted-foreground text-sm">{displayData.description || "Nenhuma descrição fornecida."}</p>
                     </div>
                 </div>
             </div>
@@ -294,7 +310,7 @@ export default function BusinessPage() {
           </TabsContent>
 
           <TabsContent value="reviews">
-            <ReviewAnalysis initialReviews={displayData.reviews} />
+            <ReviewAnalysis initialReviews={reviews} />
           </TabsContent>
         </Tabs>
       </div>
