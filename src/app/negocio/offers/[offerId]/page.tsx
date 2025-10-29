@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -61,6 +62,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
     if (isDemoUser) {
       setIsLoginModalOpen(true);
     } else {
+      // User is already logged in, proceed to claim
       claimOffer(offer, offer.limitPerUser);
       setIsQrModalOpen(true);
     }
@@ -161,7 +163,7 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
 
             {/* QR Code Modal */}
             <Dialog open={isQrModalOpen} onOpenChange={setIsQrModalOpen}>
-                <Button 
+                 <Button 
                   onClick={handleGenerateOffer} 
                   size="lg" 
                   className={cn(
