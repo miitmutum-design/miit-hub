@@ -21,7 +21,7 @@ export default function HomeHeader() {
     <header className="mb-8 flex items-center justify-between">
       <div className="text-left">
         
-        <p className="text-muted-foreground mt-2 text-lg">Discover the best businesses near you</p>
+        
       </div>
       <div className="relative">
         <Button
