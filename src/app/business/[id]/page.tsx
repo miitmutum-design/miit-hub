@@ -34,6 +34,7 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   image: { url: '', hint: '' },
   backgroundUrl: null,
   logoUrl: null,
+  phone: '00000000000',
   whatsapp: '00000000000',
   websiteUrl: '',
   availabilityStatus: 'AUTO',
@@ -105,15 +106,23 @@ export default function BusinessPage() {
   const address = ('address' in displayData && displayData.address) || 'Endereço não informado';
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
   
-  const whatsapp = ('whatsapp' in displayData && displayData.whatsapp) || '5521999999999';
-  const whatsappUrl = `https://wa.me/${whatsapp}`;
+  const whatsappNumber = displayData.phone || '';
+  const whatsappUrl = `https://wa.me/55${whatsappNumber.replace(/\D/g, '')}`;
   
   const formatPhoneNumber = (phone: string | undefined) => {
     if (!phone) return "Telefone não informado";
     const cleaned = ('' + phone).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
-    if (match) {
-        return `(${match[2]}) ${match[3]}-${match[4]}`;
+     if (cleaned.length === 11) {
+      const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
+      if (match) {
+        return `(${match[1]}) ${match[2]}-${match[3]}`;
+      }
+    }
+    if (cleaned.length === 10) {
+      const match = cleaned.match(/^(\d{2})(\d{4})(\d{4})$/);
+      if (match) {
+        return `(${match[1]}) ${match[2]}-${match[3]}`;
+      }
     }
     return phone;
   };
