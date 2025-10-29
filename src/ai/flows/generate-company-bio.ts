@@ -35,15 +35,15 @@ const prompt = ai.definePrompt({
     name: 'generateCompanyBioPrompt',
     input: { schema: GenerateCompanyBioInputSchema },
     output: { schema: GenerateCompanyBioOutputSchema },
-    prompt: `You are a professional marketing copywriter. Write a compelling and concise company description for a business profile.
+    prompt: `Você é um redator de marketing profissional. Escreva uma descrição de empresa atraente e concisa para um perfil de negócios em português do Brasil.
 
-    The description MUST be under 360 characters.
+    A descrição DEVE ter menos de 360 caracteres.
     
-    Use the following information:
-    - Company Name: {{{companyName}}}
-    - Category/Industry: {{{category}}}
+    Use as seguintes informações:
+    - Nome da Empresa: {{{companyName}}}
+    - Categoria/Indústria: {{{category}}}
     
-    Generate a professional and engaging description suitable for a customer-facing business directory.
+    Gere uma descrição profissional e envolvente, adequada para um diretório de empresas voltado para o cliente. A saída deve ser em português do Brasil.
     `,
 });
 
