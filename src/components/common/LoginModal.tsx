@@ -59,33 +59,48 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     }
   }, [avatarUrl, name, email, password, showEmailLogin]);
 
-  const handleLogin = () => {
-    if (showEmailLogin) {
-      if (!isFormValid) {
-        toast({
-          variant: "destructive",
-          title: "Campos Incompletos",
-          description: "Por favor, preencha todos os campos, incluindo a foto de perfil.",
-        });
-        return;
-      }
+  const handleEmailLogin = () => {
+    if (!isFormValid) {
+      toast({
+        variant: "destructive",
+        title: "Campos Incompletos",
+        description: "Por favor, preencha todos os campos, incluindo a foto de perfil.",
+      });
+      return;
     }
-
+    
     // In a real app, this would involve an actual authentication flow.
     // Here, we just update the context to a mock logged-in user.
     setCompanyProfile({
       id: 'user-logged-in',
-      name: name || "João Silva",
-      email: email || "joao.silva@email.com",
+      name: name,
+      email: email,
       phone: "(11) 91111-2222",
       logoUrl: avatarUrl,
       description: "Usuário autenticado.",
-      plan: 'Prata', // or 'Gold' depending on subscription
+      plan: 'Prata',
       tokens: 5,
       subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
     });
     onLoginSuccess();
   };
+  
+  const handleGoogleLogin = () => {
+    // In a real app, this would trigger the Google OAuth flow.
+    // Here, we just update the context to a mock logged-in user from Google.
+    setCompanyProfile({
+      id: 'user-google-loggedin',
+      name: "Usuário do Google",
+      email: "google.user@example.com",
+      phone: "(11) 93333-4444",
+      logoUrl: 'https://i.pravatar.cc/150?u=google-user', // Mock avatar
+      description: "Usuário autenticado via Google.",
+      plan: 'Prata',
+      tokens: 10,
+      subscriptionEndDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+    });
+    onLoginSuccess();
+  }
 
   const handleAvatarClick = () => {
     avatarInputRef.current?.click();
@@ -175,7 +190,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
             </div>
             <DialogFooter className='pt-4'>
               <Button 
-                onClick={handleLogin} 
+                onClick={handleEmailLogin} 
                 size="lg" 
                 className={cn(
                   "w-full h-12 text-lg font-bold transition-colors",
@@ -197,7 +212,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
         ) : (
           // Main Login Options
           <div className="py-4 space-y-4">
-            <Button onClick={handleLogin} variant="outline" size="lg" className="w-full h-12 text-lg border-border/80">
+            <Button onClick={handleGoogleLogin} variant="outline" size="lg" className="w-full h-12 text-lg border-border/80">
               <GoogleIcon className="mr-3 h-6 w-6" />
               Continuar com Google
             </Button>
