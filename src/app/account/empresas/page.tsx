@@ -89,7 +89,7 @@ export default function EditProfilePage() {
   const MAX_DESC_LENGTH = 360;
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-24">
+    <div className="min-h-screen bg-background text-foreground pb-40">
       <div className="container mx-auto max-w-lg py-6 sm:py-8">
         <header className="relative mb-8 flex items-center justify-center text-center">
           <Link href="/account" className="absolute left-0">
@@ -240,7 +240,7 @@ export default function EditProfilePage() {
         </form>
       </div>
 
-       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
+       <div className="fixed bottom-16 md:bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-lg border-t border-border/50">
           <Button
             size="lg"
             className={cn(
