@@ -39,7 +39,7 @@ export interface ClaimedEvent {
 // Initial mock data for a demo user
 const initialDemoProfile: CompanyProfile = {
   id: 'user-demo',
-  name: "Usuário Demo",
+  name: "Visitante",
   email: "demo@example.com",
   phone: "(65) 99999-9999",
   logoUrl: null,

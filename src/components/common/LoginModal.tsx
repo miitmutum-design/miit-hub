@@ -95,7 +95,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     setTimeout(() => {
         setCompanyProfile({
         id: 'user-google-loggedin',
-        name: "Usuário do Google",
+        name: "Usuário Google",
         email: "google.user@example.com",
         phone: "(11) 93333-4444",
         logoUrl: 'https://i.pravatar.cc/150?u=google-user', // Mock avatar
@@ -249,10 +249,10 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
             <DialogHeader>
                 <DialogTitle className="text-center text-2xl font-bold font-headline flex items-center justify-center gap-3">
                     <GoogleIcon />
-                    Simulação de Login
+                    Confirmação de Autenticação Google
                 </DialogTitle>
                 <DialogDescription className="text-center text-muted-foreground pt-2">
-                    Clique abaixo para confirmar a autenticação com a conta "Usuário Demo".
+                    Clique abaixo para autenticar com sua conta e prosseguir.
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter className="pt-4">
@@ -262,7 +262,7 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
                     className="w-full h-12 text-lg bg-blue-600 hover:bg-blue-700 text-white font-bold"
                     disabled={isAuthenticating}
                 >
-                    {isAuthenticating ? <Loader2 className="animate-spin" /> : "Confirmar Conta Demo"}
+                    {isAuthenticating ? <Loader2 className="animate-spin" /> : "Confirmar Autenticação"}
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -270,4 +270,3 @@ export default function LoginModal({ isOpen, onOpenChange, onLoginSuccess }: Log
     </>
   );
 }
-
