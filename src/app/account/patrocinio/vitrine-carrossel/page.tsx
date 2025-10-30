@@ -234,25 +234,27 @@ export default function VitrineCarrosselPage() {
                     <Upload className="h-5 w-5"/>
                     Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
                 </label>
-                 <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="relative w-full h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
-                >
-                    {bannerImage ? (
-                        <Image
-                            src={bannerImage}
-                            alt="Pré-visualização do Banner"
-                            fill
-                            className="object-cover rounded-lg"
-                        />
-                    ) : (
-                        <div className="flex flex-col items-center gap-2">
-                            <Upload className="h-8 w-8" />
-                            <span>Fazer upload da imagem</span>
-                        </div>
-                    )}
-                </button>
+                <div className="flex justify-center">
+                    <button
+                        type="button"
+                        onClick={handleImageClick}
+                        className="relative w-40 h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
+                    >
+                        {bannerImage ? (
+                            <Image
+                                src={bannerImage}
+                                alt="Pré-visualização do Banner"
+                                fill
+                                className="object-cover rounded-lg"
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center gap-2 text-center p-2">
+                                <Upload className="h-8 w-8" />
+                                <span className="text-xs">Fazer upload da imagem</span>
+                            </div>
+                        )}
+                    </button>
+                </div>
                 <input
                     type="file"
                     ref={imageInputRef}
