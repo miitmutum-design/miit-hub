@@ -288,3 +288,50 @@ export const adminCompanies = [
     joinDate: '22/06/2024'
   }
 ];
+
+export const adminReviews = [
+    {
+        id: 'r1',
+        companyId: '1',
+        companyName: 'União Construtora',
+        userId: 'u1',
+        userName: 'Carlos Silva',
+        userAvatar: 'https://i.pravatar.cc/150?u=carlos',
+        rating: 5,
+        comment: 'Serviço impecável! A equipe da União Construtora foi extremamente profissional e entregou minha obra antes do prazo. Recomendo de olhos fechados.',
+        date: '24/07/2024'
+    },
+    {
+        id: 'r2',
+        companyId: '3',
+        companyName: 'Flor de Lótus Móveis',
+        userId: 'u2',
+        userName: 'Ana Paula',
+        userAvatar: 'https://i.pravatar.cc/150?u=ana',
+        rating: 1,
+        comment: 'Péssima experiência. O sofá que comprei veio com defeito e a loja se recusou a trocar. O atendimento pós-venda é horrível. Não comprem aqui!',
+        date: '23/07/2024'
+    },
+     {
+        id: 'r3',
+        companyId: 'company-gold',
+        companyName: 'Empresa Gold',
+        userId: 'u3',
+        userName: 'Pedro Martins',
+        userAvatar: 'https://i.pravatar.cc/150?u=pedro',
+        rating: 4,
+        comment: 'O software é muito bom, mas o suporte técnico poderia ser um pouco mais ágil para resolver problemas complexos. No geral, estou satisfeito.',
+        date: '22/07/2024'
+    },
+    {
+        id: 'r4',
+        companyId: '1',
+        companyName: 'União Construtora',
+        userId: 'u4',
+        userName: 'Fernanda Lima',
+        userAvatar: 'https://i.pravatar.cc/150?u=fernanda',
+        rating: 5,
+        comment: 'Construí minha casa com eles e foi a melhor decisão. Qualidade, pontualidade e um ótimo preço. Superou minhas expectativas!',
+        date: '21/07/2024'
+    }
+];
