@@ -50,24 +50,7 @@ export default function DestaqueTotalBannerPage() {
       </div>
       
       <div className="space-y-4">
-        <ActionCard 
-            icon={Building}
-            title="Empresa"
-            description="Promova o perfil da sua empresa para todos."
-            onClick={() => handleSelection('Empresa')}
-        />
-        <ActionCard 
-            icon={Gift}
-            title="Oferta"
-            description="Destaque uma oferta ou cupom específico."
-            onClick={() => handleSelection('Oferta')}
-        />
-        <ActionCard 
-            icon={Calendar}
-            title="Eventos"
-            description="Anuncie um evento para atrair participantes."
-            onClick={() => handleSelection('Eventos')}
-        />
+        
       </div>
     </div>
   );
