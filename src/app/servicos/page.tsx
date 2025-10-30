@@ -1,5 +1,7 @@
+
 'use client';
 
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -7,7 +9,6 @@ import { businesses, getBusinessById } from '@/lib/data';
 import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
-import React from 'react';
 
 const SearchResults = ({ query }: { query: string }) => {
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -68,8 +69,7 @@ const SearchResults = ({ query }: { query: string }) => {
   );
 };
 
-
-export default async function ServicesPage({ searchParams }: { searchParams: { q?: string } }) {
+export default function ServicesPage({ searchParams }: { searchParams: { q?: string } }) {
     const query = searchParams?.q || 'Serviços';
     return <SearchResults query={query} />;
 }
