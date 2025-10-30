@@ -237,3 +237,54 @@ export const sponsors: Sponsor[] = [
   { id: 's8', name: 'Anuncie Aqui', icon: 'div', link: '#', linkType: 'internal', isOccupied: false },
   { id: 's9', name: 'Anuncie Aqui', icon: 'div', link: '#', linkType: 'internal', isOccupied: false },
 ];
+
+export const adminCompanies = [
+  {
+    id: '1',
+    name: 'União Construtora',
+    category: 'Construção',
+    status: 'Aprovada',
+    isActive: true,
+    joinDate: '10/07/2024'
+  },
+  {
+    id: '3',
+    name: 'Flor de Lótus Móveis',
+    category: 'Móveis',
+    status: 'Aprovada',
+    isActive: true,
+    joinDate: '05/07/2024'
+  },
+  {
+    id: 'company-gold',
+    name: 'Empresa Gold',
+    category: 'Tecnologia',
+    status: 'Aprovada',
+    isActive: false,
+    joinDate: '01/07/2024'
+  },
+  {
+    id: 'company-silver',
+    name: 'Empresa Prata',
+    category: 'Serviços',
+    status: 'Pendente',
+    isActive: false,
+    joinDate: '28/06/2024'
+  },
+    {
+    id: '5',
+    name: 'Nova Hamburgueria',
+    category: 'Alimentação',
+    status: 'Pendente',
+    isActive: false,
+    joinDate: '25/06/2024'
+  },
+  {
+    id: '6',
+    name: 'Jardim Secreto Flores',
+    category: 'Floricultura',
+    status: 'Pendente',
+    isActive: false,
+    joinDate: '22/06/2024'
+  }
+];
