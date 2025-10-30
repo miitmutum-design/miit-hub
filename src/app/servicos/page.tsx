@@ -1,6 +1,4 @@
 
-'use client';
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +8,10 @@ import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 
-const SearchResults = ({ query }: { query: string }) => {
+// Client Component to display the results
+function SearchResults({ query }: { query: string }) {
+  'use client';
+
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
   
   const allBusinesses = businesses.map(b => getBusinessById(b.id)).filter(Boolean) as (typeof businesses[0])[];
@@ -69,7 +70,9 @@ const SearchResults = ({ query }: { query: string }) => {
   );
 };
 
-export default function ServicesPage({ searchParams }: { searchParams: { q?: string } }) {
+
+// Server Component to fetch the search params
+export default async function ServicesPage({ searchParams }: { searchParams: { q?: string } }) {
     const query = searchParams?.q || 'Serviços';
     return <SearchResults query={query} />;
 }
