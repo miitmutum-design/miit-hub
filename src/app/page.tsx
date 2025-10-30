@@ -12,6 +12,7 @@ import SearchBar from '@/components/common/SearchBar';
 import PremiumCarousel from '@/components/common/PremiumCarousel';
 import CategoryCarousel from '@/components/common/CategoryCarousel';
 import SponsorsGrid from '@/components/common/SponsorsGrid';
+import VideoPlayer from '@/components/common/VideoPlayer';
 
 export default function Home() {
   const [availableBusinesses, setAvailableBusinesses] = useState<Business[]>([]);
@@ -54,6 +55,10 @@ export default function Home() {
           <h2 className="text-xl font-bold font-headline">Patrocinadores</h2>
         </div>
         <SponsorsGrid />
+      </section>
+
+      <section className="mt-8 mb-4">
+        <VideoPlayer />
       </section>
 
     </div>
