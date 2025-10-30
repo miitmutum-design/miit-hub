@@ -3,7 +3,6 @@
 'use client';
 
 import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -13,9 +12,8 @@ import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import React from 'react';
 
-const SearchResults = () => {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || 'Serviços';
+const SearchResults = ({ searchParams }: { searchParams: { q?: string } }) => {
+  const query = searchParams.q || 'Serviços';
 
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 
@@ -71,13 +69,13 @@ const SearchResults = () => {
   );
 };
 
-const ServicesPageContent = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const ServicesPageContent = ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
     const unwrappedSearchParams = React.use(searchParams);
-    return <SearchResults />;
+    return <SearchResults searchParams={unwrappedSearchParams as { q?: string }} />;
 }
 
 
-export default function ServicesPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function ServicesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     return (
         <Suspense fallback={<div>Carregando...</div>}>
             <ServicesPageContent searchParams={searchParams} />
