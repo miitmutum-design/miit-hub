@@ -3,7 +3,6 @@
 'use client';
 
 import { getBusinessById, businessOffers, businessEvents } from '@/lib/data';
-import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Star, MapPin, Clock, Phone, ArrowLeft, Bookmark, Share2, Globe, Info, Gift, Calendar, Ticket, Navigation, Building, Zap, ZapOff, Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
