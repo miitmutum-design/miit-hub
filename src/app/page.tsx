@@ -41,6 +41,10 @@ export default function Home() {
       </div>
 
       <section className="mb-8">
+          <SponsorsGrid />
+      </section>
+
+      <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold font-headline">Categorias</h2>
               <Link href="/categoria">
@@ -48,10 +52,6 @@ export default function Home() {
               </Link>
           </div>
           <CategoryCarousel />
-      </section>
-
-      <section className="mb-8">
-          <SponsorsGrid />
       </section>
 
       <section>
