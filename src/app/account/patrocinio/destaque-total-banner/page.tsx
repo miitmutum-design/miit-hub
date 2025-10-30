@@ -2,18 +2,19 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, Type } from 'lucide-react';
+import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useCompany } from '@/contexts/CompanyContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 
 export default function DestaqueTotalBannerPage() {
@@ -24,6 +25,7 @@ export default function DestaqueTotalBannerPage() {
   const [sponsorshipType, setSponsorshipType] = useState('empresa');
   const [destinationUrl, setDestinationUrl] = useState('');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
+  const [linkType, setLinkType] = useState('site');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -128,6 +130,33 @@ export default function DestaqueTotalBannerPage() {
                 />
             </div>
             
+            <div className="space-y-4">
+                <label className="text-sm font-medium text-muted-foreground">
+                    Tipo de Link de Destino
+                </label>
+                <RadioGroup value={linkType} onValueChange={setLinkType} className="grid grid-cols-3 gap-4">
+                    <div>
+                        <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
+                        <Label htmlFor="whatsapp" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                            WhatsApp
+                        </Label>
+                    </div>
+                    <div>
+                        <RadioGroupItem value="instagram" id="instagram" className="peer sr-only" />
+                        <Label htmlFor="instagram" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                            Instagram
+                        </Label>
+                    </div>
+                    <div>
+                        <RadioGroupItem value="site" id="site" className="peer sr-only" />
+                        <Label htmlFor="site" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                            Site
+                        </Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
+
             <div className="space-y-2">
                 <label htmlFor="destination-url" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <LinkIcon className="h-5 w-5"/>
@@ -168,3 +197,5 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
+    
