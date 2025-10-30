@@ -434,3 +434,5 @@ export default function BusinessPage() {
     </div>
   );
 }
+
+    
