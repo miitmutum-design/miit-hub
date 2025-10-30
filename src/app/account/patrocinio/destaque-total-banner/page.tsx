@@ -22,8 +22,6 @@ export default function DestaqueTotalBannerPage() {
   const { companyProfile } = useCompany();
 
   const [sponsorshipType, setSponsorshipType] = useState('empresa');
-  const [bannerTitle, setBannerTitle] = useState('');
-  const [bannerSubtitle, setBannerSubtitle] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
@@ -42,7 +40,7 @@ export default function DestaqueTotalBannerPage() {
   };
 
   const handleSubmit = () => {
-    if (!bannerSubtitle || !destinationUrl || !bannerImage) {
+    if (!destinationUrl || !bannerImage) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios",
@@ -54,8 +52,6 @@ export default function DestaqueTotalBannerPage() {
     console.log({
         companyId: companyProfile.id,
         sponsorshipType,
-        bannerTitle,
-        bannerSubtitle,
         destinationUrl,
         bannerImage,
     });
@@ -132,21 +128,6 @@ export default function DestaqueTotalBannerPage() {
                 />
             </div>
             
-            <div className="space-y-2">
-                <label htmlFor="banner-subtitle" className="text-sm font-medium text-muted-foreground">
-                    Texto Secundário do Banner (Slogan)
-                </label>
-                <Input 
-                    id="banner-subtitle" 
-                    placeholder="Ex: Qualidade e Segurança!" 
-                    maxLength={80} 
-                    className="bg-card border-border/50 h-12"
-                    value={bannerSubtitle}
-                    onChange={(e) => setBannerSubtitle(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground text-right">80 caracteres máx.</p>
-            </div>
-
             <div className="space-y-2">
                 <label htmlFor="destination-url" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <LinkIcon className="h-5 w-5"/>
