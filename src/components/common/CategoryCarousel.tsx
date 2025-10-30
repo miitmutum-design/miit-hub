@@ -18,11 +18,11 @@ const CategoryCarousel: React.FC = () => {
 
     return (
         <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-4 -ml-4 pl-4">
+            <div className="flex gap-3 -ml-4 pl-4">
                 {categories.map((category) => {
                     const Icon = category.icon as LucideIcon;
                     return (
-                        <div key={category.name} className="flex-[0_0_auto] w-2/5 md:w-1/4">
+                        <div key={category.name} className="flex-[0_0_auto] w-28">
                              <Link href={`/servicos?q=${category.name}`} className="block h-full">
                                 <Card className="group h-full cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 bg-card">
                                     <CardContent className="flex flex-col items-center justify-center p-4 gap-2">

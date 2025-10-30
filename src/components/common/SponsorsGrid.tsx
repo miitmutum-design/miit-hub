@@ -20,24 +20,24 @@ const SponsorsGrid: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
-      {displaySponsors.map((sponsor) => {
+    <div className="grid grid-cols-3 gap-3">
+      {displaySponsors.slice(0, 9).map((sponsor) => {
         const Icon = sponsor.icon;
         const isClickable = sponsor.businessId !== '#';
 
         const cardContent = (
             <Card
               className={cn(
-                "group h-full overflow-hidden text-center transition-all duration-300 bg-card",
+                "group h-full overflow-hidden text-center transition-all duration-300 bg-card aspect-[3/4]",
                 isClickable && "cursor-pointer hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50"
               )}
             >
-              <CardContent className="flex flex-col items-center justify-center p-4 gap-2">
-                <div className="bg-primary/10 p-4 rounded-lg">
-                  <Icon className={cn("h-7 w-7 text-primary transition-transform group-hover:scale-110", !isClickable && "text-muted-foreground")} />
+              <CardContent className="flex flex-col items-center justify-center p-2 sm:p-4 gap-2 h-full">
+                <div className="bg-primary/10 p-3 sm:p-4 rounded-lg">
+                  <Icon className={cn("h-6 w-6 sm:h-7 sm:w-7 text-primary transition-transform group-hover:scale-110", !isClickable && "text-muted-foreground")} />
                 </div>
                 <div className="flex flex-col">
-                  <p className={cn("font-semibold text-sm text-center text-foreground", !isClickable && "text-muted-foreground")}>
+                  <p className={cn("font-semibold text-xs sm:text-sm text-center text-foreground", !isClickable && "text-muted-foreground")}>
                     {sponsor.name}
                   </p>
                 </div>
