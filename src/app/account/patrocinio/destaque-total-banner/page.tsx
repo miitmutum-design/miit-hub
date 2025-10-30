@@ -201,30 +201,18 @@ export default function DestaqueTotalBannerPage() {
         </div>
 
         <Card className="bg-card">
-          <CardHeader className="p-4">
+          <CardHeader className="p-4 flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
-              <p className="text-3xl font-bold text-primary">{companyProfile.tokens} Tokens</p>
-            </div>
             <Link href="/account/subscription">
-                <Button variant="outline">
+                <Button variant="outline" size="sm">
                     Recarregar
                 </Button>
             </Link>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
+              <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
+              <p className="text-3xl font-bold text-primary">{companyProfile.tokens} Tokens</p>
           </CardContent>
-        </Card>
-
-        <Card className="bg-lime-900/30 border-lime-400/50 mt-8">
-            <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                    <p className="text-sm text-muted-foreground">Custo Estimado</p>
-                    <p className="text-xl font-bold text-lime-400">{estimatedCost}</p>
-                </div>
-                <DollarSign className="w-8 h-8 text-lime-400/80" />
-            </CardContent>
         </Card>
 
         <div className="pt-8 pb-24">
