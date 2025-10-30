@@ -22,10 +22,12 @@ import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import LoginModal from '@/components/common/LoginModal';
 import { getOfferById, type Offer } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
-export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
-  const offer = getOfferById(params.offerId); 
+export default function OfferDetailPage() {
+  const params = useParams();
+  const offerId = params.offerId as string;
+  const offer = getOfferById(offerId); 
 
   const { toast } = useToast();
   const { companyProfile, claimedOffers, claimOffer } = useCompany();
