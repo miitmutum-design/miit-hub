@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -9,6 +10,7 @@ import { businesses } from '@/lib/data';
 import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
+import React from 'react';
 
 const SearchResults = () => {
   const searchParams = useSearchParams();
