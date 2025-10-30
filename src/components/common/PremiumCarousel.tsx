@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
@@ -20,49 +20,59 @@ type Ad = {
 };
 
 const mockAds: Ad[] = [
-  // {
-  //   id: 1,
-  //   imageUrl: 'https://picsum.photos/seed/ad1/1200/600',
-  //   imageHint: 'modern restaurant',
-  //   title: 'Restaurante Sabor Divino',
-  //   subtitle: 'Nova filial no centro!',
-  //   link: 'https://www.google.com/maps/search/?api=1&query=Restaurante+Sabor+Divino',
-  //   linkType: 'external',
-  // },
-  // {
-  //   id: 2,
-  //   imageUrl: 'https://picsum.photos/seed/ad2/1200/600',
-  //   imageHint: 'clothing store',
-  //   title: 'Estilo & Cia',
-  //   subtitle: 'Coleção de inverno com 30% OFF',
-  //   link: '/business/6', // Example internal link to a business
-  //   linkType: 'internal',
-  // },
-  // {
-  //   id: 3,
-  //   imageUrl: 'https://picsum.photos/seed/ad3/1200/600',
-  //   imageHint: 'tech gadget',
-  //   title: 'TechNova',
-  //   subtitle: 'Os melhores gadgets estão aqui',
-  //   link: 'https://tech-nova-example.com',
-  //   linkType: 'internal', // This will use the WebView
-  // },
+  {
+    id: 1,
+    imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhbmFseXRpY3N8ZW58MHx8fHwxNzYxNjg3NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'modern restaurant',
+    title: 'União Construtora',
+    subtitle: 'Qualidade e Segurança!',
+    link: '/business/1',
+    linkType: 'internal',
+  },
+  {
+    id: 2,
+    imageUrl: 'https://images.unsplash.com/photo-1573612664822-d7d347da7b80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG90aGluZyUyMGJvdXRpcXVlfGVufDB8fHx8MTc2MTY2ODQ4NHww&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'clothing store',
+    title: 'Flor de Lótus Móveis',
+    subtitle: 'Móveis com 30% OFF',
+    link: '/business/3', 
+    linkType: 'internal',
+  },
+  {
+    id: 3,
+    imageUrl: 'https://picsum.photos/seed/ad3/1200/600',
+    imageHint: 'tech gadget',
+    title: 'Bellinha Kids',
+    subtitle: 'Os melhores gadgets estão aqui',
+    link: '/business/4', 
+    linkType: 'internal',
+  },
 ];
 
-const fallbackAd = {
-  id: 0,
-  imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhbmFseXRpY3N8ZW58MHx8fHwxNzYxNjg3NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-  imageHint: 'analytics dashboard',
-  title: 'Anuncie Aqui',
-  subtitle: 'Alcance milhares de clientes',
-  link: '/account', // Link to account/subscription page for companies
-  linkType: 'internal' as const,
+// Fisher-Yates shuffle algorithm
+const shuffleArray = (array: Ad[]) => {
+  let currentIndex = array.length, randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
 };
 
 const PremiumCarousel: React.FC = () => {
-  const adsToShow = mockAds.length > 0 ? mockAds : [fallbackAd];
-  
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: adsToShow.length > 1 }, [
+  const [shuffledAds, setShuffledAds] = useState<Ad[]>([]);
+
+  useEffect(() => {
+    // Shuffle ads on initial client-side render
+    setShuffledAds(shuffleArray([...mockAds]));
+  }, []);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: shuffledAds.length > 1 }, [
     Autoplay({ delay: 4000, stopOnInteraction: true }),
   ]);
 
@@ -80,12 +90,19 @@ const PremiumCarousel: React.FC = () => {
     }
     return ad.link;
   }
+  
+  if (shuffledAds.length === 0) {
+    return (
+        <div className="relative w-full aspect-[16/8] bg-card rounded-lg animate-pulse"></div>
+    );
+  }
+
 
   return (
     <div className="relative w-full">
       <div className="overflow-hidden rounded-lg" ref={emblaRef}>
         <div className="flex">
-          {adsToShow.map((ad) => (
+          {shuffledAds.map((ad) => (
             <div key={ad.id} className="relative flex-[0_0_100%] aspect-[16/8]">
               <Link href={getHref(ad)} target={ad.linkType === 'external' ? '_blank' : '_self'}>
                 <Image
@@ -105,7 +122,7 @@ const PremiumCarousel: React.FC = () => {
         </div>
       </div>
       
-      {adsToShow.length > 1 && (
+      {shuffledAds.length > 1 && (
         <>
         <Button
           variant="ghost"
