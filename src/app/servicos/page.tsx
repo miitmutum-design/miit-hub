@@ -27,7 +27,9 @@ const SearchResults = ({ query }: { query: string }) => {
       const nameMatch = business.name.toLowerCase().includes(searchTerm);
       const categoryMatch = business.category.toLowerCase().includes(searchTerm);
 
-      return nameMatch || categoryMatch;
+      const keywordsMatch = fullProfile.searchTerms?.some(term => term.toLowerCase().includes(searchTerm));
+
+      return nameMatch || categoryMatch || keywordsMatch;
   });
 
   return (

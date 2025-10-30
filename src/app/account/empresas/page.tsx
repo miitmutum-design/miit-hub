@@ -147,12 +147,15 @@ export default function EditProfilePage() {
     });
 
     try {
-        const searchTerms = await generateSearchTerms({
+        const result = await generateSearchTerms({
             companyName: formData.name,
             category: formData.category,
             description: formData.description,
             products: formData.products,
+            location: formData.address || '',
         });
+
+        const searchTerms = result.keywords || [];
 
         const finalData = { ...formData, searchTerms };
         
