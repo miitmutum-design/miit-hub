@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle, CircleDollarSign } from 'lucide-react';
+import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle, CircleDollarSign, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -13,7 +13,6 @@ import { useCompany } from '@/contexts/CompanyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 
@@ -26,6 +25,7 @@ export default function DestaqueTotalBannerPage() {
   const [destinationUrl, setDestinationUrl] = useState('');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [linkType, setLinkType] = useState('');
+  const [tokensToSpend, setTokensToSpend] = useState(0);
 
   const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false);
   const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false);
@@ -36,6 +36,10 @@ export default function DestaqueTotalBannerPage() {
   const [siteUrl, setSiteUrl] = useState('');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
+  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && isBalanceSufficient;
+
 
   const handleImageClick = () => {
     imageInputRef.current?.click();
@@ -86,11 +90,11 @@ export default function DestaqueTotalBannerPage() {
 
 
   const handleSubmit = () => {
-    if (!destinationUrl || !bannerImage) {
+    if (!isFormValid) {
         toast({
             variant: 'destructive',
-            title: "Campos Obrigatórios",
-            description: "Por favor, configure o link de destino e faça o upload de uma imagem para o banner.",
+            title: "Campos Obrigatórios ou Saldo Insuficiente",
+            description: "Verifique se todos os campos estão preenchidos e se seu saldo de tokens é suficiente.",
         });
         return;
     }
@@ -100,17 +104,15 @@ export default function DestaqueTotalBannerPage() {
         sponsorshipType,
         destinationUrl,
         bannerImage,
+        tokensSpent: tokensToSpend,
     });
 
     toast({
         title: "Solicitação Enviada!",
-        description: "Sua solicitação de patrocínio de banner foi enviada para análise. Entraremos em contato em breve.",
+        description: `Sua solicitação de patrocínio com ${tokensToSpend} tokens foi enviada para análise.`,
     });
     router.push('/account/patrocinio');
   }
-
-  const estimatedCost = "R$ 250,00 / mês";
-
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -126,15 +128,30 @@ export default function DestaqueTotalBannerPage() {
         </h1>
       </header>
 
+      <Card className="mb-6 bg-card">
+        <CardHeader className="p-4 flex flex-row items-center justify-between">
+          <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
+          <Link href="/account/subscription">
+              <Button variant="outline" size="sm">
+                  Recarregar
+              </Button>
+          </Link>
+        </CardHeader>
+        <CardContent className="p-6 pt-0">
+            <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
+            <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
+        </CardContent>
+      </Card>
+
       <div className="text-center mb-6">
         <p className="text-muted-foreground">Qual a intenção da sua campanha no banner principal?</p>
       </div>
       
        <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
-            <TabsTrigger value="empresa" className="flex gap-2"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
-            <TabsTrigger value="ofertas" className="flex gap-2"><Gift className="h-4 w-4"/> Oferta</TabsTrigger>
-            <TabsTrigger value="eventos" className="flex gap-2"><Calendar className="h-4 w-4"/> Evento</TabsTrigger>
+            <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
+            <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Gift className="h-4 w-4"/> Oferta</TabsTrigger>
+            <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Calendar className="h-4 w-4"/> Evento</TabsTrigger>
         </TabsList>
       </Tabs>
       
@@ -200,26 +217,40 @@ export default function DestaqueTotalBannerPage() {
             </div>
         </div>
 
-        <Card className="bg-card">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
-            <Link href="/account/subscription">
-                <Button variant="outline" size="sm">
-                    Recarregar
-                </Button>
-            </Link>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-              <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
-              <p className="text-3xl font-bold text-primary">{companyProfile.tokens} Tokens</p>
-          </CardContent>
-        </Card>
+        <div className="space-y-2">
+            <label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <DollarSign className="h-5 w-5"/>
+                Tokens para Impulsionar
+            </label>
+            <Input 
+                id="tokensToSpend"
+                type="number"
+                value={tokensToSpend === 0 ? '' : tokensToSpend}
+                onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
+                placeholder="Ex: 100"
+                min="1"
+                className="bg-card border-border/50 h-12"
+            />
+             {!isBalanceSufficient && tokensToSpend > 0 && (
+                <p className="text-sm text-red-500 flex items-center gap-1.5">
+                    <AlertTriangle className="h-4 w-4" />
+                    Saldo de tokens insuficiente.
+                </p>
+            )}
+        </div>
+
 
         <div className="pt-8 pb-24">
              <Button
                 size="lg"
-                className="w-full h-12 text-lg font-bold bg-lime-500 hover:bg-lime-600 text-black"
+                className={cn(
+                  "w-full h-12 text-lg font-bold transition-colors",
+                  isFormValid
+                    ? "bg-lime-500 hover:bg-lime-600 text-black"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                )}
                 onClick={handleSubmit}
+                disabled={!isFormValid}
              >
                 <Sparkles className="mr-2 h-5 w-5"/>
                 Solicitar Patrocínio
@@ -281,3 +312,4 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
