@@ -4,13 +4,13 @@
 import React from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
-import { categories } from '@/lib/data';
+import { sponsors } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
 
-const CategoryCarousel: React.FC = () => {
+const SponsorCarousel: React.FC = () => {
     const [emblaRef] = useEmblaCarousel({
         align: 'start',
         containScroll: 'trimSnaps',
@@ -19,27 +19,45 @@ const CategoryCarousel: React.FC = () => {
     return (
         <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex gap-3 -ml-4 pl-4">
-                {categories.map((category) => {
-                    const Icon = category.icon as LucideIcon;
+                {sponsors.map((sponsor) => {
+                    const Icon = sponsor.icon as LucideIcon;
+                    const isClickable = sponsor.businessId !== '#';
+
+                    const cardContent = (
+                        <Card className={cn(
+                            "group h-full overflow-hidden transition-all duration-300 bg-card aspect-[3/4]",
+                             isClickable && "cursor-pointer hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50"
+                        )}>
+                            <CardContent className="flex flex-col items-center justify-center p-4 gap-2 h-full">
+                                <div className="bg-primary/10 p-4 rounded-lg">
+                                    <Icon className={cn(
+                                        "h-7 w-7 text-primary transition-transform group-hover:scale-110",
+                                        !isClickable && "text-muted-foreground"
+                                        )}
+                                    />
+                                </div>
+                                <div className="flex flex-col">
+                                    <p className={cn(
+                                        "font-semibold text-sm text-center text-foreground",
+                                        !isClickable && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {sponsor.name}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+                    
                     return (
-                        <div key={category.name} className="flex-[0_0_auto] w-28">
-                             <Link href={`/servicos?q=${category.name}`} className="block h-full">
-                                <Card className="group h-full cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 bg-card">
-                                    <CardContent className="flex flex-col items-center justify-center p-4 gap-2">
-                                        <div className="bg-primary/10 p-4 rounded-lg">
-                                            <Icon className="h-7 w-7 text-primary transition-transform group-hover:scale-110" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <p className="font-semibold text-sm text-center text-foreground">
-                                                {category.name}
-                                            </p>
-                                             <p className="text-xs text-muted-foreground text-center">
-                                                {category.count} empresas
-                                            </p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </Link>
+                         <div key={sponsor.id} className="flex-[0_0_auto] w-28">
+                             {isClickable ? (
+                                <Link href={`/business/${sponsor.businessId}`} className="block h-full">
+                                    {cardContent}
+                                </Link>
+                             ) : (
+                                <div>{cardContent}</div>
+                             )}
                         </div>
                     );
                 })}
@@ -48,4 +66,4 @@ const CategoryCarousel: React.FC = () => {
     );
 };
 
-export default CategoryCarousel;
+export default SponsorCarousel;
