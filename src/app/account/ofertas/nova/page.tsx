@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent, useTransition, useEffect } from 'react';
-import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift, Building, Sparkles, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift, Building, Sparkles, Loader2, RefreshCw, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -27,6 +27,7 @@ export default function CreateNewOfferPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [limitPerUser, setLimitPerUser] = useState(1);
 
     const [isGeneratingDesc, startDescTransition] = useTransition();
     const [isGeneratingCode, startCodeTransition] = useTransition();
@@ -128,6 +129,15 @@ export default function CreateNewOfferPage() {
             });
             return;
         }
+        
+        if (limitPerUser < 1) {
+            toast({
+                variant: 'destructive',
+                title: 'Limite Inválido',
+                description: 'O limite de uso por consumidor deve ser de no mínimo 1.',
+            });
+            return;
+        }
 
         // Here you would typically send the data to your backend
         console.log({ 
@@ -135,6 +145,7 @@ export default function CreateNewOfferPage() {
             companyName: companyProfile.name,
             title, 
             couponCode,
+            limitPerUser,
             description, 
             discount, 
             startDate, 
@@ -212,6 +223,21 @@ export default function CreateNewOfferPage() {
             )}
         </div>
 
+        <div className="space-y-2">
+            <label htmlFor="limitPerUser" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <UserCheck className="w-5 h-5"/>
+                Limite de Uso por Consumidor
+            </label>
+            <Input 
+              id="limitPerUser" 
+              type="number"
+              value={limitPerUser} 
+              onChange={(e) => setLimitPerUser(parseInt(e.target.value, 10) || 1)} 
+              min={1}
+              className="bg-card border-border/50 h-12" 
+            />
+            <p className="text-xs text-muted-foreground">Defina o número máximo de vezes que um mesmo consumidor poderá resgatar esta oferta.</p>
+        </div>
 
         <div className="space-y-2">
           <label htmlFor="discount" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
