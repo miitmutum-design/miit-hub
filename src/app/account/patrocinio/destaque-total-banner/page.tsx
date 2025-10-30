@@ -212,6 +212,20 @@ export default function DestaqueTotalBannerPage() {
       </Tabs>
       
       <div className="space-y-6">
+        <div className="space-y-2">
+            <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Info className="h-5 w-5"/>
+                Nome para o Banner <span className="text-red-500">*</span>
+            </label>
+            <Input 
+                id="bannerName"
+                type="text"
+                value={bannerName}
+                onChange={(e) => setBannerName(e.target.value)}
+                placeholder="Nome que aparecerá no banner"
+                className="bg-card border-border/50 h-12"
+            />
+        </div>
         <div className="space-y-6">
             <div className="space-y-2">
                 <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -303,22 +317,6 @@ export default function DestaqueTotalBannerPage() {
                 </p>
             )}
         </div>
-
-        <div className="space-y-2">
-            <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Info className="h-5 w-5"/>
-                Nome da Empresa <span className="text-red-500">*</span>
-            </label>
-            <Input 
-                id="bannerName"
-                type="text"
-                value={bannerName}
-                onChange={(e) => setBannerName(e.target.value)}
-                placeholder="Nome que aparecerá no banner"
-                className="bg-card border-border/50 h-12"
-            />
-        </div>
-
 
         <div className="pt-8 pb-24">
              <Button
@@ -432,3 +430,5 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
+    
