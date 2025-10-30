@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
 import { sponsors } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,39 +9,25 @@ import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 import type { Sponsor } from '@/lib/data';
 
-// Fisher-Yates shuffle algorithm to randomize array order
 const shuffleArray = (array: Sponsor[]) => {
   let currentIndex = array.length,  randomIndex;
-
-  // While there remain elements to shuffle.
   while (currentIndex !== 0) {
-    // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
-
-    // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex], array[currentIndex]];
   }
-
   return array;
 };
 
 
 const SponsorCarousel: React.FC = () => {
-    const [emblaRef] = useEmblaCarousel({
-        align: 'start',
-        containScroll: 'trimSnaps',
-    });
-
     const [shuffledSponsors, setShuffledSponsors] = useState<Sponsor[]>([]);
 
     useEffect(() => {
-        // Shuffle sponsors on initial client-side render
         setShuffledSponsors(shuffleArray([...sponsors]));
     }, []);
 
-    // Display a loading skeleton or nothing until the client-side shuffle is complete
     if (shuffledSponsors.length === 0) {
         return (
             <div className="overflow-hidden">
@@ -56,11 +41,13 @@ const SponsorCarousel: React.FC = () => {
             </div>
         );
     }
+    
+    const sponsorList = [...shuffledSponsors, ...shuffledSponsors];
 
     return (
-        <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-3 -ml-4 pl-4">
-                {shuffledSponsors.map((sponsor) => {
+        <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+            <ul className="flex items-center justify-center md:justify-start [&_li]:mx-2 animate-marquee hover:[animation-play-state:paused]">
+                {sponsorList.map((sponsor, index) => {
                     const Icon = sponsor.icon as LucideIcon;
                     const isClickable = sponsor.businessId !== '#';
 
@@ -91,7 +78,7 @@ const SponsorCarousel: React.FC = () => {
                     );
                     
                     return (
-                         <div key={sponsor.id} className="flex-[0_0_auto] w-28">
+                         <li key={`${sponsor.id}-${index}`} className="flex-[0_0_auto] w-28">
                              {isClickable ? (
                                 <Link href={`/business/${sponsor.businessId}`} className="block h-full">
                                     {cardContent}
@@ -99,10 +86,10 @@ const SponsorCarousel: React.FC = () => {
                              ) : (
                                 <div>{cardContent}</div>
                              )}
-                        </div>
+                        </li>
                     );
                 })}
-            </div>
+            </ul>
         </div>
     );
 };
