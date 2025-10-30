@@ -65,7 +65,7 @@ export default function AdminDashboardLayout({
             <SidebarContent className="p-2">
                 <SidebarMenu>
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                         return (
                         <SidebarMenuItem key={item.href}>
                             <Link href={item.href}>

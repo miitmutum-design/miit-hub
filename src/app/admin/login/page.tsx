@@ -14,7 +14,8 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const { toast } = useToast();
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     // Hardcoded credentials for simulation
     if (email === 'admin@app.com' && password === 'senha123') {
       // In a real app, you'd get a token from your auth server
@@ -37,12 +38,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleLogin();
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-sm">
@@ -54,7 +49,7 @@ export default function AdminLoginPage() {
           <CardDescription>Faça login para gerenciar o conteúdo do aplicativo.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -63,7 +58,6 @@ export default function AdminLoginPage() {
                 placeholder="admin@app.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={handleKeyPress}
                 required
               />
             </div>
@@ -72,16 +66,16 @@ export default function AdminLoginPage() {
               <Input
                 id="password"
                 type="password"
+                placeholder="senha123"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handleKeyPress}
                 required
               />
             </div>
-          </div>
-          <Button onClick={handleLogin} className="w-full mt-6 h-12 bg-lime-500 hover:bg-lime-600 text-black font-bold">
-            Entrar
-          </Button>
+            <Button type="submit" className="w-full mt-6 h-12 bg-lime-500 hover:bg-lime-600 text-black font-bold">
+                Entrar
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
