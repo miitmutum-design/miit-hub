@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle, CircleDollarSign, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, CircleDollarSign, AlertTriangle, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,27 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
+import { Calendar } from "@/components/ui/calendar"
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+// Mock function to check for available slots. In a real app, this would query Firestore.
+const checkAvailability = async (date: Date): Promise<boolean> => {
+  // For demonstration, let's assume today is always fully booked.
+  const today = new Date();
+  if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+    return false; // No slots available today
+  }
+  return true; // Slots available on other days
+};
+
+// Mock list of fully booked dates
+const disabledDates = [
+  new Date(), // Today is booked
+  new Date(new Date().setDate(new Date().getDate() + 5)),
+  new Date(new Date().setDate(new Date().getDate() + 6)),
+];
+
 
 export default function DestaqueTotalBannerPage() {
   const { toast } = useToast();
@@ -34,6 +55,10 @@ export default function DestaqueTotalBannerPage() {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [instagramHandle, setInstagramHandle] = useState('');
   const [siteUrl, setSiteUrl] = useState('');
+  
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -89,8 +114,25 @@ export default function DestaqueTotalBannerPage() {
       toast({ title: 'Link do Site Salvo!'});
   }
 
+  const sendSponsorshipRequest = () => {
+    console.log({
+        companyId: companyProfile.id,
+        sponsorshipType,
+        destinationUrl,
+        bannerImage,
+        tokensSpent: tokensToSpend,
+        sponsorshipDays: sponsorshipDays,
+        startDate: selectedDate || new Date(),
+    });
 
-  const handleSubmit = () => {
+    toast({
+        title: "Solicitação Enviada!",
+        description: `Sua solicitação de patrocínio com ${tokensToSpend} tokens foi enviada para análise.`,
+    });
+    router.push('/account/patrocinio');
+  }
+
+  const handleSubmit = async () => {
     if (!isFormValid) {
         toast({
             variant: 'destructive',
@@ -100,21 +142,31 @@ export default function DestaqueTotalBannerPage() {
         return;
     }
     
-    console.log({
-        companyId: companyProfile.id,
-        sponsorshipType,
-        destinationUrl,
-        bannerImage,
-        tokensSpent: tokensToSpend,
-        sponsorshipDays: sponsorshipDays,
-    });
+    setIsSubmitting(true);
+    const startDate = selectedDate || new Date();
+    const isAvailable = await checkAvailability(startDate);
+    setIsSubmitting(false);
 
-    toast({
-        title: "Solicitação Enviada!",
-        description: `Sua solicitação de patrocínio com ${tokensToSpend} tokens foi enviada para análise.`,
-    });
-    router.push('/account/patrocinio');
+    if (isAvailable) {
+        sendSponsorshipRequest();
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Vagas Esgotadas!",
+            description: "Não há vagas para hoje. Por favor, agende uma data futura.",
+        });
+        setIsCalendarModalOpen(true);
+    }
   }
+
+  const handleScheduleAndSubmit = () => {
+    if (!selectedDate) {
+      toast({ variant: 'destructive', title: 'Nenhuma data selecionada' });
+      return;
+    }
+    setIsCalendarModalOpen(false);
+    sendSponsorshipRequest();
+  };
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -152,8 +204,8 @@ export default function DestaqueTotalBannerPage() {
        <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
             <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
-            <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Gift className="h-4 w-4"/> Oferta</TabsTrigger>
-            <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Calendar className="h-4 w-4"/> Evento</TabsTrigger>
+            <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Oferta</TabsTrigger>
+            <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Evento</TabsTrigger>
         </TabsList>
       </Tabs>
       
@@ -261,10 +313,10 @@ export default function DestaqueTotalBannerPage() {
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 )}
                 onClick={handleSubmit}
-                disabled={!isFormValid}
+                disabled={!isFormValid || isSubmitting}
              >
-                <Sparkles className="mr-2 h-5 w-5"/>
-                Solicitar Patrocínio
+                {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
+                {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
             </Button>
         </div>
       </div>
@@ -318,6 +370,46 @@ export default function DestaqueTotalBannerPage() {
                 <Button onClick={handleSaveSite}>Salvar Link</Button>
             </DialogFooter>
         </DialogContent>
+      </Dialog>
+
+      {/* Calendar Modal */}
+      <Dialog open={isCalendarModalOpen} onOpenChange={setIsCalendarModalOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                  <DialogTitle>Agendar Patrocínio</DialogTitle>
+                  <DialogDescription>
+                      As vagas para a data de hoje estão esgotadas. Por favor, escolha uma data de início futura para sua campanha.
+                  </DialogDescription>
+              </DialogHeader>
+              <div className="py-4 flex justify-center">
+                  <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      disabled={(date) =>
+                          date < new Date(new Date().setDate(new Date().getDate() - 1)) || 
+                          disabledDates.some(disabledDate => 
+                            date.getFullYear() === disabledDate.getFullYear() &&
+                            date.getMonth() === disabledDate.getMonth() &&
+                            date.getDate() === disabledDate.getDate()
+                          )
+                      }
+                      initialFocus
+                      locale={ptBR}
+                  />
+              </div>
+              <DialogFooter>
+                   <Button
+                      type="button"
+                      onClick={handleScheduleAndSubmit}
+                      disabled={!selectedDate}
+                      className="w-full bg-lime-500 hover:bg-lime-600 text-black"
+                  >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      Agendar para {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '...'}
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
       </Dialog>
 
     </div>
