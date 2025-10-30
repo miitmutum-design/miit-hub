@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, CircleDollarSign, AlertTriangle, Calendar as CalendarIcon, Loader2, Info } from 'lucide-react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -230,7 +230,7 @@ export default function DestaqueTotalBannerPage() {
             <div className="space-y-2">
                 <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Upload className="h-5 w-5"/>
-                    Imagem do Banner (1920x1080px)
+                    Imagem do Banner (1920x1080px) <span className="text-red-500">*</span>
                 </label>
                  <button
                     type="button"
