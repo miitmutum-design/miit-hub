@@ -155,21 +155,6 @@ export default function DestaqueTotalBannerPage() {
                     </div>
                 </RadioGroup>
             </div>
-
-
-            <div className="space-y-2">
-                <label htmlFor="destination-url" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <LinkIcon className="h-5 w-5"/>
-                    Link de Destino do Banner
-                </label>
-                <Input 
-                    id="destination-url" 
-                    placeholder="Cole a URL do seu Site, WhatsApp ou Instagram" 
-                    className="bg-card border-border/50 h-12"
-                    value={destinationUrl}
-                    onChange={(e) => setDestinationUrl(e.target.value)}
-                />
-            </div>
         </div>
 
         {/* Cost and Submit Button */}
@@ -197,5 +182,3 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
-
-    
