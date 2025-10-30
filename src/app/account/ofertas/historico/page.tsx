@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Gift, Trash2, CheckCircle, XCircle, Pencil, Copy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation';
 
 
 // Mock data for offers
-const mockOffers = [
+export const mockOffers = [
     { id: '1', title: '20% OFF em Cafés', description: 'Qualquer café do cardápio com 20% de desconto.', startDate: '2024-07-01', endDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(), status: 'Vigente', imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2ZmZWUlMjBzaG9wfGVufDB8fHx8MTc2MTYwMDgwOHww&ixlib=rb-4.1.0&q=80&w=1080', discount: '20%' },
     { id: '2', title: 'Compre 1 Leve 2 em Salgados', description: 'Na compra de qualquer salgado, o segundo é por nossa conta.', startDate: '2024-08-01', endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), status: 'Vigente', imageUrl: null, discount: '50%' },
     { id: '3', title: 'Promoção Dia dos Pais', description: 'Traga seu pai e o café dele é de graça.', startDate: '2024-06-10', endDate: '2024-06-16', status: 'Expirada', imageUrl: null, discount: 'R$15' },
@@ -38,6 +38,13 @@ const OfferCard = ({ offer, onDelete }: { offer: typeof mockOffers[0], onDelete:
     const isExpired = new Date(offer.endDate) < new Date();
     const { toast } = useToast();
     const router = useRouter();
+    const [formattedDates, setFormattedDates] = useState('');
+
+    useEffect(() => {
+        const start = new Date(offer.startDate).toLocaleDateString();
+        const end = new Date(offer.endDate).toLocaleDateString();
+        setFormattedDates(`${start} - ${end}`);
+    }, [offer.startDate, offer.endDate]);
 
     const handleDuplicate = () => {
         toast({
@@ -85,7 +92,7 @@ const OfferCard = ({ offer, onDelete }: { offer: typeof mockOffers[0], onDelete:
                         <div className="flex items-center gap-4 text-muted-foreground">
                             <div className="flex items-center gap-1.5">
                                 <Calendar className="w-4 h-4" />
-                                <span>{new Date(offer.startDate).toLocaleDateString()} - {new Date(offer.endDate).toLocaleDateString()}</span>
+                                <span>{formattedDates}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
