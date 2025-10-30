@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
@@ -70,8 +69,7 @@ const SearchResults = ({ query }: { query: string }) => {
 };
 
 
-export default async function ServicesPage({ searchParams }: { searchParams: Promise<{ q: string }> }) {
-    const params = await searchParams;
-    const query = params.q || 'Serviços';
+export default async function ServicesPage({ searchParams }: { searchParams: { q?: string } }) {
+    const query = searchParams?.q || 'Serviços';
     return <SearchResults query={query} />;
 }
