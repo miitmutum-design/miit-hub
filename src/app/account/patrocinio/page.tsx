@@ -78,7 +78,7 @@ export default function SponsorshipPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-cyan-400">
                             <Sparkles className="w-6 h-6" />
-                            Vitrine de Patrocinadores V1
+                            Vitrine de Carrossel
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                            Garanta uma das 8 posições em rotação justa, logo abaixo da busca principal.
