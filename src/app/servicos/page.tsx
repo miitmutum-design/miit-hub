@@ -70,7 +70,8 @@ const SearchResults = ({ query }: { query: string }) => {
 };
 
 
-export default function ServicesPage({ searchParams }: { searchParams: { q: string } }) {
-    const query = searchParams.q || 'Serviços';
+export default async function ServicesPage({ searchParams }: { searchParams: Promise<{ q: string }> }) {
+    const params = await searchParams;
+    const query = params.q || 'Serviços';
     return <SearchResults query={query} />;
 }
