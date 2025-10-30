@@ -274,7 +274,7 @@ export default function CreateNewOfferPage() {
         <div className="space-y-2">
           <label htmlFor="description" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <FileText className="w-5 h-5"/>
-            Descrição
+            Descrição da Oferta
           </label>
           <Textarea 
             id="description" 
