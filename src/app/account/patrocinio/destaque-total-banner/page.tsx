@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle, CircleDollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { useCompany } from '@/contexts/CompanyContext';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -199,6 +199,23 @@ export default function DestaqueTotalBannerPage() {
                 </div>
             </div>
         </div>
+
+        <Card className="bg-card">
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
+              <p className="text-3xl font-bold text-primary">{companyProfile.tokens} Tokens</p>
+            </div>
+            <Link href="/account/subscription">
+                <Button variant="outline">
+                    Recarregar
+                </Button>
+            </Link>
+          </CardContent>
+        </Card>
 
         <Card className="bg-lime-900/30 border-lime-400/50 mt-8">
             <CardContent className="p-4 flex items-center justify-between">
