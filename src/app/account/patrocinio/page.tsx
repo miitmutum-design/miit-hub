@@ -88,29 +88,6 @@ export default function SponsorshipPage() {
             </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Quero Patrocinar</CardTitle>
-                    <CardDescription>
-                        Envie uma mensagem para nossa equipe comercial. Nós entraremos em contato para finalizar a contratação.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Textarea 
-                        placeholder="Ex: Gostaria de saber mais sobre o plano Destaque Total..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        className="min-h-[100px]"
-                    />
-                     <Button size="lg" className="w-full mt-4 h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold" type="submit">
-                        <Send className="mr-2 h-5 w-5"/>
-                        Enviar Solicitação
-                    </Button>
-                </CardContent>
-            </Card>
-        </form>
-
       </div>
     </div>
   );
