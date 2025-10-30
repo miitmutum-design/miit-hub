@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Building, Gift, Calendar, Upload, DollarSign, Sparkles, Link as LinkIcon, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 
 export default function DestaqueTotalBannerPage() {
   const { toast } = useToast();
@@ -25,7 +25,15 @@ export default function DestaqueTotalBannerPage() {
   const [sponsorshipType, setSponsorshipType] = useState('empresa');
   const [destinationUrl, setDestinationUrl] = useState('');
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const [linkType, setLinkType] = useState('site');
+  const [linkType, setLinkType] = useState('');
+
+  const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false);
+  const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false);
+  const [isSiteModalOpen, setIsSiteModalOpen] = useState(false);
+
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [instagramHandle, setInstagramHandle] = useState('');
+  const [siteUrl, setSiteUrl] = useState('');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,13 +48,49 @@ export default function DestaqueTotalBannerPage() {
       setBannerImage(placeholderUrl);
     }
   };
+  
+  const handleSaveWhatsapp = () => {
+      const cleaned = whatsappNumber.replace(/\D/g, '');
+      if (cleaned.length < 10) {
+          toast({ variant: 'destructive', title: 'Número Inválido', description: 'Por favor, insira um número de WhatsApp válido com DDD.' });
+          return;
+      }
+      setDestinationUrl(`https://wa.me/55${cleaned}`);
+      setLinkType('whatsapp');
+      setIsWhatsappModalOpen(false);
+      toast({ title: 'Link do WhatsApp Salvo!'});
+  }
+  
+  const handleSaveInstagram = () => {
+      const cleaned = instagramHandle.replace('@', '');
+      if (!cleaned) {
+          toast({ variant: 'destructive', title: 'Usuário Inválido', description: 'Por favor, insira seu nome de usuário do Instagram.' });
+          return;
+      }
+      setDestinationUrl(`https://instagram.com/${cleaned}`);
+      setLinkType('instagram');
+      setIsInstagramModalOpen(false);
+      toast({ title: 'Link do Instagram Salvo!'});
+  }
+
+  const handleSaveSite = () => {
+       if (!siteUrl.startsWith('http')) {
+          toast({ variant: 'destructive', title: 'URL Inválida', description: 'Por favor, insira uma URL completa (ex: https://...).' });
+          return;
+      }
+      setDestinationUrl(siteUrl);
+      setLinkType('site');
+      setIsSiteModalOpen(false);
+      toast({ title: 'Link do Site Salvo!'});
+  }
+
 
   const handleSubmit = () => {
     if (!destinationUrl || !bannerImage) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios",
-            description: "Por favor, preencha todos os campos do formulário, incluindo a imagem.",
+            description: "Por favor, configure o link de destino e faça o upload de uma imagem para o banner.",
         });
         return;
     }
@@ -95,7 +139,6 @@ export default function DestaqueTotalBannerPage() {
       </Tabs>
       
       <div className="space-y-6">
-        {/* Unified Form */}
         <div className="space-y-6">
             <div className="space-y-2">
                 <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -134,31 +177,30 @@ export default function DestaqueTotalBannerPage() {
                 <label className="text-sm font-medium text-muted-foreground">
                     Tipo de Link de Destino
                 </label>
-                <RadioGroup value={linkType} onValueChange={setLinkType} className="grid grid-cols-3 gap-4">
-                    <div>
-                        <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
-                        <Label htmlFor="whatsapp" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                <div className="grid grid-cols-3 gap-4">
+                    <div onClick={() => setIsWhatsappModalOpen(true)}>
+                        <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
                             WhatsApp
+                            {linkType === 'whatsapp' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                         </Label>
                     </div>
-                    <div>
-                        <RadioGroupItem value="instagram" id="instagram" className="peer sr-only" />
-                        <Label htmlFor="instagram" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                     <div onClick={() => setIsInstagramModalOpen(true)}>
+                        <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
                             Instagram
+                            {linkType === 'instagram' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                         </Label>
                     </div>
-                    <div>
-                        <RadioGroupItem value="site" id="site" className="peer sr-only" />
-                        <Label htmlFor="site" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                     <div onClick={() => setIsSiteModalOpen(true)}>
+                        <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
                             Site
+                            {linkType === 'site' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                         </Label>
                     </div>
-                </RadioGroup>
+                </div>
             </div>
         </div>
 
-        {/* Cost and Submit Button */}
-         <Card className="bg-lime-900/30 border-lime-400/50 mt-8">
+        <Card className="bg-lime-900/30 border-lime-400/50 mt-8">
             <CardContent className="p-4 flex items-center justify-between">
                 <div>
                     <p className="text-sm text-muted-foreground">Custo Estimado</p>
@@ -179,6 +221,58 @@ export default function DestaqueTotalBannerPage() {
             </Button>
         </div>
       </div>
+      
+      {/* WhatsApp Modal */}
+      <Dialog open={isWhatsappModalOpen} onOpenChange={setIsWhatsappModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Configurar Link do WhatsApp</DialogTitle>
+                <DialogDescription>Insira o número de telefone completo (com DDD) que os clientes usarão para entrar em contato.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Label htmlFor="whatsapp-number">Número do WhatsApp</Label>
+                <Input id="whatsapp-number" type="tel" placeholder="(XX) XXXXX-XXXX" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} />
+            </div>
+            <DialogFooter>
+                <Button onClick={handleSaveWhatsapp}>Salvar Link</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Instagram Modal */}
+       <Dialog open={isInstagramModalOpen} onOpenChange={setIsInstagramModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Configurar Link do Instagram</DialogTitle>
+                <DialogDescription>Insira o seu nome de usuário (handle) do Instagram para direcionar os clientes ao seu perfil.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Label htmlFor="instagram-handle">Usuário do Instagram</Label>
+                <Input id="instagram-handle" placeholder="@seuusuario" value={instagramHandle} onChange={e => setInstagramHandle(e.target.value)} />
+            </div>
+            <DialogFooter>
+                <Button onClick={handleSaveInstagram}>Salvar Link</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Site Modal */}
+      <Dialog open={isSiteModalOpen} onOpenChange={setIsSiteModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Configurar Link do Site</DialogTitle>
+                <DialogDescription>Insira a URL completa do seu site, landing page ou link externo.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Label htmlFor="site-url">URL do Site</Label>
+                <Input id="site-url" type="url" placeholder="https://seusite.com.br" value={siteUrl} onChange={e => setSiteUrl(e.target.value)} />
+            </div>
+            <DialogFooter>
+                <Button onClick={handleSaveSite}>Salvar Link</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
