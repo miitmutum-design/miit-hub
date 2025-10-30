@@ -8,7 +8,6 @@ export function middleware(request: NextRequest) {
   }
 
   // Simple mock authentication check for admin routes
-  // In a real app, you'd verify a JWT or session cookie
   const isAdminAuthenticated = request.cookies.get('admin-auth')?.value === 'true';
 
   if (request.nextUrl.pathname.startsWith('/admin') && !isAdminAuthenticated) {

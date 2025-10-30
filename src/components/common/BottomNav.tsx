@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Ticket, User, Shapes, Building, Shield } from 'lucide-react';
+import { Home, Ticket, User, Shapes, Building } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useState } from 'react';
@@ -27,11 +28,10 @@ export default function BottomNav() {
       icon: isCompany ? Building : User, 
       label: isCompany ? 'Empresa' : 'Conta' 
     },
-    { href: '/admin', icon: Shield, label: 'Admin' }
   ];
 
   const handleAccountClick = (e: React.MouseEvent, href: string) => {
-    if (!isUserAuthenticated && (href === '/account' || href === '/admin')) {
+    if (!isUserAuthenticated && (href === '/account')) {
       e.preventDefault();
       setIsLoginModalOpen(true);
     }
@@ -39,9 +39,7 @@ export default function BottomNav() {
 
   const handleLoginSuccess = () => {
     setIsLoginModalOpen(false);
-    // check if the attempted route was admin, otherwise default to account
-    const destination = pathname.startsWith('/admin') ? '/admin' : '/account';
-    router.push(destination);
+    router.push('/account');
   };
 
   return (
