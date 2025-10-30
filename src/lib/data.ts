@@ -1,4 +1,5 @@
 
+
 import { PlaceHolderImages } from './placeholder-images';
 import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building } from 'lucide-react';
 
@@ -203,6 +204,15 @@ export const categories = [
   { name: 'Beleza', count: 15, icon: Sparkles, href: '/servicos' },
   { name: 'Automotivo', count: 11, icon: Car, href: '/servicos' },
   { name: 'Tecnologia', count: 9, icon: Laptop, href: '/servicos' },
+];
+
+export const eventCategories = [
+    { name: 'Workshop' },
+    { name: 'Música Ao Vivo' },
+    { name: 'Degustação' },
+    { name: 'Feira' },
+    { name: 'Lançamento' },
+    { name: 'Outro' },
 ];
 
 
