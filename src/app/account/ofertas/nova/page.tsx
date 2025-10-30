@@ -302,9 +302,7 @@ export default function CreateNewOfferPage() {
             </div>
         </div>
 
-      </div>
-      
-       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-t-border/50 sm:static sm:bg-transparent sm:border-t-0 sm:p-0 sm:mt-8">
+        <div className="pt-8 pb-24">
             <Button
                 size="lg"
                 className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold"
@@ -312,6 +310,8 @@ export default function CreateNewOfferPage() {
             >
                 Criar Nova Oferta
             </Button>
+        </div>
+
       </div>
 
     </div>
