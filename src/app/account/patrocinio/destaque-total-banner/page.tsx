@@ -38,6 +38,7 @@ export default function DestaqueTotalBannerPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
+  const sponsorshipDays = Math.floor(tokensToSpend / 10);
   const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && isBalanceSufficient;
 
 
@@ -105,6 +106,7 @@ export default function DestaqueTotalBannerPage() {
         destinationUrl,
         bannerImage,
         tokensSpent: tokensToSpend,
+        sponsorshipDays: sponsorshipDays,
     });
 
     toast({
@@ -231,6 +233,15 @@ export default function DestaqueTotalBannerPage() {
                 min="1"
                 className="bg-card border-border/50 h-12"
             />
+             {tokensToSpend > 0 ? (
+                <p className="text-sm text-lime-400">
+                    Seu patrocínio ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
+                </p>
+             ) : (
+                <p className="text-sm text-muted-foreground">
+                    Duração mínima: 1 dia (10 tokens).
+                </p>
+             )}
              {!isBalanceSufficient && tokensToSpend > 0 && (
                 <p className="text-sm text-red-500 flex items-center gap-1.5">
                     <AlertTriangle className="h-4 w-4" />
@@ -312,4 +323,3 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
-
