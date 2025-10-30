@@ -362,7 +362,7 @@ export const activeCategories = [
 export type Sponsor = {
     id: string;
     name: string;
-    icon: LucideIcon | 'Plus';
+    icon: LucideIcon;
     businessId: string;
 }
 

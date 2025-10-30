@@ -6,6 +6,7 @@ import { sponsors } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 
 const SponsorsGrid: React.FC = () => {
   const displaySponsors = [...sponsors];
@@ -14,7 +15,7 @@ const SponsorsGrid: React.FC = () => {
     displaySponsors.push({
       id: `empty-${displaySponsors.length}`,
       name: 'Anuncie Aqui',
-      icon: 'Plus', // This will be mapped to the Plus icon component
+      icon: Plus, // Use the component directly
       businessId: '#',
     });
   }
