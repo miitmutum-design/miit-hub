@@ -6,18 +6,22 @@ import { Suspense } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { businesses } from '@/lib/data';
+import { businesses, getBusinessById } from '@/lib/data';
 import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 
-const SearchResults = ({ searchParams }: { searchParams: { q?: string } }) => {
-  const query = searchParams.q || 'Serviços';
+const SearchResults = () => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || 'Serviços';
 
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  
+  const allBusinesses = businesses.map(b => getBusinessById(b.id)).filter(Boolean) as (typeof businesses[0])[];
 
-  const searchedBusinesses = businesses.filter(business => {
+  const searchedBusinesses = allBusinesses.filter(business => {
       const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
       const fullProfile = { ...business, ...profile };
       
@@ -69,16 +73,11 @@ const SearchResults = ({ searchParams }: { searchParams: { q?: string } }) => {
   );
 };
 
-const ServicesPageContent = ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
-    const unwrappedSearchParams = React.use(searchParams);
-    return <SearchResults searchParams={unwrappedSearchParams as { q?: string }} />;
-}
 
-
-export default function ServicesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+export default function ServicesPage() {
     return (
         <Suspense fallback={<div>Carregando...</div>}>
-            <ServicesPageContent searchParams={searchParams} />
+            <SearchResults />
         </Suspense>
     )
 }

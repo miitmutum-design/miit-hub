@@ -2,6 +2,8 @@
 
 import { PlaceHolderImages } from './placeholder-images';
 import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3, Check, X, Plus } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
 
 export type Business = {
   id: string;
@@ -32,6 +34,19 @@ const getImage = (id: string) => {
 };
 
 export const businesses: Business[] = [
+  {
+    id: '1',
+    name: 'União Construtora',
+    category: 'Construção',
+    distance: '2.5 km',
+    rating: 4.9,
+    description: 'Especialistas em construção e reforma. Qualidade e segurança em cada projeto. Transformamos seus sonhos em realidade com excelência e compromisso.',
+    reviews: ['Ótimo serviço!', 'Recomendo!'],
+    image: getImage('business-1'),
+    coordinates: { x: 35, y: 70 },
+    whatsapp: '5565912345678',
+    websiteUrl: 'https://uniaoconstrutora.com.br'
+  },
   {
     id: '2',
     name: 'Page Turners',
@@ -70,7 +85,7 @@ export const businesses: Business[] = [
   },
   {
     id: '4',
-    name: 'The Kneaded Loaf',
+    name: 'Bellinha Kids',
     category: 'Bakery',
     distance: '1.2 mi',
     rating: 4.9,
@@ -89,7 +104,19 @@ export const businesses: Business[] = [
 ];
 
 export const getBusinessById = (id: string): Business | undefined => {
-  return businesses.find(b => b.id === id);
+  const allMockBusinesses = [...businesses, ...adminCompanies.map(c => ({
+    id: c.id,
+    name: c.name,
+    category: c.category,
+    distance: 'N/A',
+    rating: 0,
+    reviews: [],
+    image: { url: '', hint: ''},
+    whatsapp: '',
+    websiteUrl: '',
+    description: ''
+  }))];
+  return allMockBusinesses.find(b => b.id === id);
 };
 
 export interface Offer {
@@ -196,15 +223,15 @@ export const getEventById = (id: string): Event | undefined => {
 
 
 export const categories = [
-  { name: 'Saúde', count: 12, icon: HeartPulse, href: '/servicos' },
-  { name: 'Imobiliária', count: 8, icon: Store, href: '/servicos' },
-  { name: 'Alimentação', count: 24, icon: Utensils, href: '/servicos' },
-  { name: 'Serviços', count: 18, icon: Wrench, href: '/servicos' },
-  { name: 'Educação', count: 7, icon: Book, href: '/servicos' },
-  { name: 'Beleza', count: 15, icon: Sparkles, href: '/servicos' },
-  { name: 'Automotivo', count: 11, icon: Car, href: '/servicos' },
-  { name: 'Tecnologia', count: 9, icon: Laptop, href: '/servicos' },
-  { name: 'Comunicação', count: 5, icon: MessageSquare, href: '/servicos' }
+  { name: 'Saúde', count: 12, icon: HeartPulse, href: '/servicos?q=Saúde' },
+  { name: 'Imobiliária', count: 8, icon: Store, href: '/servicos?q=Imobiliária' },
+  { name: 'Alimentação', count: 24, icon: Utensils, href: '/servicos?q=Alimentação' },
+  { name: 'Serviços', count: 18, icon: Wrench, href: '/servicos?q=Serviços' },
+  { name: 'Educação', count: 7, icon: Book, href: '/servicos?q=Educação' },
+  { name: 'Beleza', count: 15, icon: Sparkles, href: '/servicos?q=Beleza' },
+  { name: 'Automotivo', count: 11, icon: Car, href: '/servicos?q=Automotivo' },
+  { name: 'Tecnologia', count: 9, icon: Laptop, href: '/servicos?q=Tecnologia' },
+  { name: 'Comunicação', count: 5, icon: MessageSquare, href: '/servicos?q=Comunicação' }
 ];
 
 export const eventCategories = [
@@ -332,13 +359,20 @@ export const activeCategories = [
     { name: 'Tecnologia', count: 9 },
 ];
 
-export const sponsors = [
+export type Sponsor = {
+    id: string;
+    name: string;
+    icon: LucideIcon | 'Plus';
+    businessId: string;
+}
+
+export const sponsors: Sponsor[] = [
     { id: 'sp1', name: 'União Construtora', icon: Building, businessId: '1' },
     { id: 'sp2', name: 'Flor de Lótus Móveis', icon: Sparkles, businessId: '3' },
     { id: 'sp3', name: 'Instituto Marina Feld', icon: HeartPulse, businessId: '1' },
     { id: 'sp4', name: 'Bellinha Kids', icon: Car, businessId: '4' },
     { id: 'sp5', name: 'Page Turners', icon: Book, businessId: '2' },
     { id: 'sp6', name: 'The Kneaded Loaf', icon: Utensils, businessId: '4' },
+    { id: 'sp7', name: 'Tech Solutions', icon: Laptop, businessId: 'company-gold'},
+    { id: 'sp8', name: 'Serviços Prata', icon: Wrench, businessId: 'company-silver'},
 ];
-
-
