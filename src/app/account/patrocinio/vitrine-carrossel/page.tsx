@@ -170,6 +170,19 @@ export default function VitrineCarrosselPage() {
     setIsCalendarModalOpen(false);
     sendSponsorshipRequest();
   };
+  
+  const getBannerNameLabel = () => {
+    switch (sponsorshipType) {
+        case 'empresa':
+            return 'Nome da Empresa';
+        case 'ofertas':
+            return 'Nome da Oferta';
+        case 'eventos':
+            return 'Nome do Evento';
+        default:
+            return 'Nome para a Vitrine';
+    }
+  }
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -216,7 +229,7 @@ export default function VitrineCarrosselPage() {
         <div className="space-y-2">
             <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Info className="h-5 w-5"/>
-                Nome para a Vitrine <span className="text-red-500">*</span>
+                {getBannerNameLabel()} <span className="text-red-500">*</span>
             </label>
             <Input 
                 id="bannerName"
