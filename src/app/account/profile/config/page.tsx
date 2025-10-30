@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Bell, FileText, Globe, Bookmark, Ticket, Gift, Calendar, Star, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Bell, FileText, Globe, Star, Calendar, Gift, HelpCircle, CircleDollarSign, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,9 +10,12 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 
-const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href, onClick }: { icon: React.ElementType, title: string, description: string, hasSwitch?: boolean, href?: string, onClick?: () => void }) => {
+const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href, onClick, disabled = false }: { icon: React.ElementType, title: string, description: string, hasSwitch?: boolean, href?: string, onClick?: () => void, disabled?: boolean }) => {
     const content = (
-        <div className="flex items-center justify-between p-4">
+        <div className={cn(
+            "flex items-center justify-between p-4",
+            disabled && "opacity-50 pointer-events-none"
+        )}>
             <div className="flex items-center gap-4">
                 <Icon className="w-6 h-6 text-primary" />
                 <div>
@@ -25,6 +28,10 @@ const ConfigItem = ({ icon: Icon, title, description, hasSwitch = false, href, o
     );
     
     const wrapperClasses = "block group rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 hover:shadow-lg hover:shadow-lime-400/20 hover:border-lime-400/50 border border-transparent";
+
+    if (disabled) {
+        return <div className={cn(wrapperClasses, "cursor-not-allowed")}>{content}</div>
+    }
 
     if (href) {
         return (
@@ -81,6 +88,10 @@ export default function ConsumerConfigPage() {
                 <ConfigItem icon={Calendar} title="Eventos" description="Cadastrar os meus Eventos" href="/account/profile/events" />
                 <Separator />
                 <ConfigItem icon={Star} title="Avaliações" description="Ver avaliações recebidas" href="/account/avaliacoes-empresa" />
+                <Separator />
+                <ConfigItem icon={CircleDollarSign} title="Patrocínio" description="Impulsionar meu negócio" onClick={() => handleFeatureClick('Patrocínio')} />
+                <Separator />
+                <ConfigItem icon={BarChart3} title="Analytics" description="Ver métricas de desempenho" onClick={() => handleFeatureClick('Analytics')} />
             </div>
         </CardContent>
       </Card>
