@@ -56,18 +56,6 @@ export default function Home() {
         <SponsorsGrid />
       </section>
 
-      <section>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold font-headline">Aberto Agora</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {availableBusinesses.map((business) => (
-            <Link key={business.id} href={`/business/${business.id}`} className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg">
-              <BusinessCard business={business} />
-            </Link>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
