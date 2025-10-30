@@ -1,7 +1,7 @@
 
 
 import { PlaceHolderImages } from './placeholder-images';
-import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building } from 'lucide-react';
+import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3 } from 'lucide-react';
 
 export type Business = {
   id: string;
