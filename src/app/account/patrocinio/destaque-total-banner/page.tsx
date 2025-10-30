@@ -42,7 +42,7 @@ export default function DestaqueTotalBannerPage() {
   };
 
   const handleSubmit = () => {
-    if (!bannerTitle || !bannerSubtitle || !destinationUrl || !bannerImage) {
+    if (!bannerSubtitle || !destinationUrl || !bannerImage) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios",
@@ -130,22 +130,6 @@ export default function DestaqueTotalBannerPage() {
                     className="hidden"
                     accept="image/*"
                 />
-            </div>
-
-            <div className="space-y-2">
-                <label htmlFor="banner-title" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Type className="h-5 w-5"/>
-                    Texto Principal do Banner
-                </label>
-                <Input 
-                    id="banner-title" 
-                    placeholder="Ex: União Construtora" 
-                    maxLength={50} 
-                    className="bg-card border-border/50 h-12"
-                    value={bannerTitle}
-                    onChange={(e) => setBannerTitle(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground text-right">50 caracteres máx.</p>
             </div>
             
             <div className="space-y-2">
