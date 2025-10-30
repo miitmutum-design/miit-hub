@@ -29,7 +29,6 @@ import {
   SidebarTrigger,
   SidebarFooter
 } from '@/components/ui/sidebar';
-import { SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -62,7 +61,6 @@ export default function AdminDashboardLayout({
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar>
             <SidebarHeader>
-                 <SheetTitle className="hidden">Admin Menu</SheetTitle>
                  <div className="flex items-center gap-3">
                     <Avatar>
                         <AvatarImage src="https://i.pravatar.cc/150?u=admin" alt="Admin" />
