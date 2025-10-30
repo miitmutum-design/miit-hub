@@ -232,7 +232,7 @@ export default function VitrineCarrosselPage() {
             <div className="space-y-2">
                 <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Upload className="h-5 w-5"/>
-                    Imagem para Vitrine (1080x1080px) <span className="text-red-500">*</span>
+                    Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
                 </label>
                  <button
                     type="button"
