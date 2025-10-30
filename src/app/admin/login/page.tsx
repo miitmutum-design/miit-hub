@@ -2,7 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +12,6 @@ import { Shield } from 'lucide-react';
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
   const { toast } = useToast();
 
   const handleLogin = () => {
@@ -27,7 +25,9 @@ export default function AdminLoginPage() {
         title: 'Login bem-sucedido!',
         description: 'Redirecionando para o painel de administrador.',
       });
-      router.push('/admin');
+
+      // Use window.location.href for a full page reload to ensure middleware catches the new cookie
+      window.location.href = '/admin';
     } else {
       toast({
         variant: 'destructive',
@@ -57,6 +57,7 @@ export default function AdminLoginPage() {
                 placeholder="admin@app.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                 required
               />
             </div>
@@ -67,6 +68,7 @@ export default function AdminLoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                 required
               />
             </div>
