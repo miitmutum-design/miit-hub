@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Suspense } from 'react';
@@ -12,9 +13,8 @@ import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import React from 'react';
 
-const SearchResults = () => {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || 'Serviços';
+const SearchResults = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+  const query = (searchParams?.q as string) || 'Serviços';
 
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 
@@ -70,10 +70,11 @@ const SearchResults = () => {
   );
 };
 
-export default function ServicesPage() {
+export default function ServicesPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+    const unwrappedSearchParams = React.use(searchParams);
     return (
         <Suspense fallback={<div>Carregando...</div>}>
-            <SearchResults />
+            <SearchResults searchParams={unwrappedSearchParams} />
         </Suspense>
     )
 }

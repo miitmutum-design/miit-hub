@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import LoginModal from '@/components/common/LoginModal';
 import { getOfferById, type Offer } from '@/lib/data';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import React from 'react';
 
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {

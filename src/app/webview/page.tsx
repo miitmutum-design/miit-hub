@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { Suspense } from 'react';
@@ -74,7 +75,8 @@ function WebViewContent() {
 }
 
 
-export default function WebViewPage() {
+export default function WebViewPage({ searchParams }: { searchParams: { url: string } }) {
+    const unwrappedSearchParams = React.use(searchParams);
     return (
         <Suspense fallback={<div className="flex items-center justify-center h-screen">Carregando...</div>}>
             <WebViewContent />
