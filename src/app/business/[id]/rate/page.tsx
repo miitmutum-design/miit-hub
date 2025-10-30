@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { getBusinessById } from '@/lib/data';
 import Link from 'next/link';
+import React from 'react';
 
 function StarRating({ rating, setRating }: { rating: number; setRating: (rating: number) => void }) {
   return (
@@ -25,9 +26,8 @@ function StarRating({ rating, setRating }: { rating: number; setRating: (rating:
   );
 }
 
-export default function RateBusinessPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default function RateBusinessPage({ params }: { params: { id: string } }) {
+  const { id } = React.use(params);
   
   const business = getBusinessById(id);
   const [rating, setRating] = useState(0);

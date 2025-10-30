@@ -60,9 +60,8 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   ]
 };
 
-export default function BusinessPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default function BusinessPage({ params }: { params: { id: string } }) {
+  const { id } = React.use(params);
   const { toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
