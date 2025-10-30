@@ -42,7 +42,7 @@ export default function Home() {
 
       <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold font-headline">Categorias</h2>
+              <h2 className="text-xl font-bold font-headline">Patrocinadores V1</h2>
               <Link href="/categoria">
                   <span className="text-sm font-semibold text-primary hover:underline">Ver Todas</span>
               </Link>
