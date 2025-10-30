@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 
 export default function SponsorshipPage() {
@@ -63,50 +64,58 @@ export default function SponsorshipPage() {
         <div>
             <h2 className="text-lg font-semibold mb-4 text-center">Nossas Opções de Patrocínio</h2>
             <div className="grid grid-cols-1 gap-4">
-                <Card className="border-lime-400/50 border-2 bg-lime-900/20">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lime-400">
-                            <Star className="w-6 h-6" />
-                            Destaque Total Banner
-                        </CardTitle>
-                        <CardDescription className="text-muted-foreground">
-                           Apareça para todos os usuários no primeiro banner da Home Page, em rotação justa.
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-                 <Card className="border-cyan-400/50 border-2 bg-cyan-900/20">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-cyan-400">
-                            <Sparkles className="w-6 h-6" />
-                            Vitrine de Carrossel
-                        </CardTitle>
-                        <CardDescription className="text-muted-foreground">
-                           Garanta uma das 8 posições em rotação justa, logo abaixo da busca principal.
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-                <Card className="border-purple-400/50 border-2 bg-purple-900/20">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-purple-400">
-                            <Grid className="w-6 h-6" />
-                            Vitrine Estática
-                        </CardTitle>
-                        <CardDescription className="text-muted-foreground">
-                            Posição fixa na grade de patrocinadores da Home Page para máxima visibilidade.
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-                 <Card className="border-orange-400/50 border-2 bg-orange-900/20">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-orange-400">
-                            <Video className="w-6 h-6" />
-                            Vídeo Promocional
-                        </CardTitle>
-                        <CardDescription className="text-muted-foreground">
-                           Exiba um vídeo promocional na Home Page para engajar clientes.
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
+                <Link href="/account/patrocinio/destaque-total-banner">
+                    <Card className="border-lime-400/50 border-2 bg-lime-900/20 hover:bg-lime-900/40 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-lime-400">
+                                <Star className="w-6 h-6" />
+                                Destaque Total Banner
+                            </CardTitle>
+                            <CardDescription className="text-muted-foreground">
+                               Apareça para todos os usuários no primeiro banner da Home Page, em rotação justa.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </Link>
+                 <Link href="/account/patrocinio/vitrine-carrossel">
+                    <Card className="border-cyan-400/50 border-2 bg-cyan-900/20 hover:bg-cyan-900/40 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-cyan-400">
+                                <Sparkles className="w-6 h-6" />
+                                Vitrine de Carrossel
+                            </CardTitle>
+                            <CardDescription className="text-muted-foreground">
+                               Garanta uma das 8 posições em rotação justa, logo abaixo da busca principal.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </Link>
+                <Link href="/account/patrocinio/vitrine-estatica">
+                    <Card className="border-purple-400/50 border-2 bg-purple-900/20 hover:bg-purple-900/40 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-purple-400">
+                                <Grid className="w-6 h-6" />
+                                Vitrine Estática
+                            </CardTitle>
+                            <CardDescription className="text-muted-foreground">
+                                Posição fixa na grade de patrocinadores da Home Page para máxima visibilidade.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </Link>
+                 <Link href="/account/patrocinio/video-promocional">
+                    <Card className="border-orange-400/50 border-2 bg-orange-900/20 hover:bg-orange-900/40 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-orange-400">
+                                <Video className="w-6 h-6" />
+                                Vídeo Promocional
+                            </CardTitle>
+                            <CardDescription className="text-muted-foreground">
+                               Exiba um vídeo promocional na Home Page para engajar clientes.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                 </Link>
             </div>
         </div>
 
