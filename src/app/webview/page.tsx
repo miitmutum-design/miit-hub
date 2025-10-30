@@ -75,8 +75,7 @@ function WebViewContent() {
 }
 
 
-export default function WebViewPage({ searchParams }: { searchParams: { url: string } }) {
-    const unwrappedSearchParams = React.use(searchParams);
+export default function WebViewPage() {
     return (
         <Suspense fallback={<div className="flex items-center justify-center h-screen">Carregando...</div>}>
             <WebViewContent />

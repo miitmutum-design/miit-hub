@@ -19,6 +19,7 @@ import type { Business } from '@/lib/data';
 import type { CompanyProfile, OperatingHours } from '@/contexts/CompanyContext';
 import React, { useState, useEffect } from 'react';
 import { isCompanyActuallyOpen } from '@/lib/availability';
+import { useParams } from 'next/navigation';
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -59,8 +60,9 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   ]
 };
 
-export default function BusinessPage({ params }: { params: { id: string } }) {
-  const { id } = React.use(params);
+export default function BusinessPage() {
+  const params = useParams();
+  const id = params.id as string;
   const { toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);

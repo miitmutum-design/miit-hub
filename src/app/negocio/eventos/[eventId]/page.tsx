@@ -20,11 +20,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import { getEventById, type Event } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import React from 'react';
 
-export default function EventDetailPage({ params }: { params: { eventId: string } }) {
-  const { eventId } = React.use(params);
+export default function EventDetailPage() {
+  const params = useParams();
+  const eventId = params.eventId as string;
   const event = getEventById(eventId);
 
   const { toast } = useToast();
