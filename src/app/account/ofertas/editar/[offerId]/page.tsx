@@ -10,7 +10,8 @@ import { mockOffers } from '@/app/account/ofertas/historico/page';
 
 
 export default function EditOfferPage({ params }: { params: { offerId: string } }) {
-  const { offerId } = React.use(params);
+  const resolvedParams = React.use(params);
+  const { offerId } = resolvedParams;
   const offer = mockOffers.find(o => o.id === offerId);
 
   if (!offer) {
