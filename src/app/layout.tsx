@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 async function LayoutContent({ children }: { children: React.ReactNode }) {
     const headersList = headers();
     const pathname = headersList.get('x-pathname') || '';
-    const showNav = !pathname.startsWith('/webview');
+    const showNav = !pathname.startsWith('/webview') && !pathname.startsWith('/admin');
 
     return (
         <div className="relative flex min-h-screen w-full flex-col">

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Ticket, User, Shapes, Building } from 'lucide-react';
+import { Home, Ticket, User, Shapes, Building, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useState } from 'react';
@@ -27,10 +27,11 @@ export default function BottomNav() {
       icon: isCompany ? Building : User, 
       label: isCompany ? 'Empresa' : 'Conta' 
     },
+    { href: '/admin', icon: Shield, label: 'Admin' }
   ];
 
   const handleAccountClick = (e: React.MouseEvent, href: string) => {
-    if (!isUserAuthenticated && href === '/account') {
+    if (!isUserAuthenticated && (href === '/account' || href === '/admin')) {
       e.preventDefault();
       setIsLoginModalOpen(true);
     }
@@ -38,7 +39,9 @@ export default function BottomNav() {
 
   const handleLoginSuccess = () => {
     setIsLoginModalOpen(false);
-    router.push('/account');
+    // check if the attempted route was admin, otherwise default to account
+    const destination = pathname.startsWith('/admin') ? '/admin' : '/account';
+    router.push(destination);
   };
 
   return (
@@ -51,7 +54,7 @@ export default function BottomNav() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname.startsWith(item.href) && (item.href !== '/' || pathname === '/');
             return (
               <Link
                 key={item.href}

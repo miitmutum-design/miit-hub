@@ -196,7 +196,7 @@ export const getEventById = (id: string): Event | undefined => {
 
 
 export const categories = [
-  { name: 'Saúde', count: 12, icon: Wind, href: '/servicos' },
+  { name: 'Saúde', count: 12, icon: HeartPulse, href: '/servicos' },
   { name: 'Imobiliária', count: 8, icon: Store, href: '/servicos' },
   { name: 'Alimentação', count: 24, icon: Utensils, href: '/servicos' },
   { name: 'Serviços', count: 18, icon: Wrench, href: '/servicos' },
@@ -204,6 +204,7 @@ export const categories = [
   { name: 'Beleza', count: 15, icon: Sparkles, href: '/servicos' },
   { name: 'Automotivo', count: 11, icon: Car, href: '/servicos' },
   { name: 'Tecnologia', count: 9, icon: Laptop, href: '/servicos' },
+  { name: 'Comunicação', count: 5, icon: MessageSquare, href: '/servicos' }
 ];
 
 export const eventCategories = [
