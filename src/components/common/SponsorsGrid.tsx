@@ -9,11 +9,12 @@ import Link from 'next/link';
 
 const SponsorsGrid: React.FC = () => {
   const displaySponsors = [...sponsors];
-  while (displaySponsors.length < 3) {
+  // Ensure the grid has exactly 9 items
+  while (displaySponsors.length < 9) {
     displaySponsors.push({
       id: `empty-${displaySponsors.length}`,
       name: 'Anuncie Aqui',
-      icon: 'Plus',
+      icon: 'Plus', // This will be mapped to the Plus icon component
       businessId: '#',
     });
   }

@@ -335,6 +335,10 @@ export const activeCategories = [
 export const sponsors = [
     { id: 'sp1', name: 'União Construtora', icon: Building, businessId: '1' },
     { id: 'sp2', name: 'Flor de Lótus Móveis', icon: Sparkles, businessId: '3' },
-    { id: 'sp3', name: 'Instituto Marina Feld', icon: HeartPulse, businessId: '1' }, // Assuming this links to a health business
+    { id: 'sp3', name: 'Instituto Marina Feld', icon: HeartPulse, businessId: '1' },
+    { id: 'sp4', name: 'Bellinha Kids', icon: Car, businessId: '4' },
+    { id: 'sp5', name: 'Page Turners', icon: Book, businessId: '2' },
+    { id: 'sp6', name: 'The Kneaded Loaf', icon: Utensils, businessId: '4' },
 ];
+
 
