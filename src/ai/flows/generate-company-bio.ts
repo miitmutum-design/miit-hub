@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
     - Nome da Empresa: {{{companyName}}}
     - Categoria/Indústria: {{{category}}}
     
-    Gere uma descrição profissional e envolvente, adequada para um diretório de empresas voltado para o cliente. A saída deve ser em português do Brasil.
+    Gere uma descrição profissional e envolvente. A saída DEVE ser em português do Brasil.
     `,
 });
 
