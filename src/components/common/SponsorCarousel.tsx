@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { sponsors } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,10 +23,72 @@ const shuffleArray = (array: Sponsor[]) => {
 
 const SponsorCarousel: React.FC = () => {
     const [shuffledSponsors, setShuffledSponsors] = useState<Sponsor[]>([]);
+    const carouselRef = useRef<HTMLUListElement>(null);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         setShuffledSponsors(shuffleArray([...sponsors]));
     }, []);
+    
+    const startScrolling = () => {
+        if (intervalRef.current) return;
+        intervalRef.current = setInterval(() => {
+            if (carouselRef.current) {
+                const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+                
+                if (scrollLeft >= scrollWidth / 2) {
+                    // When it reaches the end of the first set, reset silently
+                    carouselRef.current.style.scrollBehavior = 'auto';
+                    carouselRef.current.scrollLeft = 0;
+                    carouselRef.current.style.scrollBehavior = 'smooth';
+                } else {
+                    carouselRef.current.scrollLeft += 1;
+                }
+            }
+        }, 50); // Adjust for speed
+    };
+
+    const stopScrolling = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+    };
+    
+    const handleInteractionStart = () => {
+      stopScrolling();
+      if(timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+    
+    const handleInteractionEnd = () => {
+      if(timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        startScrolling();
+      }, 3000); // 3-second delay
+    }
+
+    useEffect(() => {
+        const carouselElement = carouselRef.current;
+        if (shuffledSponsors.length > 0 && carouselElement) {
+            startScrolling();
+
+            carouselElement.addEventListener('mouseenter', handleInteractionStart);
+            carouselElement.addEventListener('mouseleave', handleInteractionEnd);
+            carouselElement.addEventListener('touchstart', handleInteractionStart, { passive: true });
+            carouselElement.addEventListener('touchend', handleInteractionEnd);
+            
+            return () => {
+                stopScrolling();
+                if(timeoutRef.current) clearTimeout(timeoutRef.current);
+                carouselElement.removeEventListener('mouseenter', handleInteractionStart);
+                carouselElement.removeEventListener('mouseleave', handleInteractionEnd);
+                carouselElement.removeEventListener('touchstart', handleInteractionStart);
+                carouselElement.removeEventListener('touchend', handleInteractionEnd);
+            };
+        }
+    }, [shuffledSponsors]);
+
 
     if (shuffledSponsors.length === 0) {
         return (
@@ -42,11 +104,15 @@ const SponsorCarousel: React.FC = () => {
         );
     }
     
-    const sponsorList = [...shuffledSponsors, ...shuffledSponsors];
+    const sponsorList = [...shuffledSponsors, ...shuffledSponsors]; // Clone for infinite loop illusion
 
     return (
-        <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
-            <ul className="flex items-center justify-center md:justify-start [&_li]:mx-2 animate-marquee hover:[animation-play-state:paused]">
+        <div className="w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_48px,_black_calc(100%-48px),transparent_100%)]">
+            <ul 
+                ref={carouselRef}
+                className="flex items-center justify-start [&_li]:mx-2 overflow-x-auto scrollbar-hide"
+                style={{ scrollBehavior: 'smooth' }}
+            >
                 {sponsorList.map((sponsor, index) => {
                     const Icon = sponsor.icon as LucideIcon;
                     const isClickable = sponsor.businessId !== '#';

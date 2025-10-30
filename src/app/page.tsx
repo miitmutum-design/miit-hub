@@ -10,23 +10,11 @@ import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import SearchBar from '@/components/common/SearchBar';
 import PremiumCarousel from '@/components/common/PremiumCarousel';
-import CategoryCarousel from '@/components/common/CategoryCarousel';
+import SponsorCarousel from '@/components/common/SponsorCarousel';
 import SponsorsGrid from '@/components/common/SponsorsGrid';
 import VideoPlayer from '@/components/common/VideoPlayer';
 
 export default function Home() {
-  const [availableBusinesses, setAvailableBusinesses] = useState<Business[]>([]);
-
-  // This logic now runs only on the client, after hydration, preventing the error.
-  useEffect(() => {
-    const filtered = businesses.filter(business => {
-      // This is a mock join, in a real app this would be a single data source
-      const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
-      const fullProfile = { ...business, ...profile };
-      return isCompanyActuallyOpen(fullProfile);
-    });
-    setAvailableBusinesses(filtered);
-  }, []);
 
   return (
     <div className="container mx-auto max-w-3xl pt-6 sm:pt-8 pb-10">
@@ -47,7 +35,7 @@ export default function Home() {
                   <span className="text-sm font-semibold text-primary hover:underline">Ver Todas</span>
               </Link>
           </div>
-          <CategoryCarousel />
+          <SponsorCarousel />
       </section>
 
       <section className="mb-8">
