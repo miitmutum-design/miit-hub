@@ -1,7 +1,7 @@
 
 
 import { PlaceHolderImages } from './placeholder-images';
-import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3, Check, X } from 'lucide-react';
+import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3, Check, X, Plus } from 'lucide-react';
 
 export type Business = {
   id: string;
@@ -331,3 +331,10 @@ export const activeCategories = [
     { name: 'Automotivo', count: 11 },
     { name: 'Tecnologia', count: 9 },
 ];
+
+export const sponsors = [
+    { id: 'sp1', name: 'União Construtora', icon: Building, businessId: '1' },
+    { id: 'sp2', name: 'Flor de Lótus Móveis', icon: Sparkles, businessId: '3' },
+    { id: 'sp3', name: 'Instituto Marina Feld', icon: HeartPulse, businessId: '1' }, // Assuming this links to a health business
+];
+
