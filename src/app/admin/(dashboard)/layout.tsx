@@ -16,7 +16,8 @@ import {
   Shapes,
   Gift,
   LogOut,
-  BarChart3
+  BarChart3,
+  HelpCircle
 } from 'lucide-react';
 import {
   Sidebar,
@@ -33,6 +34,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import AdminHeader from '@/components/common/AdminHeader';
+import { SheetTitle } from '@/components/ui/sheet';
 
 const navItems = [
   { href: '/admin', icon: BarChart3, label: 'Dashboard' },
@@ -40,6 +42,7 @@ const navItems = [
   { href: '/admin/avaliacoes', icon: Star, label: 'Avaliações' },
   { href: '/admin/categorias', icon: Shapes, label: 'Categorias' },
   { href: '/admin/conteudo', icon: Package, label: 'Conteúdo' },
+  { href: '/admin/suporte', icon: HelpCircle, label: 'Suporte' },
 ];
 
 export default function AdminDashboardLayout({

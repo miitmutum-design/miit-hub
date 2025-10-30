@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Bell, FileText, Globe, Bookmark, Ticket, Gift, Calendar, Star } from 'lucide-react';
+import { ArrowLeft, Bell, FileText, Globe, Bookmark, Ticket, Gift, Calendar, Star, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -92,6 +92,8 @@ export default function ConsumerConfigPage() {
                 <ConfigItem icon={Bell} title="Notificações Push" description="Receber alertas de ofertas" href="/account/profile/config/notifications" />
                 <Separator />
                 <ConfigItem icon={Globe} title="Idioma" description="Português (Brasil)" />
+                 <Separator />
+                <ConfigItem icon={HelpCircle} title="Suporte" description="Ajuda e perguntas frequentes" href="/account/suporte" />
                 <Separator />
                 <ConfigItem icon={FileText} title="Termos de Uso" description="Visualizar os termos de serviço" href="/account/profile/config/terms-of-use" />
             </div>
