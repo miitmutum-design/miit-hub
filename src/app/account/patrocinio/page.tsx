@@ -67,7 +67,7 @@ export default function SponsorshipPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lime-400">
                             <Star className="w-6 h-6" />
-                            Destaque Total no Topo
+                            Destaque Total Banner
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                            Apareça para todos os usuários no primeiro banner da Home Page, em rotação justa.
