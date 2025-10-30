@@ -1,23 +1,204 @@
 
 'use client';
-import { Shapes } from 'lucide-react';
+import {
+  Shapes,
+  PlusCircle,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Check,
+  X,
+  Search
+} from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { categorySuggestions, activeCategories as initialActiveCategories } from '@/lib/data';
 
 export default function AdminCategoriasPage() {
+    const [activeCategories, setActiveCategories] = useState(initialActiveCategories);
+    const [suggestions, setSuggestions] = useState(categorySuggestions);
+
+    const handleApprove = (suggestionName: string) => {
+        // Add to active categories if it doesn't exist
+        if (!activeCategories.some(cat => cat.name === suggestionName)) {
+            setActiveCategories(prev => [...prev, { name: suggestionName, count: 0 }]);
+        }
+        // Remove from suggestions
+        setSuggestions(prev => prev.filter(s => s.name !== suggestionName));
+    };
+
+    const handleReject = (suggestionName: string) => {
+        setSuggestions(prev => prev.filter(s => s.name !== suggestionName));
+    };
+    
+    const handleDeleteActive = (categoryName: string) => {
+        setActiveCategories(prev => prev.filter(cat => cat.name !== categoryName));
+    };
+
+
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-        <AdminHeader title="Gerenciar Categorias" />
-        <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-            <div className="flex flex-col items-center gap-1 text-center">
-                <Shapes className="h-16 w-16 text-muted-foreground" />
-                <h3 className="text-2xl font-bold tracking-tight">
-                    Módulo de Categorias
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                    A funcionalidade para aprovar, adicionar, editar e excluir categorias será implementada aqui.
-                </p>
+    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+      <AdminHeader title="Gerenciar Categorias" />
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sugestões de Empresas</CardTitle>
+            <CardDescription>
+              Aprove ou rejeite as categorias sugeridas pelas empresas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {suggestions.length > 0 ? (
+                <div className="space-y-3">
+                {suggestions.map((suggestion) => (
+                    <div
+                    key={suggestion.name}
+                    className="flex items-center justify-between rounded-lg border bg-card p-3 shadow-sm"
+                    >
+                    <span className="font-medium">{suggestion.name}</span>
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-green-500 hover:bg-green-500/10 hover:text-green-500" onClick={() => handleApprove(suggestion.name)}>
+                            <Check className="h-4 w-4" />
+                            <span className="sr-only">Aprovar</span>
+                        </Button>
+                         <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:bg-red-500/10 hover:text-red-500" onClick={() => handleReject(suggestion.name)}>
+                            <X className="h-4 w-4" />
+                            <span className="sr-only">Rejeitar</span>
+                        </Button>
+                    </div>
+                    </div>
+                ))}
+                </div>
+            ) : (
+                <div className="text-center text-muted-foreground p-4">Nenhuma sugestão pendente.</div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+                <CardTitle>Categorias Ativas</CardTitle>
+                <CardDescription>
+                Adicione, edite ou remova as categorias principais.
+                </CardDescription>
             </div>
-        </div>
+             <Dialog>
+                <DialogTrigger asChild>
+                    <Button size="sm" className="gap-1 h-8">
+                        <PlusCircle className="h-3.5 w-3.5" />
+                        Adicionar Nova
+                    </Button>
+                </DialogTrigger>
+                 <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Adicionar Nova Categoria</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Label htmlFor="category-name">Nome da Categoria</Label>
+                        <Input id="category-name" placeholder="Ex: Restaurante"/>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary">Cancelar</Button>
+                        </DialogClose>
+                        <Button type="submit">Salvar Categoria</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+          </CardHeader>
+          <CardContent>
+             <div className="relative mb-4">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Buscar categoria..."
+                  className="w-full appearance-none bg-background pl-8 shadow-none"
+                />
+              </div>
+            <div className="space-y-2">
+                {activeCategories.map((category) => (
+                    <div key={category.name} className="flex items-center justify-between rounded-lg border bg-card p-3 shadow-sm">
+                        <div>
+                            <span className="font-medium">{category.name}</span>
+                            <span className="text-xs text-muted-foreground ml-2">({category.count} empresas)</span>
+                        </div>
+                        <AlertDialog>
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <Pencil className="mr-2 h-4 w-4" />
+                                        Editar
+                                    </DropdownMenuItem>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            Excluir
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                             <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Excluir a categoria "{category.name}" afetará as empresas que a utilizam. Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteActive(category.name)} className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

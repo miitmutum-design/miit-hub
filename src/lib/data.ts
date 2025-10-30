@@ -1,7 +1,7 @@
 
 
 import { PlaceHolderImages } from './placeholder-images';
-import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3 } from 'lucide-react';
+import { Car, HeartPulse, Home, Laptop, Book, Sparkles, Utensils, Wrench, Wind, Store, Globe, Camera, MessageSquare, Building, BarChart3, Check, X } from 'lucide-react';
 
 export type Business = {
   id: string;
@@ -334,4 +334,21 @@ export const adminReviews = [
         comment: 'Construí minha casa com eles e foi a melhor decisão. Qualidade, pontualidade e um ótimo preço. Superou minhas expectativas!',
         date: '21/07/2024'
     }
+];
+
+export const categorySuggestions = [
+    { name: 'Pet Shop' },
+    { name: 'Barbearia' },
+    { name: 'Consultoria de TI' },
+];
+
+export const activeCategories = [
+    { name: 'Saúde', count: 12 },
+    { name: 'Imobiliária', count: 8 },
+    { name: 'Alimentação', count: 24 },
+    { name: 'Serviços', count: 18 },
+    { name: 'Educação', count: 7 },
+    { name: 'Beleza', count: 15 },
+    { name: 'Automotivo', count: 11 },
+    { name: 'Tecnologia', count: 9 },
 ];
