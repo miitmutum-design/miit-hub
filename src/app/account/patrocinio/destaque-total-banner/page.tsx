@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, CircleDollarSign, AlertTriangle, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, CircleDollarSign, AlertTriangle, Calendar as CalendarIcon, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -47,6 +47,7 @@ export default function DestaqueTotalBannerPage() {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [linkType, setLinkType] = useState('');
   const [tokensToSpend, setTokensToSpend] = useState(0);
+  const [bannerName, setBannerName] = useState('');
 
   const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false);
   const [isInstagramModalOpen, setIsInstagramModalOpen] = useState(false);
@@ -64,7 +65,7 @@ export default function DestaqueTotalBannerPage() {
 
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
   const sponsorshipDays = Math.floor(tokensToSpend / 10);
-  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && isBalanceSufficient;
+  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
 
 
   const handleImageClick = () => {
@@ -118,6 +119,7 @@ export default function DestaqueTotalBannerPage() {
     console.log({
         companyId: companyProfile.id,
         sponsorshipType,
+        bannerName,
         destinationUrl,
         bannerImage,
         tokensSpent: tokensToSpend,
@@ -300,6 +302,21 @@ export default function DestaqueTotalBannerPage() {
                     Saldo de tokens insuficiente.
                 </p>
             )}
+        </div>
+
+        <div className="space-y-2">
+            <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Info className="h-5 w-5"/>
+                Nome da Empresa <span className="text-red-500">*</span>
+            </label>
+            <Input 
+                id="bannerName"
+                type="text"
+                value={bannerName}
+                onChange={(e) => setBannerName(e.target.value)}
+                placeholder="Nome que aparecerá no banner"
+                className="bg-card border-border/50 h-12"
+            />
         </div>
 
 
