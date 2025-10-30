@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, Send, Sparkles, Star } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, Star, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -82,6 +82,17 @@ export default function SponsorshipPage() {
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                            Garanta uma das 8 posições em rotação justa, logo abaixo da busca principal.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card className="border-purple-400/50 border-2 bg-purple-900/20">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-purple-400">
+                            <Grid className="w-6 h-6" />
+                            Vitrine Estática
+                        </CardTitle>
+                        <CardDescription className="text-muted-foreground">
+                            Posição fixa na grade de patrocinadores da Home Page para máxima visibilidade.
                         </CardDescription>
                     </CardHeader>
                 </Card>
