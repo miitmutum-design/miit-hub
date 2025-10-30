@@ -17,7 +17,8 @@ import {
   Gift,
   LogOut,
   BarChart3,
-  HelpCircle
+  HelpCircle,
+  CircleDollarSign
 } from 'lucide-react';
 import {
   Sidebar,
@@ -42,6 +43,7 @@ const navItems = [
   { href: '/admin/avaliacoes', icon: Star, label: 'Avaliações' },
   { href: '/admin/categorias', icon: Shapes, label: 'Categorias' },
   { href: '/admin/conteudo', icon: Package, label: 'Conteúdo' },
+  { href: '/admin/patrocinio', icon: CircleDollarSign, label: 'Patrocínio'},
   { href: '/admin/suporte', icon: HelpCircle, label: 'Suporte' },
 ];
 

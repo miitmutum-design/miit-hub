@@ -89,7 +89,7 @@ export default function ConsumerConfigPage() {
                 <Separator />
                 <ConfigItem icon={Star} title="Avaliações" description="Ver avaliações recebidas" href="/account/avaliacoes-empresa" />
                 <Separator />
-                <ConfigItem icon={CircleDollarSign} title="Patrocínio" description="Impulsionar meu negócio" onClick={() => handleFeatureClick('Patrocínio')} />
+                <ConfigItem icon={CircleDollarSign} title="Patrocínio" description="Impulsionar meu negócio" href="/account/patrocinio" />
                 <Separator />
                 <ConfigItem icon={BarChart3} title="Analytics" description="Ver métricas de desempenho" onClick={() => handleFeatureClick('Analytics')} />
             </div>
