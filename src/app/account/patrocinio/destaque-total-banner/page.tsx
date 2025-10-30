@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { useCompany } from '@/contexts/CompanyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
@@ -224,6 +224,7 @@ export default function DestaqueTotalBannerPage() {
                 onChange={(e) => setBannerName(e.target.value)}
                 placeholder="Nome que aparecerá no banner"
                 className="bg-card border-border/50 h-12"
+                maxLength={50}
             />
         </div>
         <div className="space-y-6">
@@ -262,7 +263,7 @@ export default function DestaqueTotalBannerPage() {
             
             <div className="space-y-4">
                 <label className="text-sm font-medium text-muted-foreground">
-                    Tipo de Link de Destino
+                    Tipo de Link de Destino <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-4">
                     <div onClick={() => setIsWhatsappModalOpen(true)}>

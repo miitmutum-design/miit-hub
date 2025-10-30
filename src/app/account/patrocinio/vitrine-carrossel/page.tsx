@@ -264,7 +264,7 @@ export default function VitrineCarrosselPage() {
             
             <div className="space-y-4">
                 <label className="text-sm font-medium text-muted-foreground">
-                    Tipo de Link de Destino
+                    Tipo de Link de Destino <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-4">
                     <div onClick={() => setIsWhatsappModalOpen(true)}>
