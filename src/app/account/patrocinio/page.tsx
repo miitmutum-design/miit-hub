@@ -72,7 +72,7 @@ export default function SponsorshipPage() {
                                 Destaque Total Banner
                             </CardTitle>
                             <CardDescription className="text-muted-foreground">
-                               Apareça para todos os usuários no primeiro banner da Home Page, em rotação justa.
+                               Garanta sua vaga entre as 3 empresas exibidas no topo da Home Page, em um sistema de rotação justa.
                             </CardDescription>
                         </CardHeader>
                     </Card>
