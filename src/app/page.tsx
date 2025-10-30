@@ -30,7 +30,7 @@ export default function Home() {
 
       <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold font-headline">Patrocinadores V1</h2>
+              <h2 className="text-xl font-bold font-headline">Vitrine de Carrossel</h2>
           </div>
           <SponsorCarousel />
       </section>
