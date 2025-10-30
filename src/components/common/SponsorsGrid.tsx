@@ -28,7 +28,7 @@ const SponsorsGrid: React.FC = () => {
         const cardContent = (
             <Card
               className={cn(
-                "group h-full overflow-hidden text-center transition-all duration-300 bg-card aspect-[3/4]",
+                "group h-full overflow-hidden text-center transition-all duration-300 bg-card aspect-square",
                 isClickable && "cursor-pointer hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50"
               )}
             >
