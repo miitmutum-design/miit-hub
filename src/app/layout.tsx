@@ -20,7 +20,7 @@ async function LayoutContent({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="relative flex min-h-screen w-full flex-col">
-            <main className={cn("flex-1", showNav && 'pb-32 md:pb-20')}>{children}</main>
+            <main className={cn("flex-1", showNav && 'pb-20 md:pb-20')}>{children}</main>
             {showNav && <BottomNav />}
         </div>
     )
