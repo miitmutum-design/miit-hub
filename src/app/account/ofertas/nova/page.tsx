@@ -139,7 +139,7 @@ export default function CreateNewOfferPage() {
             return;
         }
 
-        // Here you would typically send the data to your backend
+        // Here you would typically send the data to your backend and get an ID back
         console.log({ 
             companyId: companyProfile.id,
             companyName: companyProfile.name,
@@ -158,7 +158,9 @@ export default function CreateNewOfferPage() {
             description: 'Sua nova oferta foi publicada com sucesso.',
         });
 
-        router.push('/account/ofertas/historico');
+        // In a real app, you would get the new offer's ID from the backend.
+        // For now, we'll redirect to a mock offer ID '1'.
+        router.push('/negocio/offers/1');
     };
 
 
