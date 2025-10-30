@@ -112,6 +112,7 @@ export default function CreateNewOfferPage() {
     }
 
     const handleSubmit = () => {
+        // Validation Checks
         if (!title || !description || !discount || !startDate || !endDate || !couponCode) {
             toast({
                 variant: 'destructive',
@@ -126,6 +127,24 @@ export default function CreateNewOfferPage() {
                 variant: 'destructive',
                 title: 'Código de Cupom Inválido',
                 description: 'O código do cupom deve ter entre 8 e 12 caracteres.',
+            });
+            return;
+        }
+
+        if (!/^[A-Z0-9]+$/.test(couponCode)) {
+            toast({
+                variant: 'destructive',
+                title: 'Código de Cupom Inválido',
+                description: 'O código do cupom deve conter apenas letras maiúsculas e números.',
+            });
+            return;
+        }
+        
+        if (new Date(endDate) <= new Date(startDate)) {
+            toast({
+                variant: 'destructive',
+                title: 'Data Inválida',
+                description: 'A data de fim deve ser posterior à data de início.',
             });
             return;
         }
@@ -204,7 +223,7 @@ export default function CreateNewOfferPage() {
                  <Input 
                     id="couponCode" 
                     value={couponCode} 
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())} 
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                     placeholder="Ex: CUPOM123" 
                     className="bg-card border-border/50 h-12"
                     maxLength={12}
@@ -345,3 +364,5 @@ export default function CreateNewOfferPage() {
     </div>
   );
 }
+
+    
