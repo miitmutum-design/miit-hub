@@ -21,23 +21,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import LoginModal from '@/components/common/LoginModal';
-
-// Mock data - in a real app, you'd fetch this based on offerId
-const mockOfferDetails = {
-    id: '1',
-    companyId: '3', // Added companyId
-    businessName: 'Flor de Lótus Móveis',
-    title: '50% OFF em Sofás Selecionados',
-    validUntil: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // Expires in 30 days
-    discount: '50%',
-    description: 'Aproveite 50% de desconto em nossa linha de sofás de 3 e 4 lugares. Perfeito para renovar sua sala com estilo e conforto. Promoção não cumulativa e válida enquanto durar o estoque.',
-    couponCode: 'SOFANOVO50',
-    terms: 'Válido apenas para sofás selecionados. Desconto não aplicável a outros itens. Necessário apresentar o código no caixa.',
-    limitPerUser: 1, // Max claims per user
-};
+import { getOfferById, type Offer } from '@/lib/data';
+import { notFound } from 'next/navigation';
 
 export default function OfferDetailPage({ params }: { params: { offerId: string } }) {
-  const offer = mockOfferDetails; // Using mock data
+  const offer = getOfferById(params.offerId); 
+
   const { toast } = useToast();
   const { companyProfile, claimedOffers, claimOffer } = useCompany();
   
@@ -48,8 +37,14 @@ export default function OfferDetailPage({ params }: { params: { offerId: string 
   const isUserAuthenticated = companyProfile.id !== 'user-demo';
 
   useEffect(() => {
-    setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));
-  }, [offer.validUntil]);
+    if (offer) {
+        setFormattedDate(new Date(offer.validUntil).toLocaleDateString('pt-BR'));
+    }
+  }, [offer]);
+  
+  if (!offer) {
+      notFound();
+  }
 
   const isExpired = new Date(offer.validUntil) < new Date();
   
