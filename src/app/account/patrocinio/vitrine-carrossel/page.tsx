@@ -21,13 +21,6 @@ export default function VitrineCarrosselPage() {
         </h1>
       </header>
       
-      <div className="space-y-6 bg-card p-6 rounded-lg">
-        <div className="text-center text-muted-foreground py-10">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-          <h2 className="mt-4 text-xl font-semibold text-foreground">Página em Construção</h2>
-          <p>A tela de detalhes para este plano de patrocínio está sendo desenvolvida.</p>
-        </div>
-      </div>
     </div>
   );
 }
