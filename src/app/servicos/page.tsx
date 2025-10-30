@@ -1,8 +1,6 @@
 
-
 'use client';
 
-import { Suspense } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -11,12 +9,8 @@ import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
 
-const SearchResults = () => {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || 'Serviços';
-
+const SearchResults = ({ query }: { query: string }) => {
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
   
   const allBusinesses = businesses.map(b => getBusinessById(b.id)).filter(Boolean) as (typeof businesses[0])[];
@@ -74,10 +68,7 @@ const SearchResults = () => {
 };
 
 
-export default function ServicesPage() {
-    return (
-        <Suspense fallback={<div>Carregando...</div>}>
-            <SearchResults />
-        </Suspense>
-    )
+export default function ServicesPage({ searchParams }: { searchParams: { q: string } }) {
+    const query = searchParams.q || 'Serviços';
+    return <SearchResults query={query} />;
 }
