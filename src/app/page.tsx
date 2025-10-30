@@ -43,6 +43,9 @@ export default function Home() {
       </section>
 
       <section className="mt-8 mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold font-headline">Vídeo Promocional</h2>
+        </div>
         <VideoPlayer />
       </section>
 
