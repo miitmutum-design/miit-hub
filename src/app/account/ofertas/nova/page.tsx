@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift, Building } from 'lucide-react';
+import { useState, useRef, ChangeEvent, useTransition, useEffect } from 'react';
+import { ArrowLeft, Calendar, FileText, Percent, Tag, ImageIcon, Gift, Building, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCompany } from '@/contexts/CompanyContext';
+import { generateOfferDescription } from '@/ai/flows/generate-offer-description';
+
 
 export default function CreateNewOfferPage() {
     const { toast } = useToast();
@@ -24,7 +26,11 @@ export default function CreateNewOfferPage() {
     const [endDate, setEndDate] = useState('');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
 
+    const [isGenerating, startTransition] = useTransition();
+
     const imageInputRef = useRef<HTMLInputElement>(null);
+    const isAiButtonEnabled = title.length >= 10;
+    const MAX_DESC_LENGTH = 360;
 
     const handleImageClick = () => {
         imageInputRef.current?.click();
@@ -37,6 +43,45 @@ export default function CreateNewOfferPage() {
             setImageUrl(placeholderUrl);
         }
     };
+
+    const handleGenerateDescription = () => {
+        if (!isAiButtonEnabled) {
+            toast({
+                variant: 'destructive',
+                title: 'Informação Insuficiente',
+                description: 'Por favor, preencha o título da oferta com pelo menos 10 caracteres.'
+            });
+            return;
+        }
+
+        startTransition(async () => {
+            try {
+                const result = await generateOfferDescription({
+                    title,
+                    discount,
+                    startDate,
+                    endDate,
+                });
+                 if (result && result.description) {
+                    setDescription(result.description);
+                    toast({
+                        title: "Descrição Gerada!",
+                        description: "A descrição da sua oferta foi preenchida com o texto da IA."
+                    });
+                } else {
+                     throw new Error("A IA não conseguiu gerar uma descrição.");
+                }
+
+            } catch (error: any) {
+                 console.error("Error generating offer description:", error);
+                toast({
+                    variant: "destructive",
+                    title: "Falha na Geração",
+                    description: error.message || "Ocorreu um erro ao contatar a IA. Tente novamente.",
+                });
+            }
+        });
+    }
 
     const handleSubmit = () => {
         if (!title || !description || !discount || !startDate || !endDate) {
@@ -101,19 +146,28 @@ export default function CreateNewOfferPage() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="description" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-            <FileText className="w-5 h-5"/>
-            Descrição
-          </label>
-          <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descreva os detalhes da sua promoção..." className="bg-card border-border/50 min-h-[120px]" />
-        </div>
-        
-        <div className="space-y-2">
           <label htmlFor="discount" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <Percent className="w-5 h-5"/>
             Valor do Desconto
           </label>
           <Input id="discount" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="Ex: 20% ou R$50" className="bg-card border-border/50 h-12" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="startDate" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Calendar className="w-5 h-5"/>
+                Data de Início
+              </label>
+              <Input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-card border-border/50 h-12" />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="endDate" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Calendar className="w-5 h-5"/>
+                Data de Fim
+              </label>
+              <Input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-card border-border/50 h-12" />
+            </div>
         </div>
 
         <div className="space-y-2">
@@ -149,23 +203,37 @@ export default function CreateNewOfferPage() {
             />
         </div>
 
-
-        <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="startDate" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Calendar className="w-5 h-5"/>
-                Data de Início
-              </label>
-              <Input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-card border-border/50 h-12" />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="endDate" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Calendar className="w-5 h-5"/>
-                Data de Fim
-              </label>
-              <Input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-card border-border/50 h-12" />
+        <div className="space-y-2">
+          <label htmlFor="description" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5"/>
+            Descrição
+          </label>
+          <Textarea 
+            id="description" 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)} 
+            placeholder="Descreva os detalhes da sua promoção ou clique no botão de IA..." 
+            className="bg-card border-border/50 min-h-[120px]"
+            maxLength={MAX_DESC_LENGTH}
+          />
+           <div className="flex justify-between items-center">
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGenerateDescription}
+                    disabled={isGenerating || !isAiButtonEnabled}
+                    className="gap-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary disabled:opacity-50"
+                >
+                    {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                    Gerar com IA
+                </Button>
+                <p className="text-sm text-right text-muted-foreground">
+                    {description.length} / {MAX_DESC_LENGTH}
+                </p>
             </div>
         </div>
+
       </div>
       
        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-t-border/50 sm:static sm:bg-transparent sm:border-t-0 sm:p-0 sm:mt-8">
