@@ -158,10 +158,6 @@ export default function AccountPage() {
         const newProfile = mockCompanyProfiles[result.companyId as keyof typeof mockCompanyProfiles];
         if (newProfile) {
             setCompanyProfile(newProfile);
-            toast({
-                title: "Bem-vindo!",
-                description: "Chave resgatada com sucesso. Seu painel foi ativado.",
-            });
             setIsRedeemModalOpen(false);
             setAccessKey('');
             router.push('/account/subscription');
@@ -192,10 +188,6 @@ export default function AccountPage() {
     if (newProfile) {
         setCompanyProfile(newProfile);
         finalizeKeyRedemptionMockAPI(accessKey); // Mark key as used
-        toast({
-            title: "Bem-vindo!",
-            description: `Painel para ${newProfile.name} ativado com sucesso.`,
-        });
         setIsSelectCompanyModalOpen(false);
         setAccessKey('');
         router.push('/account/subscription');
@@ -392,4 +384,5 @@ export default function AccountPage() {
     
 
     
+
 
