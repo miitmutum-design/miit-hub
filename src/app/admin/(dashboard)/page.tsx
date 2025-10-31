@@ -1,9 +1,9 @@
 
 'use client';
-import { Building2, Star, Shapes, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import AdminHeader from '@/components/common/AdminHeader';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import ReviewsChart from '@/components/admin/ReviewsChart';
@@ -27,41 +27,68 @@ export default function AdminDashboardPage() {
     <main className="flex flex-1 flex-col gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
         <AdminHeader title="Dashboard" />
         
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <StatCard
-                title="Empresas Pendentes"
-                value="3"
-                icon={Clock}
-                description="Aguardando sua aprovação"
-            >
-                <Link href="/admin/empresas?filter=pending" className="mt-4 block">
-                    <Button size="sm" className="w-full">Revisar</Button>
-                </Link>
-            </StatCard>
-            <StatCard
-                title="Total de Empresas Ativas"
-                value="215"
-                icon={Building2}
-                description="+2 na última semana"
-            />
-            <StatCard
-                title="Novas Avaliações (24h)"
-                value="38"
-                icon={Star}
-                description="Novos feedbacks para moderar"
-            />
-            <StatCard
-                title="Sugestões de Categorias"
-                value="3"
-                icon={Shapes}
-                description="Categorias sugeridas por empresas"
-            />
-        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Controle de Monetização e Inventário</CardTitle>
+                <CardDescription>Monitore a saúde financeira e a capacidade de patrocínio do PWA.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <StatCard
+                    title="Tokens Vendidos (24h)"
+                    value="1,250"
+                    icon={DollarSign}
+                    description="Total de tokens comprados."
+                />
+                <StatCard
+                    title="Patrocínios Pendentes"
+                    value="5"
+                    icon={Clock}
+                    description="Solicitações aguardando revisão."
+                >
+                    <Link href="/admin/patrocinio" className="mt-2 block">
+                        <Button size="sm" className="w-full bg-lime-500 hover:bg-lime-600 text-black">Revisar</Button>
+                    </Link>
+                </StatCard>
+                 <StatCard
+                    title="Conteúdo Patrocinado Ativo"
+                    value="18"
+                    icon={TrendingUp}
+                    description="Ofertas e eventos impulsionados."
+                />
+            </CardContent>
+        </Card>
 
+        <Card>
+             <CardHeader>
+                <CardTitle>Inventário de Patrocínio</CardTitle>
+                <CardDescription>Acompanhe a ocupação dos seus principais espaços de anúncio.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                 <StatCard
+                    title="Slots Carrossel (Hoje)"
+                    value="3/3"
+                    icon={ShoppingCart}
+                    description="Ocupação do Destaque Total Banner."
+                />
+                 <StatCard
+                    title="Slots Vitrine (Hoje)"
+                    value="7/9"
+                    icon={ShoppingCart}
+                    description="Ocupação da Vitrine Estática."
+                />
+                <StatCard
+                    title="Próximo Slot Livre"
+                    value="05/08/2024"
+                    icon={CalendarCheck}
+                    description="Data mais próxima com vaga no Carrossel."
+                />
+            </CardContent>
+        </Card>
+        
         <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-7">
             <Card className="lg:col-span-4">
                  <CardHeader>
-                    <CardTitle>Tarefas Pendentes</CardTitle>
+                    <CardTitle>Tarefas de Moderação</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-8">
                     <div>
@@ -74,7 +101,9 @@ export default function AdminDashboardPage() {
                                         <p className="text-sm text-muted-foreground">{company.category}</p>
                                     </div>
                                     <div className="ml-auto">
-                                        <Button variant="outline" size="sm">Ver Detalhes</Button>
+                                        <Link href="/admin/empresas">
+                                            <Button variant="outline" size="sm">Ver Detalhes</Button>
+                                        </Link>
                                     </div>
                                 </div>
                             ))}
