@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Gift, Tag, FileText, Building, Download, QrCode, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Clock, Gift, Tag, FileText, Download, QrCode, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
