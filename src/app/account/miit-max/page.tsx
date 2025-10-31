@@ -32,6 +32,13 @@ type RankingMetric = 'views' | 'interactions' | 'rating';
 type PerformanceType = 'geral' | 'organico' | 'patrocinado';
 type Period = 'weekly' | 'monthly' | 'yearly';
 
+const weeklyRating = [
+  { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 4.9, unit: 'estrelas' },
+  { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 4.8, unit: 'estrelas' },
+  { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 4.6, unit: 'estrelas' },
+  { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 4.5, unit: 'estrelas' },
+  { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 4.4, unit: 'estrelas' },
+];
 
 const mockRankingData = {
   weekly: {
@@ -49,13 +56,7 @@ const mockRankingData = {
       { rank: 4, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 32, unit: 'interações' },
       { rank: 5, companyId: '4', name: 'Bellinha Kids', logo: null, score: 25, unit: 'interações' },
     ],
-    rating: [
-      { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 4.9, unit: 'estrelas' },
-      { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 4.8, unit: 'estrelas' },
-      { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 4.6, unit: 'estrelas' },
-      { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 4.5, unit: 'estrelas' },
-      { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 4.4, unit: 'estrelas' },
-    ],
+    rating: weeklyRating,
   },
   monthly: {
     views: [
@@ -72,7 +73,7 @@ const mockRankingData = {
       { rank: 4, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 120, unit: 'interações' },
       { rank: 5, companyId: '4', name: 'Bellinha Kids', logo: null, score: 95, unit: 'interações' },
     ],
-    rating: mockRankingData.weekly.rating, // Assuming rating is consistent
+    rating: weeklyRating,
   },
   yearly: {
      views: [
@@ -89,7 +90,7 @@ const mockRankingData = {
       { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 1500, unit: 'interações' },
       { rank: 5, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 1200, unit: 'interações' },
     ],
-    rating: mockRankingData.weekly.rating, // Assuming rating is consistent
+    rating: weeklyRating,
   }
 };
 
@@ -132,8 +133,10 @@ const Podium = ({ data, companyId }: { data: (typeof mockRankingData.weekly.view
 
 const Countdown = () => {
     const [timeLeft, setTimeLeft] = useState<{ dias: number; horas: number; minutos: number } | null>(null);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
         const calculateTimeLeft = () => {
             const endOfWeek = new Date();
             endOfWeek.setDate(endOfWeek.getDate() + (7 - endOfWeek.getDay()));
@@ -158,7 +161,7 @@ const Countdown = () => {
         return () => clearInterval(timer);
     }, []);
 
-    if (!timeLeft) {
+    if (!isClient || !timeLeft) {
         return (
             <div className="flex justify-center items-baseline gap-4 text-center">
                  <div><span className="text-2xl font-bold">-</span><p className="text-xs">dias</p></div>
@@ -343,3 +346,5 @@ export default function MiitMaxPage() {
         </div>
     );
 }
+
+    
