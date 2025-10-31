@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   File,
   ListFilter,
@@ -17,6 +17,8 @@ import {
   Calendar,
   Image as ImageIcon,
   Loader2,
+  AlertTriangle,
+  ArrowUpDown,
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -62,6 +64,7 @@ import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
+import { cn } from '@/lib/utils';
 
 const initialSponsorshipRequests = [
     {
@@ -74,7 +77,7 @@ const initialSponsorshipRequests = [
         imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhbmFseXRpY3N8ZW58MHx8fHwxNzYxNjg3NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080',
         tokens: 70,
         durationDays: 7,
-        requestedAt: new Date().toISOString(),
+        requestedAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(),
         status: 'Pendente'
     },
     {
@@ -107,6 +110,7 @@ const initialSponsorshipRequests = [
 
 type SponsorshipRequest = typeof initialSponsorshipRequests[0];
 type StatusFilter = "todos" | "Pendente" | "Contatado";
+type SortKey = 'requestedAt';
 
 
 export default function AdminSponsorshipPage() {
@@ -122,6 +126,41 @@ export default function AdminSponsorshipPage() {
   const [emailBody, setEmailBody] = useState('');
   
   const { toast } = useToast();
+
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey, direction: 'ascending' | 'descending' }>({ key: 'requestedAt', direction: 'descending' });
+
+  const filteredRequests = useMemo(() => {
+    return requests.filter(
+      (req) =>
+        (req.companyName.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (statusFilter === 'todos' || req.status === statusFilter)
+    );
+  }, [requests, searchQuery, statusFilter]);
+
+  const sortedRequests = useMemo(() => {
+    let sortableItems = [...filteredRequests];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        if (new Date(a[sortConfig.key]) < new Date(b[sortConfig.key])) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (new Date(a[sortConfig.key]) > new Date(b[sortConfig.key])) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [filteredRequests, sortConfig]);
+
+  const requestSort = (key: SortKey) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
 
   const handleMarkAsContacted = (requestId: string) => {
     setRequests(prev => 
@@ -195,12 +234,6 @@ export default function AdminSponsorshipPage() {
     setEmailBody('');
     setIsEmailModalOpen(false);
   }
-
-  const filteredRequests = requests.filter(
-    (req) =>
-      (req.companyName.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (statusFilter === 'todos' || req.status === statusFilter)
-  );
   
   const openDetailsModal = (req: SponsorshipRequest) => {
       setSelectedRequest(req);
@@ -260,7 +293,12 @@ export default function AdminSponsorshipPage() {
               <TableRow>
                 <TableHead>Empresa</TableHead>
                 <TableHead className="hidden md:table-cell">Campanha</TableHead>
-                <TableHead>Data</TableHead>
+                <TableHead>
+                    <Button variant="ghost" onClick={() => requestSort('requestedAt')}>
+                        Data
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>
                   <span className="sr-only">Ações</span>
@@ -268,40 +306,51 @@ export default function AdminSponsorshipPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRequests.map((req) => (
-                <TableRow key={req.id}>
-                  <TableCell className="font-medium">{req.companyName}</TableCell>
-                  <TableCell className="hidden md:table-cell">{req.campaignType}</TableCell>
-                  <TableCell>{format(new Date(req.requestedAt), 'dd/MM/yyyy')}</TableCell>
-                  <TableCell>
-                    <Badge variant={req.status === 'Pendente' ? 'destructive' : 'default'} className={
-                        req.status === 'Pendente' 
-                        ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' 
-                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                    }>
-                      {req.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => openDetailsModal(req)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openEmailModal(req)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
-                        {req.status === 'Pendente' && (
-                            <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {sortedRequests.map((req) => {
+                const isOld = new Date(req.requestedAt) < new Date(new Date().setDate(new Date().getDate() - 3));
+                return (
+                    <TableRow 
+                        key={req.id}
+                        className={cn(isOld && req.status === 'Pendente' && 'bg-red-900/20 hover:bg-red-900/30')}
+                    >
+                    <TableCell className="font-medium">{req.companyName}</TableCell>
+                    <TableCell className="hidden md:table-cell">{req.campaignType}</TableCell>
+                    <TableCell>
+                        <div className="flex items-center gap-2">
+                            {isOld && req.status === 'Pendente' && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                            {format(new Date(req.requestedAt), 'dd/MM/yyyy')}
+                        </div>
+                    </TableCell>
+                    <TableCell>
+                        <Badge variant={req.status === 'Pendente' ? 'destructive' : 'default'} className={
+                            req.status === 'Pendente' 
+                            ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' 
+                            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                        }>
+                        {req.status}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => openDetailsModal(req)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openEmailModal(req)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
+                            {req.status === 'Pendente' && (
+                                <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
+                            )}
+                        </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
+                    </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </CardContent>
@@ -373,3 +422,5 @@ export default function AdminSponsorshipPage() {
     </main>
   );
 }
+
+    
