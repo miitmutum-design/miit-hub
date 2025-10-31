@@ -355,7 +355,22 @@ export default function AdminDashboardPage() {
                         <ReviewsChart />
                     </div>
                      <div className="border-t border-border/50 pt-6">
-                        <h3 className="text-sm font-medium text-muted-foreground mb-4">Status das Ofertas</h3>
+                        <div className="flex items-center gap-2 mb-4">
+                           <h3 className="text-sm font-medium text-muted-foreground">Status das Ofertas</h3>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-3 w-3" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Controle de Vigência</p>
+                                        <p>Vigentes: Total de ofertas ativas e válidas na data de hoje. Expiradas: Total de ofertas cuja data de validade já passou. Esta métrica ajuda a monitorar a longevidade do conteúdo promocional.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                         <div className="flex items-center justify-around text-center p-4 bg-muted/50 rounded-md">
                            <div>
                                 <p className="text-2xl font-bold text-green-400">125</p>
@@ -373,3 +388,5 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
+
+    
