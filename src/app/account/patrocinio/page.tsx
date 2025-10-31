@@ -98,7 +98,7 @@ export default function SponsorshipPage() {
                                 Vitrine Estática
                             </CardTitle>
                             <CardDescription className="text-muted-foreground">
-                                Posição de destaque na grade de patrocinadores da Home Page. Vagas limitadas a 9 empresas em rotação justa horizontal, garantindo máxima visibilidade.
+                                Posição de destaque na grade de patrocinadores da Home Page. Vagas limitadas a 9 empresas garantindo visibilidade.
                             </CardDescription>
                         </CardHeader>
                     </Card>
