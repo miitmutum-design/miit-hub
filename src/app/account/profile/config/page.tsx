@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Bell, FileText, Globe, Star, Calendar, Gift, HelpCircle, CircleDollarSign, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Bell, FileText, Globe, Star, Calendar, Gift, HelpCircle, CircleDollarSign, BarChart3, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -92,6 +92,8 @@ export default function ConsumerConfigPage() {
                 <ConfigItem icon={CircleDollarSign} title="Patrocínio" description="Impulsionar meu negócio" href="/account/patrocinio" />
                 <Separator />
                 <ConfigItem icon={BarChart3} title="Analytics" description="Ver métricas de desempenho" href="/account/analytics" />
+                <Separator />
+                <ConfigItem icon={Trophy} title="MiiT Max" description="Veja seu Ranking e Desempenho" href="/account/miit-max" />
             </div>
         </CardContent>
       </Card>
