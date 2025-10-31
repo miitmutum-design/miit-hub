@@ -262,7 +262,22 @@ export default function AdminDashboardPage() {
                 </CardHeader>
                 <CardContent className="grid gap-8">
                     <div>
-                        <h3 className="text-sm font-medium text-muted-foreground mb-4">Empresas para Aprovar</h3>
+                        <div className="flex items-center gap-2 mb-4">
+                            <h3 className="text-sm font-medium text-muted-foreground">Empresas para Aprovar</h3>
+                             <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-3 w-3" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Aprovação de Conteúdo</p>
+                                        <p>Estas empresas concluíram o cadastro e estão aguardando sua análise. O administrador deve verificar os dados e aprovar para que a loja apareça nos resultados de busca do PWA.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                         <div className="space-y-4">
                             {pendingCompanies.map(company => (
                                 <div key={company.name} className="flex items-center">
@@ -329,4 +344,3 @@ export default function AdminDashboardPage() {
   );
 }
 
-    
