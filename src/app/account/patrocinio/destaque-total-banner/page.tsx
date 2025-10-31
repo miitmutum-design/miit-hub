@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info, Gift, Ticket as EventTicket } from 'lucide-react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info, Gift, Ticket as EventTicket, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -20,8 +20,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 // Mock function to check for available slots. In a real app, this would query Firestore.
-const checkAvailability = async (date: Date): Promise<boolean> => {
-  // For demonstration, let's assume today is always fully booked.
+const checkTodaysAvailability = async (): Promise<number> => {
+  // For demonstration, let's assume 1 slot is occupied today, leaving 2 free.
+  return await new Promise(resolve => setTimeout(() => resolve(1), 500));
+};
+
+const checkFutureDateAvailability = async (date: Date): Promise<boolean> => {
+  // For demonstration, let's assume today is always fully booked for this check.
   const today = new Date();
   if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
     return false; // No slots available today
@@ -60,11 +65,26 @@ export default function DestaqueTotalBannerPage() {
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [occupiedSlotsToday, setOccupiedSlotsToday] = useState(0);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(true);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
+  
+  useEffect(() => {
+    const fetchTodaysSlots = async () => {
+      setIsLoadingSlots(true);
+      const slots = await checkTodaysAvailability();
+      setOccupiedSlotsToday(slots);
+      setIsLoadingSlots(false);
+    }
+    fetchTodaysSlots();
+  }, []);
 
   const dailyCost = companyProfile.plan === 'Gold' ? 7 : 10;
   const isFormDisabled = companyProfile.tokens < dailyCost;
+  const totalSlots = 3;
+  const hasAvailableSlotsToday = occupiedSlotsToday < totalSlots;
 
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
   const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
@@ -136,7 +156,7 @@ export default function DestaqueTotalBannerPage() {
       toast({ title: 'Link do Site Salvo!'});
   }
 
-  const sendSponsorshipRequest = () => {
+  const sendSponsorshipRequest = (startDate: Date) => {
     console.log({
         companyId: companyProfile.id,
         sponsorshipType,
@@ -145,7 +165,7 @@ export default function DestaqueTotalBannerPage() {
         bannerImage,
         tokensSpent: tokensToSpend,
         sponsorshipDays: sponsorshipDays,
-        startDate: selectedDate || new Date(),
+        startDate: startDate,
     });
 
     toast({
@@ -155,40 +175,49 @@ export default function DestaqueTotalBannerPage() {
     router.push('/account/patrocinio');
   }
 
-  const handleSubmit = async () => {
-    if (!isFormValid || isFormDisabled) {
+  const handleSubmitNow = async () => {
+    if (!isFormValid || isFormDisabled || !hasAvailableSlotsToday) {
         toast({
             variant: 'destructive',
-            title: "Campos Obrigatórios ou Saldo Insuficiente",
-            description: "Verifique se todos os campos estão preenchidos e se seu saldo de tokens é suficiente.",
+            title: "Não é possível publicar agora",
+            description: "Verifique se o formulário está preenchido, se há saldo de tokens e se há vagas para hoje.",
         });
         return;
     }
     
     setIsSubmitting(true);
-    const startDate = selectedDate || new Date();
-    const isAvailable = await checkAvailability(startDate);
+    sendSponsorshipRequest(new Date());
     setIsSubmitting(false);
-
-    if (isAvailable) {
-        sendSponsorshipRequest();
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Vagas Esgotadas!",
-            description: "Não há vagas para hoje. Por favor, agende uma data futura.",
-        });
-        setIsCalendarModalOpen(true);
-    }
   }
 
-  const handleScheduleAndSubmit = () => {
+  const handleScheduleClick = () => {
+    if (!isFormValid || isFormDisabled) {
+      toast({ variant: 'destructive', title: 'Formulário inválido', description: 'Preencha todos os campos e verifique seu saldo.'});
+      return;
+    }
+    setIsCalendarModalOpen(true);
+  }
+
+  const handleScheduleAndSubmit = async () => {
     if (!selectedDate) {
       toast({ variant: 'destructive', title: 'Nenhuma data selecionada' });
       return;
     }
-    setIsCalendarModalOpen(false);
-    sendSponsorshipRequest();
+
+    setIsSubmitting(true);
+    const isAvailable = await checkFutureDateAvailability(selectedDate);
+    setIsSubmitting(false);
+
+    if (isAvailable) {
+        sendSponsorshipRequest(selectedDate);
+        setIsCalendarModalOpen(false);
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Vagas Esgotadas!",
+            description: "Não há vagas para a data selecionada. Por favor, escolha outra data.",
+        });
+    }
   };
 
   const bannerLabels = {
@@ -358,23 +387,47 @@ export default function DestaqueTotalBannerPage() {
               )}
           </div>
         </div>
-
-        <div className="pt-8 pb-24">
-            <Button
-              size="lg"
-              className={cn(
-                "w-full h-12 text-lg font-bold transition-colors",
-                isFormValid && !isFormDisabled
-                  ? "bg-lime-500 hover:bg-lime-600 text-black"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              )}
-              onClick={handleSubmit}
-              disabled={!isFormValid || isSubmitting || isFormDisabled}
-            >
-              {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
-              {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
-          </Button>
+        
+        <div className="pt-8 pb-24 space-y-4 group-disabled:opacity-50">
+            <Label>Escolha de Publicação</Label>
+            <div className="grid grid-cols-2 gap-4">
+                <Button
+                    size="lg"
+                    className={cn(
+                        "w-full h-12 text-lg font-bold transition-colors",
+                        isFormValid && !isFormDisabled && hasAvailableSlotsToday
+                        ? "bg-lime-500 hover:bg-lime-600 text-black"
+                        : "bg-muted text-muted-foreground cursor-not-allowed"
+                    )}
+                    onClick={handleSubmitNow}
+                    disabled={!isFormValid || isSubmitting || isFormDisabled || !hasAvailableSlotsToday || isLoadingSlots}
+                    >
+                    {isLoadingSlots ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
+                    Publicar Agora
+                </Button>
+                 <Button
+                    size="lg"
+                    variant="outline"
+                    className={cn(
+                        "w-full h-12 text-lg font-bold transition-colors",
+                         isFormValid && !isFormDisabled ? "border-primary text-primary hover:bg-primary/10" : "cursor-not-allowed"
+                    )}
+                    onClick={handleScheduleClick}
+                    disabled={!isFormValid || isSubmitting || isFormDisabled || isLoadingSlots}
+                    >
+                    <CalendarIcon className="mr-2 h-5 w-5"/>
+                    Agendar
+                </Button>
+            </div>
+             {isLoadingSlots ? (
+                <p className="text-xs text-muted-foreground text-center animate-pulse">Verificando vagas...</p>
+            ) : hasAvailableSlotsToday ? (
+                 <p className="text-xs text-muted-foreground text-center">Vagas disponíveis para hoje!</p>
+            ) : (
+                 <p className="text-xs text-orange-400 text-center">Vagas para hoje esgotadas. Por favor, agende.</p>
+            )}
         </div>
+        
       </fieldset>
       
       {/* WhatsApp Modal */}
@@ -458,11 +511,11 @@ export default function DestaqueTotalBannerPage() {
                    <Button
                       type="button"
                       onClick={handleScheduleAndSubmit}
-                      disabled={!selectedDate}
+                      disabled={!selectedDate || isSubmitting}
                       className="w-full bg-lime-500 hover:bg-lime-600 text-black"
                   >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      Agendar para {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '...'}
+                      {isSubmitting ? <Loader2 className="animate-spin" /> : <CalendarIcon className="mr-2 h-4 w-4" />}
+                      {isSubmitting ? 'Agendando...' : `Agendar para ${selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '...'}`}
                   </Button>
               </DialogFooter>
           </DialogContent>
