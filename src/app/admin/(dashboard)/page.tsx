@@ -63,7 +63,25 @@ export default function AdminDashboardPage() {
                     description="Total de tokens comprados."
                 />
                 <StatCard
-                    title="Patrocínios Pendentes"
+                    title={
+                         <div className="flex items-center gap-2">
+                            Patrocínios Pendentes
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Definição da Métrica</p>
+                                        <p>Total de solicitações de patrocínio que estão aguardando sua revisão e contato. Elas estão no status PENDENTE na Caixa de Entrada.</p>
+                                        <p className="mt-2 text-lime-300">Próxima Ação: Clique em 'Revisar' para ver a lista e iniciar o contato.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="5"
                     icon={Clock}
                     description="Solicitações aguardando revisão."
