@@ -295,7 +295,22 @@ export default function AdminDashboardPage() {
                         </div>
                     </div>
                     <div className="border-t border-border/50 pt-6">
-                        <h3 className="text-sm font-medium text-muted-foreground mb-4">Sugestões de Categorias</h3>
+                        <div className="flex items-center gap-2 mb-4">
+                            <h3 className="text-sm font-medium text-muted-foreground">Sugestões de Categorias</h3>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-3 w-3" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Moderação de Taxonomia</p>
+                                        <p>Estas são novas categorias sugeridas pelas empresas durante o cadastro. O administrador deve APROVAR (✅) para adicioná-las ao dropdown de categorias principal do PWA, ou REJEITAR (❌) para remover a sugestão.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                          <div className="space-y-3">
                              {categorySuggestions.map(cat => (
                                 <div key={cat.name} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
@@ -343,4 +358,3 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
-
