@@ -332,7 +332,22 @@ export default function AdminDashboardPage() {
 
             <Card className="lg:col-span-3">
                  <CardHeader>
-                    <CardTitle>Visão Geral do Conteúdo</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                        Visão Geral do Conteúdo
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button className="text-lime-400 focus:outline-none">
+                                        <Info className="h-4 w-4" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p className="font-bold">Monitoramento de Engajamento</p>
+                                    <p>Este gráfico mostra o Resumo de Avaliações recebidas ao longo dos últimos 7 dias. Ele mede o engajamento direto dos consumidores com o conteúdo das empresas (serviços, produtos e lojas) no PWA.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-8">
                     <div>
