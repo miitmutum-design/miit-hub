@@ -63,8 +63,9 @@ export default function DestaqueTotalBannerPage() {
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const dailyCost = companyProfile.plan === 'Gold' ? 7 : 10;
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const sponsorshipDays = Math.floor(tokensToSpend / 10);
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
   const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
 
 
@@ -307,7 +308,7 @@ export default function DestaqueTotalBannerPage() {
                 type="number"
                 value={tokensToSpend === 0 ? '' : tokensToSpend}
                 onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
-                placeholder="Ex: 100"
+                placeholder={`Ex: ${dailyCost}`}
                 min="1"
                 className="bg-card border-border/50 h-12"
             />
@@ -317,7 +318,7 @@ export default function DestaqueTotalBannerPage() {
                 </p>
              ) : (
                 <p className="text-sm text-muted-foreground">
-                    Duração mínima: 1 dia (10 tokens).
+                    Custo: {dailyCost} tokens por dia.
                 </p>
              )}
              {!isBalanceSufficient && tokensToSpend > 0 && (
@@ -440,6 +441,8 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
+    
 
     
 

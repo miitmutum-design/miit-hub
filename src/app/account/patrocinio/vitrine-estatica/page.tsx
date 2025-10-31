@@ -60,8 +60,9 @@ export default function VitrineEstaticaPage() {
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
+  const dailyCost = companyProfile.plan === 'Gold' ? 4 : 6;
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const sponsorshipDays = Math.floor(tokensToSpend / 5);
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
   const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
 
 
@@ -311,7 +312,7 @@ export default function VitrineEstaticaPage() {
                 type="number"
                 value={tokensToSpend === 0 ? '' : tokensToSpend}
                 onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
-                placeholder="Ex: 50"
+                placeholder={`Ex: ${dailyCost}`}
                 min="1"
                 className="bg-card border-border/50 h-12"
             />
@@ -321,7 +322,7 @@ export default function VitrineEstaticaPage() {
                 </p>
             ) : (
                 <p className="text-sm text-muted-foreground">
-                    Custo: 5 tokens por dia.
+                    Custo: {dailyCost} tokens por dia.
                 </p>
             )}
             {!isBalanceSufficient && tokensToSpend > 0 && (
@@ -445,3 +446,5 @@ export default function VitrineEstaticaPage() {
     </div>
   );
 }
+
+    

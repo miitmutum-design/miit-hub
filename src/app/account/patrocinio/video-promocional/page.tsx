@@ -50,8 +50,9 @@ export default function VideoPromocionalPage() {
 
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  const dailyCost = companyProfile.plan === 'Gold' ? 10 : 12;
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const sponsorshipDays = Math.floor(tokensToSpend / 15); // Example cost: 15 tokens/day
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
   const isFormValid = campaignTitle.trim() !== '' && videoFile && tokensToSpend > 0 && isBalanceSufficient;
 
 
@@ -217,7 +218,7 @@ export default function VideoPromocionalPage() {
                 type="number"
                 value={tokensToSpend === 0 ? '' : tokensToSpend}
                 onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
-                placeholder="Ex: 150"
+                placeholder={`Ex: ${dailyCost}`}
                 min="1"
                 className="bg-card border-border/50 h-12"
             />
@@ -227,7 +228,7 @@ export default function VideoPromocionalPage() {
                 </p>
             ) : (
                 <p className="text-sm text-muted-foreground">
-                    Custo: 15 tokens por dia.
+                    Custo: {dailyCost} tokens por dia.
                 </p>
             )}
             {!isBalanceSufficient && tokensToSpend > 0 && (
@@ -299,3 +300,5 @@ export default function VideoPromocionalPage() {
     </div>
   );
 }
+
+    
