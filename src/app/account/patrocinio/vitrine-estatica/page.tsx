@@ -78,6 +78,23 @@ export default function VitrineEstaticaPage() {
       setBannerImage(placeholderUrl);
     }
   };
+
+  const handleTokenInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setTokensToSpend(value);
+  };
+
+  const handleTokenInputBlur = () => {
+    if (tokensToSpend < dailyCost) {
+        setTokensToSpend(dailyCost);
+        return;
+    }
+    const remainder = tokensToSpend % dailyCost;
+    if (remainder !== 0) {
+        const roundedTokens = Math.ceil(tokensToSpend / dailyCost) * dailyCost;
+        setTokensToSpend(roundedTokens);
+    }
+  };
   
   const handleSaveWhatsapp = () => {
       const cleaned = whatsappNumber.replace(/\D/g, '');
@@ -314,10 +331,11 @@ export default function VitrineEstaticaPage() {
                 id="tokensToSpend"
                 type="number"
                 value={tokensToSpend === 0 ? '' : tokensToSpend}
-                onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
+                onChange={handleTokenInputChange}
+                onBlur={handleTokenInputBlur}
                 placeholder={`Ex: ${dailyCost}`}
                 min={dailyCost}
-                step={dailyCost}
+                step={1}
                 className="bg-card border-border/50 h-12"
             />
             {tokensToSpend > 0 && !isTokenAmountValid ? (
