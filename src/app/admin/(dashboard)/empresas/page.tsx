@@ -9,6 +9,7 @@ import {
   Copy,
   ArrowRight,
   Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -47,7 +48,7 @@ import {
 } from '@/components/ui/dialog';
 import AdminHeader from '@/components/common/AdminHeader';
 import { Button } from '@/components/ui/button';
-import { adminCompanies } from '@/lib/data';
+import { adminCompanies as initialAdminCompanies } from '@/lib/data';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
@@ -67,6 +68,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function AdminEmpresasPage() {
+  const [adminCompanies, setAdminCompanies] = useState(initialAdminCompanies);
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [accessKey, setAccessKey] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -96,6 +98,27 @@ export default function AdminEmpresasPage() {
       setIsGenerating(false);
     }, 500);
   };
+  
+  const handleRegenerateKey = (companyId: string) => {
+    const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+    let key = '';
+    for (let i = 0; i < 12; i++) {
+      key += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const newKey = `${key.slice(0, 4)}-${key.slice(
+      4,
+      8
+    )}-${key.slice(8, 12)}`;
+
+    setAdminCompanies(prevCompanies => 
+        prevCompanies.map(c => c.id === companyId ? {...c, accessKey: newKey} : c)
+    );
+
+    toast({
+        title: "Chave Regenerada!",
+        description: `Nova chave de acesso gerada para a empresa.`,
+    });
+  }
 
   const copyToClipboard = (keyToCopy: string) => {
     navigator.clipboard.writeText(keyToCopy).then(
@@ -155,7 +178,7 @@ export default function AdminEmpresasPage() {
               </DropdownMenu>
               <Button size="sm" variant="outline" className="h-8 gap-1">
                 <File className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                <span className="sr-only sm:not-sr-only sm:whitespace-rap">
                   Exportar
                 </span>
               </Button>
@@ -262,6 +285,9 @@ export default function AdminEmpresasPage() {
                                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
                                     <Copy className="h-4 w-4"/>
                                 </Button>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRegenerateKey(company.id)}>
+                                    <RefreshCw className="h-4 w-4 text-lime-400"/>
+                                </Button>
                             </div>
                         </TableCell>
                         <TableCell>
@@ -354,6 +380,9 @@ export default function AdminEmpresasPage() {
                                 <span className="font-mono text-xs">{company.accessKey}</span>
                                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
                                     <Copy className="h-4 w-4"/>
+                                </Button>
+                                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRegenerateKey(company.id)}>
+                                    <RefreshCw className="h-4 w-4 text-lime-400"/>
                                 </Button>
                             </div>
                         </TableCell>
