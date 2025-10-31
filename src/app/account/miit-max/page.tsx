@@ -90,33 +90,43 @@ const Podium = ({ data, companyId }: { data: (typeof mockRankingData.views)[0][]
 };
 
 const Countdown = () => {
-    const calculateTimeLeft = () => {
-        const endOfWeek = new Date();
-        endOfWeek.setDate(endOfWeek.getDate() + (7 - endOfWeek.getDay()));
-        endOfWeek.setHours(23, 59, 59, 999);
-
-        const difference = +endOfWeek - +new Date();
-        let timeLeft = {};
-
-        if (difference > 0) {
-            timeLeft = {
-                dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                horas: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutos: Math.floor((difference / 1000 / 60) % 60),
-            };
-        }
-        return timeLeft as {dias: number, horas: number, minutos: number};
-    };
-
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+    const [timeLeft, setTimeLeft] = useState<{ dias: number; horas: number; minutos: number } | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setTimeLeft(calculateTimeLeft());
-        }, 1000 * 60); // Update every minute
-        return () => clearTimeout(timer);
-    });
+        const calculateTimeLeft = () => {
+            const endOfWeek = new Date();
+            endOfWeek.setDate(endOfWeek.getDate() + (7 - endOfWeek.getDay()));
+            endOfWeek.setHours(23, 59, 59, 999);
 
+            const difference = +endOfWeek - +new Date();
+            let newTimeLeft = { dias: 0, horas: 0, minutos: 0 };
+
+            if (difference > 0) {
+                newTimeLeft = {
+                    dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    horas: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutos: Math.floor((difference / 1000 / 60) % 60),
+                };
+            }
+            setTimeLeft(newTimeLeft);
+        };
+
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 1000 * 60); // Update every minute
+
+        return () => clearInterval(timer);
+    }, []);
+
+    if (!timeLeft) {
+        return (
+            <div className="flex justify-center items-baseline gap-4 text-center">
+                 <div><span className="text-2xl font-bold">-</span><p className="text-xs">dias</p></div>
+                 <div><span className="text-2xl font-bold">-</span><p className="text-xs">horas</p></div>
+                 <div><span className="text-2xl font-bold">-</span><p className="text-xs">minutos</p></div>
+            </div>
+        );
+    }
+    
     return (
         <div className="flex justify-center items-baseline gap-4 text-center">
             {timeLeft.dias > 0 && <div><span className="text-2xl font-bold">{timeLeft.dias}</span><p className="text-xs">dias</p></div>}
@@ -237,3 +247,5 @@ export default function MiitMaxPage() {
         </div>
     );
 }
+
+    
