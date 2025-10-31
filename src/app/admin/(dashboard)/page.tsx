@@ -215,7 +215,24 @@ export default function AdminDashboardPage() {
                     description="Campanhas de vídeo agendadas."
                 />
                 <StatCard
-                    title="Próximo Slot Livre"
+                    title={
+                        <div className="flex items-center gap-2">
+                            Próximo Slot Livre
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Controle de Agendamento</p>
+                                        <p>A data mais próxima (futura) em que há pelo menos uma vaga disponível para o Patrocínio Principal (Carrossel). Esta métrica é vital para agendar novos pedidos e fechar vendas.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="05/08/2024"
                     icon={CalendarCheck}
                     description="Data mais próxima com vaga no Banner."
