@@ -251,7 +251,8 @@ export const adminCompanies = [
     category: 'Construção',
     status: 'Aprovada',
     isActive: true,
-    joinDate: '10/07/2024'
+    joinDate: '10/07/2024',
+    accessKey: 'ABCD-1234-EFGH'
   },
   {
     id: '3',
@@ -259,7 +260,8 @@ export const adminCompanies = [
     category: 'Móveis',
     status: 'Aprovada',
     isActive: true,
-    joinDate: '05/07/2024'
+    joinDate: '05/07/2024',
+    accessKey: 'IJKL-5678-MNOP'
   },
   {
     id: 'company-gold',
@@ -267,7 +269,8 @@ export const adminCompanies = [
     category: 'Tecnologia',
     status: 'Aprovada',
     isActive: false,
-    joinDate: '01/07/2024'
+    joinDate: '01/07/2024',
+    accessKey: 'QRST-9012-UVWX'
   },
   {
     id: 'company-silver',
@@ -275,7 +278,8 @@ export const adminCompanies = [
     category: 'Serviços',
     status: 'Pendente',
     isActive: false,
-    joinDate: '28/06/2024'
+    joinDate: '28/06/2024',
+    accessKey: 'YZAB-3456-CDEF'
   },
     {
     id: '5',
@@ -283,7 +287,8 @@ export const adminCompanies = [
     category: 'Alimentação',
     status: 'Pendente',
     isActive: false,
-    joinDate: '25/06/2024'
+    joinDate: '25/06/2024',
+    accessKey: 'GHIJ-7890-KLMN'
   },
   {
     id: '6',
@@ -291,7 +296,8 @@ export const adminCompanies = [
     category: 'Floricultura',
     status: 'Pendente',
     isActive: false,
-    joinDate: '22/06/2024'
+    joinDate: '22/06/2024',
+    accessKey: 'OPQR-1234-STUV'
   }
 ];
 

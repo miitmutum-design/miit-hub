@@ -97,8 +97,8 @@ export default function AdminEmpresasPage() {
     }, 500);
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(accessKey).then(
+  const copyToClipboard = (keyToCopy: string) => {
+    navigator.clipboard.writeText(keyToCopy).then(
       () => {
         toast({
           title: 'Chave Copiada!',
@@ -196,7 +196,7 @@ export default function AdminEmpresasPage() {
                           variant="ghost"
                           size="icon"
                           className="absolute right-2 top-1/2 h-9 w-9 -translate-y-1/2"
-                          onClick={copyToClipboard}
+                          onClick={() => copyToClipboard(accessKey)}
                         >
                           <Copy className="h-5 w-5" />
                         </Button>
@@ -239,9 +239,10 @@ export default function AdminEmpresasPage() {
                     <TableRow>
                       <TableHead>Nome da Empresa</TableHead>
                       <TableHead>Categoria</TableHead>
+                      <TableHead>Data de Cadastro</TableHead>
+                      <TableHead>Chave de Acesso</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Ativo no PWA</TableHead>
-                      <TableHead>Data de Cadastro</TableHead>
                       <TableHead>
                         <span className="sr-only">Ações</span>
                       </TableHead>
@@ -254,6 +255,15 @@ export default function AdminEmpresasPage() {
                           {company.name}
                         </TableCell>
                         <TableCell>{company.category}</TableCell>
+                        <TableCell>{company.joinDate}</TableCell>
+                        <TableCell>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs">{company.accessKey}</span>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
+                                    <Copy className="h-4 w-4"/>
+                                </Button>
+                            </div>
+                        </TableCell>
                         <TableCell>
                           <Badge
                             variant={
@@ -273,7 +283,6 @@ export default function AdminEmpresasPage() {
                         <TableCell>
                           <Switch defaultChecked={company.isActive} />
                         </TableCell>
-                        <TableCell>{company.joinDate}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
