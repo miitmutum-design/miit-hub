@@ -115,7 +115,6 @@ export default function EventDetailPage() {
         <CardContent className="p-6 space-y-6">
             <div className="text-center">
                 <p className="text-sm font-medium text-muted-foreground flex items-center justify-center gap-2">
-                    <Building className="h-4 w-4"/>
                     {event.businessName}
                 </p>
                 <h2 className="text-3xl font-bold text-foreground font-headline mt-2">{event.title}</h2>
