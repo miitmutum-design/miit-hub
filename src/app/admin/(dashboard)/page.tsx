@@ -243,7 +243,22 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-7">
             <Card className="lg:col-span-4">
                  <CardHeader>
-                    <CardTitle>Tarefas de Moderação</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                        Tarefas de Moderação
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button className="text-lime-400 focus:outline-none">
+                                        <Info className="h-4 w-4" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                    <p className="font-bold">Fluxo de Trabalho do Administrador</p>
+                                    <p>Esta seção lista os itens que requerem sua ação imediata (aprovação ou análise), garantindo a qualidade e segurança do conteúdo do PWA.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-8">
                     <div>
@@ -313,3 +328,5 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
+
+    
