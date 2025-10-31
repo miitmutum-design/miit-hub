@@ -1,12 +1,18 @@
 
 'use client';
-import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp, Info } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import AdminHeader from '@/components/common/AdminHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import ReviewsChart from '@/components/admin/ReviewsChart';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 
 const pendingCompanies = [
@@ -34,7 +40,24 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <StatCard
-                    title="Tokens Vendidos (24h)"
+                    title={
+                        <div className="flex items-center gap-2">
+                            Tokens Vendidos (24h)
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Definição da Métrica</p>
+                                        <p>Total de Tokens comprados pelas empresas nos últimos 24 horas. Esta métrica representa a receita bruta potencial de pacotes de Tokens e a demanda imediata por patrocínios.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="1,250"
                     icon={DollarSign}
                     description="Total de tokens comprados."
