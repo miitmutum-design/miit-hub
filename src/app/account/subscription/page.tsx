@@ -29,7 +29,7 @@ const plans = {
     period: '/mês',
     benefits: [
       '1 Oferta por Mês',
-      '10 Eventos',
+      '1 Evento no Ano',
       'Suporte Padrão',
     ],
     borderColor: 'border-zinc-500/50',
