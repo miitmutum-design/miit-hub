@@ -111,7 +111,7 @@ export default function VitrineCarrosselPage() {
       setLinkType('whatsapp');
       setIsWhatsappModalOpen(false);
       toast({ title: 'Link do WhatsApp Salvo!'});
-  }
+  };
   
   const handleSaveInstagram = () => {
       const cleaned = instagramHandle.replace('@', '');
@@ -123,7 +123,7 @@ export default function VitrineCarrosselPage() {
       setLinkType('instagram');
       setIsInstagramModalOpen(false);
       toast({ title: 'Link do Instagram Salvo!'});
-  }
+  };
 
   const handleSaveSite = () => {
        if (!siteUrl.startsWith('http')) {
@@ -134,7 +134,7 @@ export default function VitrineCarrosselPage() {
       setLinkType('site');
       setIsSiteModalOpen(false);
       toast({ title: 'Link do Site Salvo!'});
-  }
+  };
 
   const sendSponsorshipRequest = () => {
     console.log({
@@ -154,7 +154,7 @@ export default function VitrineCarrosselPage() {
         description: `Sua solicitação para a Vitrine de Carrossel com ${tokensToSpend} tokens foi enviada para análise.`,
     });
     router.push('/account/patrocinio');
-  }
+  };
 
   const handleSubmit = async () => {
     if (!isFormValid || isFormDisabled) {
@@ -181,7 +181,7 @@ export default function VitrineCarrosselPage() {
         });
         setIsCalendarModalOpen(true);
     }
-  }
+  };
 
   const handleScheduleAndSubmit = () => {
     if (!selectedDate) {
