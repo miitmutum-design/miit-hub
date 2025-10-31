@@ -19,6 +19,8 @@ import {
   Loader2,
   AlertTriangle,
   ArrowUpDown,
+  Crown,
+  Shield,
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -108,8 +110,9 @@ const initialSponsorshipRequests = [
     }
 ];
 
-type SponsorshipRequest = typeof initialSponsorshipRequests[0];
+type SponsorshipRequest = typeof initialSponsorshipRequests[0] & { plan: 'Gold' | 'Prata' | 'Básico' };
 type StatusFilter = "todos" | "Pendente" | "Contatado";
+type PlanFilter = "todos" | "Gold" | "Prata";
 type SortKey = 'requestedAt';
 
 
@@ -117,6 +120,7 @@ export default function AdminSponsorshipPage() {
   const [requests, setRequests] = useState(initialSponsorshipRequests);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('todos');
+  const [planFilter, setPlanFilter] = useState<PlanFilter>('todos');
   const [selectedRequest, setSelectedRequest] = useState<SponsorshipRequest | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -129,13 +133,21 @@ export default function AdminSponsorshipPage() {
 
   const [sortConfig, setSortConfig] = useState<{ key: SortKey, direction: 'ascending' | 'descending' }>({ key: 'requestedAt', direction: 'descending' });
 
+  const requestsWithPlan = useMemo(() => {
+    return requests.map(req => {
+      const profile = mockCompanyProfiles[req.companyId as keyof typeof mockCompanyProfiles];
+      return { ...req, plan: profile?.plan || 'Prata' };
+    });
+  }, [requests]);
+
   const filteredRequests = useMemo(() => {
-    return requests.filter(
+    return requestsWithPlan.filter(
       (req) =>
         (req.companyName.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        (statusFilter === 'todos' || req.status === statusFilter)
+        (statusFilter === 'todos' || req.status === statusFilter) &&
+        (planFilter === 'todos' || req.plan === planFilter)
     );
-  }, [requests, searchQuery, statusFilter]);
+  }, [requestsWithPlan, searchQuery, statusFilter, planFilter]);
 
   const sortedRequests = useMemo(() => {
     let sortableItems = [...filteredRequests];
@@ -245,6 +257,17 @@ export default function AdminSponsorshipPage() {
       setIsEmailModalOpen(true);
   }
 
+  const planBadge = (plan: 'Gold' | 'Prata' | 'Básico') => {
+      switch(plan) {
+          case 'Gold':
+              return <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-500/30 gap-1.5"><Crown className="h-3 w-3"/>{plan}</Badge>;
+          case 'Prata':
+              return <Badge className="bg-zinc-400/20 text-zinc-300 border-zinc-500/30 gap-1.5"><Shield className="h-3 w-3"/>{plan}</Badge>;
+          default:
+              return <Badge variant="outline">{plan}</Badge>;
+      }
+  }
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <AdminHeader title="Solicitações de Patrocínio" />
@@ -271,7 +294,7 @@ export default function AdminSponsorshipPage() {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ListFilter className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filtro
+                    Status
                     </span>
                 </Button>
                 </DropdownMenuTrigger>
@@ -282,6 +305,25 @@ export default function AdminSponsorshipPage() {
                         <DropdownMenuRadioItem value="todos">Todos</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="Pendente">Pendentes</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="Contatado">Contatados</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Plano
+                    </span>
+                </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Filtrar por Plano</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioGroup value={planFilter} onValueChange={(value) => setPlanFilter(value as PlanFilter)}>
+                        <DropdownMenuRadioItem value="todos">Todos</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="Gold">Gold</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="Prata">Prata</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -313,7 +355,10 @@ export default function AdminSponsorshipPage() {
                         key={req.id}
                         className={cn(isOld && req.status === 'Pendente' && 'bg-red-900/20 hover:bg-red-900/30')}
                     >
-                    <TableCell className="font-medium">{req.companyName}</TableCell>
+                    <TableCell>
+                      <div className="font-medium">{req.companyName}</div>
+                      {planBadge(req.plan)}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">{req.campaignType}</TableCell>
                     <TableCell>
                         <div className="flex items-center gap-2">
@@ -340,8 +385,8 @@ export default function AdminSponsorshipPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => openDetailsModal(req)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => openEmailModal(req)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openDetailsModal(req as SponsorshipRequest)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openEmailModal(req as SponsorshipRequest)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
                             {req.status === 'Pendente' && (
                                 <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
                             )}
@@ -422,5 +467,3 @@ export default function AdminSponsorshipPage() {
     </main>
   );
 }
-
-    
