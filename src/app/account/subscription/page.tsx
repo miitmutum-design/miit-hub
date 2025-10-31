@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign } from 'lucide-react';
+import { ArrowLeft, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign, AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCompany } from '@/contexts/CompanyContext';
@@ -28,17 +28,33 @@ const calculateDaysRemaining = (endDate: string) => {
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 };
 
+type SubscriptionStatus = 'active' | 'pending' | 'expired';
+
+const getSubscriptionStatus = (endDate: string): SubscriptionStatus => {
+    const daysRemaining = calculateDaysRemaining(endDate);
+    if (daysRemaining <= 0) return 'expired';
+    if (daysRemaining <= 7) return 'pending';
+    return 'active';
+}
+
+const statusConfig = {
+    active: { text: 'Ativo', icon: CheckCircle, className: 'text-green-400' },
+    pending: { text: 'Pendente', icon: AlertTriangle, className: 'text-yellow-400' },
+    expired: { text: 'Expirado', icon: Clock, className: 'text-orange-500' }
+};
+
 export default function SubscriptionPage() {
   const { companyProfile, setCompanyProfile } = useCompany();
   const [daysRemaining, setDaysRemaining] = useState(0);
-  const [isExpired, setIsExpired] = useState(false);
+  const [status, setStatus] = useState<SubscriptionStatus>('active');
   const [tokenAmount, setTokenAmount] = useState(10);
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
 
   useEffect(() => {
     const days = calculateDaysRemaining(companyProfile.subscriptionEndDate);
+    const currentStatus = getSubscriptionStatus(companyProfile.subscriptionEndDate);
     setDaysRemaining(days);
-    setIsExpired(days <= 0);
+    setStatus(currentStatus);
   }, [companyProfile.subscriptionEndDate]);
 
   const handleRenew = () => {
@@ -85,6 +101,8 @@ export default function SubscriptionPage() {
   const incrementAmount = () => setTokenAmount(prev => prev + 10);
   const decrementAmount = () => setTokenAmount(prev => Math.max(10, prev - 10));
 
+  const StatusIcon = statusConfig[status].icon;
+
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
@@ -119,12 +137,10 @@ export default function SubscriptionPage() {
                 }
                 Plano {companyProfile.plan}
               </CardTitle>
-              {!isExpired && (
-                <div className="flex items-center gap-2 text-sm text-green-400">
-                  <CheckCircle className="w-4 h-4"/>
-                  <span>Ativo</span>
-                </div>
-              )}
+              <div className={cn("flex items-center gap-2 text-sm font-semibold", statusConfig[status].className)}>
+                <StatusIcon className="w-4 h-4"/>
+                <span>{statusConfig[status].text}</span>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-6 space-y-4">
@@ -132,7 +148,7 @@ export default function SubscriptionPage() {
                 <p className="text-sm text-muted-foreground">Próxima Renovação</p>
                 <p className="text-lg font-semibold">{new Date(companyProfile.subscriptionEndDate).toLocaleDateString('pt-BR')}</p>
              </div>
-             {companyProfile.plan === 'Prata' && !isExpired && (
+             {companyProfile.plan === 'Prata' && status !== 'expired' && (
                 <div>
                   <p className="text-sm text-muted-foreground">Contador Regressivo</p>
                   <p className="text-lg font-semibold">{daysRemaining} dias restantes</p>
@@ -142,14 +158,14 @@ export default function SubscriptionPage() {
               size="lg"
               className={cn(
                 "w-full h-12 text-lg font-bold transition-colors",
-                isExpired
+                status === 'expired'
                   ? "bg-lime-500 hover:bg-lime-600 text-black"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               )}
               onClick={handleRenew}
-              disabled={!isExpired}
+              disabled={status !== 'expired'}
             >
-              {isExpired ? 'Pagar / Renovar Plano' : 'Plano Ativo'}
+              {status === 'expired' ? 'Pagar / Renovar Plano' : 'Plano Ativo'}
             </Button>
           </CardContent>
         </Card>
@@ -174,7 +190,7 @@ export default function SubscriptionPage() {
                 <DialogHeader>
                   <DialogTitle>Adicionar Tokens</DialogTitle>
                   <DialogDescription>
-                    Selecione a quantidade de tokens para recarregar (múltiplos de R$10,00).
+                    Selecione a quantidade de tokens para recarregar (múltiplos de 10). Cada token custa R$1,00.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -219,5 +235,3 @@ export default function SubscriptionPage() {
     </div>
   );
 }
-
-    
