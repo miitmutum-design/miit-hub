@@ -1,13 +1,14 @@
 
 'use client';
 
-import { ArrowLeft, Eye, Phone, Globe, Star, BarChart3, TrendingUp, TrendingDown, Calendar, MapPin, CircleDollarSign } from 'lucide-react';
+import { ArrowLeft, Eye, Phone, Globe, Star, BarChart3, TrendingUp, TrendingDown, Calendar, MapPin, CircleDollarSign, MousePointerClick, Search, Package, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useCompany } from '@/contexts/CompanyContext';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, LineChart, Line, ResponsiveContainer } from "recharts";
+import { Badge } from '@/components/ui/badge';
 
 const viewsData = [
   { date: '20/07', views: 58 },
@@ -25,6 +26,14 @@ const geoData = [
     { name: 'Pq. das Emas', views: 75 },
     { name: 'Jd. Europa', views: 50 },
     { name: 'Outros', views: 80 },
+];
+
+const topSearchTerms = [
+    { term: "restaurante perto de mim", views: 120 },
+    { term: "comida italiana", views: 95 },
+    { term: "melhor happy hour", views: 80 },
+    { term: "almoço executivo", views: 65 },
+    { term: "bar com música ao vivo", views: 50 },
 ];
 
 const chartConfig = {
@@ -52,7 +61,7 @@ export default function AnalyticsPage() {
             <div className="space-y-6">
                 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Vis. do Perfil</CardTitle>
@@ -60,7 +69,7 @@ export default function AnalyticsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-primary">1,234</div>
-                            <p className="text-xs text-muted-foreground">+20.1% no último mês</p>
+                            <p className="text-xs text-muted-foreground">+20.1%</p>
                         </CardContent>
                     </Card>
                     <Card>
@@ -70,17 +79,17 @@ export default function AnalyticsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-primary">87</div>
-                            <p className="text-xs text-muted-foreground">Cliques em contato</p>
+                            <p className="text-xs text-muted-foreground">Cliques</p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Total de Avaliações</CardTitle>
+                            <CardTitle className="text-sm font-medium">Avaliações</CardTitle>
                             <Star className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-primary">42</div>
-                            <p className="text-xs text-muted-foreground">5 novas esta semana</p>
+                            <p className="text-xs text-muted-foreground">+5 esta semana</p>
                         </CardContent>
                     </Card>
                     <Card>
@@ -90,7 +99,45 @@ export default function AnalyticsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-primary">4.8</div>
-                            <p className="text-xs text-muted-foreground">Baseado em 42 avaliações</p>
+                            <p className="text-xs text-muted-foreground">de 5</p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Content Engagement */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base font-medium flex items-center gap-2">
+                               <MousePointerClick className="w-4 h-4 text-primary" />
+                               Engajamento com Conteúdo
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <div className="flex justify-between items-baseline">
+                                <span className="text-sm text-muted-foreground flex items-center gap-2"><Package className="w-4 h-4"/>Cliques em Ofertas:</span>
+                                <span className="text-lg font-bold text-lime-400">128</span>
+                            </div>
+                             <div className="flex justify-between items-baseline">
+                                <span className="text-sm text-muted-foreground flex items-center gap-2"><Ticket className="w-4 h-4"/>Cliques em Eventos:</span>
+                                <span className="text-lg font-bold text-lime-400">62</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base font-medium flex items-center gap-2">
+                               <Search className="w-4 h-4 text-primary" />
+                               Termos de Busca Principais
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-1">
+                            {topSearchTerms.slice(0,2).map((item, index) => (
+                                <div key={index} className="flex justify-between items-baseline text-sm">
+                                    <span className="text-muted-foreground truncate pr-4">{item.term}</span>
+                                    <span className="font-semibold text-lime-400">{item.views}</span>
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </div>
@@ -102,7 +149,7 @@ export default function AnalyticsPage() {
                             <BarChart3 className="w-5 h-5 text-primary" />
                             Desempenho da Campanha
                         </CardTitle>
-                        <CardDescription>Visualizações do seu anúncio na última semana.</CardDescription>
+                        <CardDescription>Visualizações totais de anúncios na última semana.</CardDescription>
                     </CardHeader>
                     <CardContent>
                          <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -117,42 +164,41 @@ export default function AnalyticsPage() {
                     </CardContent>
                 </Card>
 
-                 {/* Token ROI & Status */}
+                 {/* Sponsorship Details */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-base font-medium flex items-center gap-2">
-                               <CircleDollarSign className="w-4 h-4" />
-                               ROI de Tokens
+                               Visibilidade dos Anúncios
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex justify-between items-baseline">
-                                <span className="text-sm text-muted-foreground">Tokens Gastos:</span>
-                                <span className="text-lg font-bold text-orange-400">150</span>
+                                <span className="text-sm text-muted-foreground">Vis. Carrossel Principal:</span>
+                                <span className="text-lg font-bold text-orange-400">450</span>
                             </div>
                              <div className="flex justify-between items-baseline">
-                                <span className="text-sm text-muted-foreground">Cliques Recebidos:</span>
-                                <span className="text-lg font-bold text-lime-400">450</span>
+                                <span className="text-sm text-muted-foreground">Vis. Vitrine Horizontal:</span>
+                                <span className="text-lg font-bold text-cyan-400">784</span>
                             </div>
-                            <p className="text-center text-xs text-muted-foreground pt-2">Eficiência: 3 cliques por token</p>
+                            <p className="text-center text-xs text-muted-foreground pt-2">Total de 1,234 visualizações</p>
                         </CardContent>
                     </Card>
                     <Card>
                         <CardHeader>
                              <CardTitle className="text-base font-medium flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
-                                Campanha Ativa
+                                <CircleDollarSign className="w-4 h-4" />
+                                ROI de Tokens
                              </CardTitle>
                         </CardHeader>
                          <CardContent className="space-y-2">
                             <div className="flex justify-between items-baseline">
-                                <span className="text-sm text-muted-foreground">Início:</span>
-                                <span className="text-base font-semibold">20/07/2024</span>
+                                <span className="text-sm text-muted-foreground">Tokens Gastos:</span>
+                                <span className="text-lg font-bold">150</span>
                             </div>
                              <div className="flex justify-between items-baseline">
-                                <span className="text-sm text-muted-foreground">Fim:</span>
-                                <span className="text-base font-semibold">04/08/2024</span>
+                                <span className="text-sm text-muted-foreground">Vis. por Token:</span>
+                                <span className="text-lg font-bold">~8.2</span>
                             </div>
                         </CardContent>
                     </Card>
