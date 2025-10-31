@@ -30,7 +30,9 @@ const plans = {
     benefits: [
       '1 Oferta por Mês',
       '1 Evento no Ano',
-      'Suporte Padrão',
+      'Token (R$1 = 1 Token)',
+      'Analytics (Acesso ao Dashboard)',
+      'Suporte Chat Comunidade',
     ],
     borderColor: 'border-zinc-500/50',
     headerColor: 'bg-zinc-800/30',
