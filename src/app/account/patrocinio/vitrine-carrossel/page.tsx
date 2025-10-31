@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info } from 'lucide-react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info, Gift, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -171,18 +171,13 @@ export default function VitrineCarrosselPage() {
     sendSponsorshipRequest();
   };
   
-  const getBannerNameLabel = () => {
-    switch (sponsorshipType) {
-        case 'empresa':
-            return 'Nome da Empresa';
-        case 'ofertas':
-            return 'Nome da Oferta';
-        case 'eventos':
-            return 'Nome do Evento';
-        default:
-            return 'Nome para a Vitrine';
-    }
-  }
+    const bannerLabels = {
+        empresa: { label: 'Nome da Empresa', icon: Building },
+        ofertas: { label: 'Nome da Oferta', icon: Gift },
+        eventos: { label: 'Nome do Evento', icon: Ticket },
+    };
+
+    const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels] || bannerLabels.empresa;
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -198,38 +193,39 @@ export default function VitrineCarrosselPage() {
         </h1>
       </header>
 
-      <Card className="mb-6 bg-card">
-        <CardHeader className="p-4 flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
-          <Link href="/account/subscription">
-              <Button variant="outline" size="sm">
-                  Recarregar
-              </Button>
-          </Link>
-        </CardHeader>
-        <CardContent className="p-6 pt-0">
-            <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
-            <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
-        </CardContent>
-      </Card>
-
-      <div className="text-center mb-6">
-        <p className="text-muted-foreground">Qual a intenção da sua campanha no carrossel?</p>
-      </div>
-      
-       <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
-            <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
-            <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Oferta</TabsTrigger>
-            <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Evento</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
       <div className="space-y-6">
+
+        <Card className="bg-card">
+            <CardHeader className="p-4 flex flex-row items-center justify-between">
+            <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
+            <Link href="/account/subscription">
+                <Button variant="outline" size="sm">
+                    Recarregar
+                </Button>
+            </Link>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+                <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
+                <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
+            </CardContent>
+        </Card>
+
+        <div className="text-center">
+            <p className="text-muted-foreground">Qual a intenção da sua campanha no carrossel?</p>
+        </div>
+      
+        <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
+                <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
+                <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Gift className="h-4 w-4"/> Oferta</TabsTrigger>
+                <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Ticket className="h-4 w-4"/> Evento</TabsTrigger>
+            </TabsList>
+        </Tabs>
+      
         <div className="space-y-2">
             <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Info className="h-5 w-5"/>
-                {getBannerNameLabel()} <span className="text-red-500">*</span>
+                <BannerIcon className="h-5 w-5"/>
+                {bannerNameLabel} <span className="text-red-500">*</span>
             </label>
             <Input 
                 id="bannerName"
@@ -241,66 +237,55 @@ export default function VitrineCarrosselPage() {
             />
         </div>
 
-        <div className="space-y-6">
-            <div className="space-y-2">
-                <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Upload className="h-5 w-5"/>
-                    Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
-                </label>
-                <div className="flex justify-center">
-                    <button
-                        type="button"
-                        onClick={handleImageClick}
-                        className="relative w-40 h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
-                    >
-                        {bannerImage ? (
-                            <Image
-                                src={bannerImage}
-                                alt="Pré-visualização do Banner"
-                                fill
-                                className="object-cover rounded-lg"
-                            />
-                        ) : (
-                            <div className="flex flex-col items-center gap-2 text-center p-2">
-                                <Upload className="h-8 w-8" />
-                                <span className="text-xs">Fazer upload da imagem</span>
-                            </div>
-                        )}
-                    </button>
-                </div>
-                <input
-                    type="file"
-                    ref={imageInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*"
-                />
+        <div className="space-y-2">
+            <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Upload className="h-5 w-5"/>
+                Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
+            </label>
+            <div className="flex justify-center">
+                <button
+                    type="button"
+                    onClick={handleImageClick}
+                    className="relative w-40 h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
+                >
+                    {bannerImage ? (
+                        <Image
+                            src={bannerImage}
+                            alt="Pré-visualização do Banner"
+                            fill
+                            className="object-cover rounded-lg"
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center gap-2 text-center p-2">
+                            <Upload className="h-8 w-8" />
+                            <span className="text-xs">Fazer upload da imagem</span>
+                        </div>
+                    )}
+                </button>
             </div>
-            
-            <div className="space-y-4">
-                <label className="text-sm font-medium text-muted-foreground">
-                    Tipo de Link de Destino <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-4">
-                    <div onClick={() => setIsWhatsappModalOpen(true)}>
-                        <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            WhatsApp
-                            {linkType === 'whatsapp' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                     <div onClick={() => setIsInstagramModalOpen(true)}>
-                        <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            Instagram
-                            {linkType === 'instagram' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                     <div onClick={() => setIsSiteModalOpen(true)}>
-                        <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            Site
-                            {linkType === 'site' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                </div>
+            <input
+                type="file"
+                ref={imageInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/*"
+            />
+        </div>
+        
+        <div className="space-y-4">
+            <label className="text-sm font-medium text-muted-foreground">
+                Tipo de Link de Destino <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-3 gap-4">
+                <Button variant={linkType === 'whatsapp' ? 'default' : 'outline'} onClick={() => setIsWhatsappModalOpen(true)} className={cn(linkType === 'whatsapp' && 'bg-lime-600 hover:bg-lime-700')}>
+                    WhatsApp
+                </Button>
+                <Button variant={linkType === 'instagram' ? 'default' : 'outline'} onClick={() => setIsInstagramModalOpen(true)} className={cn(linkType === 'instagram' && 'bg-lime-600 hover:bg-lime-700')}>
+                    Instagram
+                </Button>
+                <Button variant={linkType === 'site' ? 'default' : 'outline'} onClick={() => setIsSiteModalOpen(true)} className={cn(linkType === 'site' && 'bg-lime-600 hover:bg-lime-700')}>
+                    Site
+                </Button>
             </div>
         </div>
 
@@ -318,16 +303,16 @@ export default function VitrineCarrosselPage() {
                 min="1"
                 className="bg-card border-border/50 h-12"
             />
-             {tokensToSpend > 0 ? (
+            {tokensToSpend > 0 ? (
                 <p className="text-sm text-lime-400">
                     Sua vitrine ficará ativa por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
                 </p>
-             ) : (
+            ) : (
                 <p className="text-sm text-muted-foreground">
                     Custo: 8 tokens por dia.
                 </p>
-             )}
-             {!isBalanceSufficient && tokensToSpend > 0 && (
+            )}
+            {!isBalanceSufficient && tokensToSpend > 0 && (
                 <p className="text-sm text-red-500 flex items-center gap-1.5">
                     <AlertTriangle className="h-4 w-4" />
                     Saldo de tokens insuficiente.
@@ -337,7 +322,7 @@ export default function VitrineCarrosselPage() {
 
 
         <div className="pt-8 pb-24">
-             <Button
+            <Button
                 size="lg"
                 className={cn(
                   "w-full h-12 text-lg font-bold transition-colors",
@@ -347,7 +332,7 @@ export default function VitrineCarrosselPage() {
                 )}
                 onClick={handleSubmit}
                 disabled={!isFormValid || isSubmitting}
-             >
+            >
                 {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
                 {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
             </Button>
@@ -448,3 +433,5 @@ export default function VitrineCarrosselPage() {
     </div>
   );
 }
+
+    
