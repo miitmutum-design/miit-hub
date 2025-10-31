@@ -92,7 +92,7 @@ export default function VitrineEstaticaPage() {
     const value = parseInt(e.target.value, 10) || 0;
     setTokensToSpend(value);
   };
-
+  
   const handleTokenInputBlur = () => {
     if (tokensToSpend === 0) return;
     if (tokensToSpend < dailyCost) {
