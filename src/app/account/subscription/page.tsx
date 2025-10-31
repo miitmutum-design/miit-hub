@@ -25,7 +25,7 @@ import { Badge } from '@/components/ui/badge';
 const plans = {
   Prata: {
     name: 'Prata',
-    price: 'R$ 49',
+    price: 'R$ 29,90',
     period: '/mês',
     benefits: [
       '1 Oferta por Mês',
