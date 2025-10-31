@@ -112,6 +112,9 @@ export default function AdminSponsorshipPage() {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  
   const { toast } = useToast();
 
   const handleMarkAsContacted = (requestId: string) => {
@@ -165,10 +168,25 @@ export default function AdminSponsorshipPage() {
   }
 
   const handleSendEmail = () => {
+    if (!selectedRequest?.companyEmail || !emailSubject || !emailBody) {
+        toast({
+            variant: "destructive",
+            title: "Campos obrigatórios",
+            description: "Por favor, preencha o assunto e a mensagem para continuar.",
+        });
+        return;
+    }
+
+    const mailtoLink = `mailto:${selectedRequest.companyEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = mailtoLink;
+
     toast({
-        title: "E-mail Enviado (Simulação)",
-        description: "Seu e-mail para o cliente foi enviado com sucesso."
+        title: "E-mail pronto para ser enviado!",
+        description: "Seu cliente de e-mail deve abrir em breve.",
     });
+    
+    setEmailSubject('');
+    setEmailBody('');
     setIsEmailModalOpen(false);
   }
 
@@ -322,16 +340,16 @@ export default function AdminSponsorshipPage() {
                 </div>
                  <div>
                     <Label htmlFor="email-subject">Assunto</Label>
-                    <Input id="email-subject" placeholder="Assunto do E-mail"/>
+                    <Input id="email-subject" placeholder="Assunto do E-mail" value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} />
                 </div>
                 <div>
                     <Label htmlFor="email-body">Mensagem</Label>
-                    <Textarea id="email-body" placeholder="Escreva sua mensagem aqui..." className="min-h-[150px]"/>
+                    <Textarea id="email-body" placeholder="Escreva sua mensagem aqui..." className="min-h-[150px]" value={emailBody} onChange={(e) => setEmailBody(e.target.value)} />
                 </div>
             </div>
             <DialogFooter>
                  <Button variant="secondary" onClick={() => setIsEmailModalOpen(false)}>Cancelar</Button>
-                <Button onClick={handleSendEmail}>
+                <Button onClick={handleSendEmail} className="bg-lime-500 hover:bg-lime-600 text-black">
                    <Mail className="mr-2 h-4 w-4"/> Enviar
                 </Button>
             </DialogFooter>
