@@ -3,9 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign, AlertTriangle, Clock } from 'lucide-react';
+import { ArrowLeft, Check, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign, AlertTriangle, Clock, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useCompany } from '@/contexts/CompanyContext';
 import { cn } from '@/lib/utils';
 import {
@@ -19,89 +19,68 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
-const calculateDaysRemaining = (endDate: string) => {
-  const end = new Date(endDate);
-  const now = new Date();
-  const diff = end.getTime() - now.getTime();
-  if (diff < 0) return 0;
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+const plans = {
+  Prata: {
+    name: 'Prata',
+    price: 'R$ 49',
+    period: '/mês',
+    benefits: [
+      '50% mais Tokens Inclusos',
+      '10 Eventos',
+      'Suporte Padrão',
+    ],
+    borderColor: 'border-zinc-500/50',
+    headerColor: 'bg-zinc-800/30',
+    iconColor: 'text-zinc-400 fill-zinc-400',
+  },
+  Gold: {
+    name: 'Gold',
+    price: 'R$ 499',
+    period: '/ano',
+    benefits: [
+      '100% mais Tokens',
+      'Eventos Ilimitados',
+      '1º a ver novos recursos',
+      'Suporte Prioritário',
+    ],
+    borderColor: 'border-yellow-400/50',
+    headerColor: 'bg-yellow-900/30',
+    iconColor: 'text-yellow-400 fill-yellow-400',
+  },
 };
 
-type SubscriptionStatus = 'active' | 'pending' | 'expired';
-
-const getSubscriptionStatus = (endDate: string): SubscriptionStatus => {
-    const daysRemaining = calculateDaysRemaining(endDate);
-    if (daysRemaining <= 0) return 'expired';
-    if (daysRemaining <= 7) return 'pending';
-    return 'active';
-}
-
-const statusConfig = {
-    active: { text: 'Ativo', icon: CheckCircle, className: 'text-green-400' },
-    pending: { text: 'Pendente', icon: AlertTriangle, className: 'text-yellow-400' },
-    expired: { text: 'Expirado', icon: Clock, className: 'text-orange-500' }
-};
+const tokenPackages = [
+    { name: 'Bronze', tokens: 500, price: 50, bestValue: false },
+    { name: 'Prata', tokens: 1200, price: 100, bestValue: true },
+    { name: 'Ouro', tokens: 3000, price: 200, bestValue: false },
+]
 
 export default function SubscriptionPage() {
   const { companyProfile, setCompanyProfile } = useCompany();
-  const [daysRemaining, setDaysRemaining] = useState(0);
-  const [status, setStatus] = useState<SubscriptionStatus>('active');
-  const [tokenAmount, setTokenAmount] = useState(10);
+  const { toast } = useToast();
+
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
-
-  useEffect(() => {
-    const days = calculateDaysRemaining(companyProfile.subscriptionEndDate);
-    const currentStatus = getSubscriptionStatus(companyProfile.subscriptionEndDate);
-    setDaysRemaining(days);
-    setStatus(currentStatus);
-  }, [companyProfile.subscriptionEndDate]);
-
-  const handleRenew = () => {
-    alert('Simulando pagamento com Mercado Pago...');
-    // Mock success
-    const newEndDate = new Date();
-    if (companyProfile.plan === 'Prata') {
-      newEndDate.setDate(newEndDate.getDate() + 30);
-      setCompanyProfile(prev => ({
-        ...prev,
-        subscriptionEndDate: newEndDate.toISOString(),
-        tokens: prev.tokens + 3,
-      }));
-    } else {
-      newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-      setCompanyProfile(prev => ({
-        ...prev,
-        subscriptionEndDate: newEndDate.toISOString(),
-        tokens: prev.tokens + 200,
-      }));
-    }
-  };
   
-  const handleAddTokens = () => {
-    alert(`Simulando compra de ${tokenAmount} Tokens via Mercado Pago...`);
-    // Mock success
-    setCompanyProfile(prev => ({
-      ...prev,
-      tokens: prev.tokens + tokenAmount
-    }));
-    setIsTokenModalOpen(false);
-    setTokenAmount(10); // Reset
+  const handleUpgrade = (newPlan: 'Prata' | 'Gold') => {
+      if (companyProfile.plan === newPlan) return;
+      alert(`Simulando upgrade para o plano ${newPlan}...`);
   }
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-     if (value >= 10 && value % 10 === 0) {
-      setTokenAmount(value);
-    } else if (isNaN(value) || value < 10) {
-      setTokenAmount(10);
-    }
-  };
+  const handleAddTokens = (amount: number, price: number) => {
+    alert(`Simulando compra de ${amount} Tokens por R$${price.toFixed(2)} via Mercado Pago...`);
+    setCompanyProfile(prev => ({
+      ...prev,
+      tokens: prev.tokens + amount
+    }));
+    toast({
+        title: 'Recarga bem-sucedida!',
+        description: `${amount} tokens foram adicionados à sua carteira.`,
+    });
+    setIsTokenModalOpen(false);
+  }
 
-  const incrementAmount = () => setTokenAmount(prev => prev + 10);
-  const decrementAmount = () => setTokenAmount(prev => Math.max(10, prev - 10));
-
-  const StatusIcon = statusConfig[status].icon;
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -113,64 +92,67 @@ export default function SubscriptionPage() {
           </Button>
         </Link>
         <h1 className="text-xl font-bold text-foreground font-headline">
-          Assinaturas
+          Assinaturas e Planos
         </h1>
       </header>
       
       <div className="space-y-6">
-        {/* Bloco 1: Plano Contratado */}
-        <Card className={cn(
-          "border-2 overflow-hidden",
-          companyProfile.plan === 'Prata' && 'border-zinc-500/50',
-          companyProfile.plan === 'Gold' && 'border-yellow-400/50'
-        )}>
-          <CardHeader className={cn(
-            "p-4",
-            companyProfile.plan === 'Prata' && 'bg-zinc-800/30',
-            companyProfile.plan === 'Gold' && 'bg-yellow-900/30'
-          )}>
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2 text-2xl font-headline">
-                {companyProfile.plan === 'Gold' ? 
-                  <Star className="w-7 h-7 text-yellow-400 fill-yellow-400" /> :
-                  <Star className="w-7 h-7 text-zinc-400 fill-zinc-400" />
-                }
-                Plano {companyProfile.plan}
-              </CardTitle>
-              <div className={cn("flex items-center gap-2 text-sm font-semibold", statusConfig[status].className)}>
-                <StatusIcon className="w-4 h-4"/>
-                <span>{statusConfig[status].text}</span>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-6 space-y-4">
-             <div>
-                <p className="text-sm text-muted-foreground">Próxima Renovação</p>
-                <p className="text-lg font-semibold">{new Date(companyProfile.subscriptionEndDate).toLocaleDateString('pt-BR')}</p>
-             </div>
-             {companyProfile.plan === 'Prata' && status !== 'expired' && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Contador Regressivo</p>
-                  <p className="text-lg font-semibold">{daysRemaining} dias restantes</p>
-                </div>
-             )}
-            <Button
-              size="lg"
-              className={cn(
-                "w-full h-12 text-lg font-bold transition-colors",
-                status === 'expired'
-                  ? "bg-lime-500 hover:bg-lime-600 text-black"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              )}
-              onClick={handleRenew}
-              disabled={status !== 'expired'}
-            >
-              {status === 'expired' ? 'Pagar / Renovar Plano' : 'Plano Ativo'}
-            </Button>
-          </CardContent>
-        </Card>
+        
+        {/* Plan comparison */}
+        <div className="space-y-4">
+            {Object.values(plans).map(plan => {
+                const isCurrentPlan = companyProfile.plan === plan.name;
+                const PlanIcon = plan.name === 'Gold' ? Star : ShieldCheck;
 
-        {/* Bloco 2: Gestão de Tokens */}
+                return (
+                    <Card key={plan.name} className={cn(
+                        "border-2 overflow-hidden bg-card transition-all",
+                         isCurrentPlan ? plan.borderColor : 'border-transparent'
+                    )}>
+                        <CardHeader className={cn("p-4", plan.headerColor)}>
+                            <CardTitle className="flex items-center justify-between gap-2 text-2xl font-headline">
+                                <div className="flex items-center gap-2">
+                                    <PlanIcon className={cn("w-7 h-7", plan.iconColor)} />
+                                    Plano {plan.name}
+                                </div>
+                                {isCurrentPlan && (
+                                    <Badge className="bg-lime-500/20 text-lime-300 border-lime-400/30">Plano Atual</Badge>
+                                )}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                            <div className="flex items-baseline">
+                                <span className="text-3xl font-bold">{plan.price}</span>
+                                <span className="text-muted-foreground">{plan.period}</span>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                {plan.benefits.map((benefit, index) => (
+                                    <li key={index} className="flex items-center gap-3">
+                                        <Check className="w-4 h-4 text-green-400" />
+                                        <span className="text-muted-foreground">{benefit}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                             <Button
+                                size="lg"
+                                onClick={() => handleUpgrade(plan.name as 'Prata' | 'Gold')}
+                                disabled={isCurrentPlan}
+                                className={cn(
+                                    "w-full h-12 text-lg font-bold transition-colors",
+                                    isCurrentPlan ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                                  : "bg-lime-500 hover:bg-lime-600 text-black"
+                                )}
+                            >
+                                {isCurrentPlan ? 'Plano Ativo' : 'Fazer Upgrade'}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )
+            })}
+        </div>
+
+
+        {/* Token management */}
         <Card className="bg-card">
           <CardHeader className="p-4">
             <CardTitle className="text-xl font-headline">Gestão de Tokens</CardTitle>
@@ -178,7 +160,7 @@ export default function SubscriptionPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Saldo Atual</p>
-              <p className="text-4xl font-bold text-primary">{companyProfile.tokens}</p>
+              <p className="text-4xl font-bold text-lime-400">{companyProfile.tokens}</p>
             </div>
             <Dialog open={isTokenModalOpen} onOpenChange={setIsTokenModalOpen}>
               <DialogTrigger asChild>
@@ -186,47 +168,31 @@ export default function SubscriptionPage() {
                   Adicionar Tokens
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-md bg-card border-border/50">
                 <DialogHeader>
-                  <DialogTitle>Adicionar Tokens</DialogTitle>
+                  <DialogTitle>Recarga de Tokens</DialogTitle>
                   <DialogDescription>
-                    Selecione a quantidade de tokens para recarregar (múltiplos de 10). Cada token custa R$1,00.
+                    Escolha um pacote para adicionar mais tokens à sua carteira.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="token-amount" className="text-right">
-                      Tokens
-                    </Label>
-                    <div className="col-span-3 relative">
-                      <Input
-                        id="token-amount"
-                        type="number"
-                        value={tokenAmount}
-                        onChange={handleAmountChange}
-                        step="10"
-                        min="10"
-                        className="pr-16 text-center text-lg h-12"
-                      />
-                       <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col">
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={incrementAmount}><ChevronUp className="w-4 h-4"/></Button>
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={decrementAmount}><ChevronDown className="w-4 h-4"/></Button>
-                      </div>
-                    </div>
-                  </div>
-                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label className="text-right">
-                      Valor
-                    </Label>
-                     <p className="col-span-3 text-2xl font-bold text-center">R$ {tokenAmount.toFixed(2)}</p>
-                  </div>
+                <div className="py-4 space-y-3">
+                    {tokenPackages.map(pkg => (
+                         <Card key={pkg.name} className={cn("overflow-hidden", pkg.bestValue && "border-2 border-lime-400/80")}>
+                           <CardContent className="p-4 flex justify-between items-center">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-bold text-lg text-foreground">{pkg.name}</h4>
+                                      {pkg.bestValue && <Badge className="bg-lime-400/20 text-lime-300">Melhor Oferta</Badge>}
+                                    </div>
+                                    <p className="text-lime-400 font-semibold">{pkg.tokens.toLocaleString('pt-BR')} Tokens</p>
+                                </div>
+                                <Button onClick={() => handleAddTokens(pkg.tokens, pkg.price)}>
+                                    R$ {pkg.price.toFixed(2)}
+                                </Button>
+                           </CardContent>
+                         </Card>
+                    ))}
                 </div>
-                <DialogFooter>
-                  <Button type="button" onClick={handleAddTokens} className="w-full h-12 bg-orange-600 hover:bg-orange-700">
-                    <CircleDollarSign className="mr-2 h-5 w-5"/>
-                    Pagar com Mercado Pago
-                  </Button>
-                </DialogFooter>
               </DialogContent>
             </Dialog>
           </CardContent>
