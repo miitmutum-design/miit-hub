@@ -192,7 +192,24 @@ export default function AdminDashboardPage() {
                     description="Ocupação da Vitrine de Posição Fixa."
                 />
                  <StatCard
-                    title="Vídeos Exibidos (Hoje)"
+                    title={
+                        <div className="flex items-center gap-2">
+                            Vídeos Exibidos (Hoje)
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Controle de Inventário de Vídeo</p>
+                                        <p>Contagem total de campanhas de Vídeo Promocional agendadas para rodar no dia de hoje. Esta métrica mede o inventário de vídeo ativo por duração (em vez de slots).</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="1"
                     icon={Video}
                     description="Campanhas de vídeo agendadas."
@@ -279,5 +296,3 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
-
-    
