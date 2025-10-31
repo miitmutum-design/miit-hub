@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Eye, Phone, Globe, Star, BarChart3, TrendingUp, TrendingDown, Calendar, MapPin, CircleDollarSign, MousePointerClick, Search, Package, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -87,6 +87,11 @@ const chartConfig = {
 export default function AnalyticsPage() {
     const { companyProfile } = useCompany();
     const [filter, setFilter] = useState('all');
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const data = filter === 'all' ? allData : filter === 'sponsored' ? sponsoredData : organicData;
 
@@ -122,7 +127,7 @@ export default function AnalyticsPage() {
                             <Eye className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-primary">{data.kpis.views.toLocaleString()}</div>
+                            <div className="text-2xl font-bold text-primary">{isClient ? data.kpis.views.toLocaleString('pt-BR') : data.kpis.views}</div>
                             <p className="text-xs text-muted-foreground">+20.1%</p>
                         </CardContent>
                     </Card>
@@ -132,7 +137,7 @@ export default function AnalyticsPage() {
                             <Phone className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-primary">{data.kpis.interactions.toLocaleString()}</div>
+                            <div className="text-2xl font-bold text-primary">{isClient ? data.kpis.interactions.toLocaleString('pt-BR') : data.kpis.interactions}</div>
                             <p className="text-xs text-muted-foreground">Cliques</p>
                         </CardContent>
                     </Card>
@@ -142,7 +147,7 @@ export default function AnalyticsPage() {
                             <Star className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-primary">{data.kpis.reviews.toLocaleString()}</div>
+                            <div className="text-2xl font-bold text-primary">{isClient ? data.kpis.reviews.toLocaleString('pt-BR') : data.kpis.reviews}</div>
                             <p className="text-xs text-muted-foreground">+5 esta semana</p>
                         </CardContent>
                     </Card>
@@ -236,7 +241,7 @@ export default function AnalyticsPage() {
                                     <span className="text-sm text-muted-foreground">Vis. Vitrine Horizontal:</span>
                                     <span className="text-lg font-bold text-cyan-400">{data.sponsorship.gridViews}</span>
                                 </div>
-                                <p className="text-center text-xs text-muted-foreground pt-2">Total de {data.sponsorship.carouselViews + data.sponsorship.gridViews} visualizações</p>
+                                <p className="text-center text-xs text-muted-foreground pt-2">Total de {isClient ? (data.sponsorship.carouselViews + data.sponsorship.gridViews).toLocaleString('pt-BR') : (data.sponsorship.carouselViews + data.sponsorship.gridViews)} visualizações</p>
                             </CardContent>
                         </Card>
                         <Card>
