@@ -112,7 +112,7 @@ export default function AdminDashboardPage() {
                 />
                 <StatCard
                     title={
-                         <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             Patrocínios Pendentes
                             <TooltipProvider>
                                 <Tooltip>
@@ -123,8 +123,8 @@ export default function AdminDashboardPage() {
                                     </TooltipTrigger>
                                     <TooltipContent className="max-w-xs">
                                         <p className="font-bold">Definição da Métrica</p>
-                                        <p>Total de solicitações de patrocínio que estão aguardando sua revisão e contato. Elas estão no status PENDENTE na Caixa de Entrada.</p>
-                                        <p className="mt-2 text-lime-300">Próxima Ação: Clique em 'Revisar' para ver a lista e iniciar o contato.</p>
+                                        <p>Total de solicitações de patrocínio (banners ou vídeos) que estão aguardando sua revisão e contato. Elas estão no status PENDENTE na Caixa de Entrada.</p>
+                                        <p className="mt-2 text-lime-300">Próxima Ação: Clique em 'Revisar' para ver a lista completa e iniciar o contato.</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
