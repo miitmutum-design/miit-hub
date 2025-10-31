@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign, AlertTriangle, Clock, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Check, CheckCircle, ChevronDown, ChevronUp, Star, CircleDollarSign, AlertTriangle, Clock, ShieldCheck, Trophy, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useCompany } from '@/contexts/CompanyContext';
@@ -43,9 +43,11 @@ const plans = {
     price: 'R$ 499',
     period: '/ano',
     benefits: [
-      'Oferta Ilimitada',
+      'Ofertas Ilimitadas',
       'Eventos Ilimitados',
-      'Mais Tokens ( R$1 = 3 Tokens)',
+      'Mais Tokens (R$1 = 3 Tokens)',
+      'Analytics (Acesso Completo ao Dashboard)',
+      'MiiT Max (Acesso Total ao Ranking e Pódio)',
       'Suporte Prioritário',
     ],
     borderColor: 'border-yellow-400/50',
@@ -71,24 +73,39 @@ export default function SubscriptionPage() {
       alert(`Simulando upgrade para o plano ${newPlan}...`);
   }
 
-  const handleAddTokens = (amount: number, price: number) => {
-    alert(`Simulando compra de ${amount} Tokens por R$${price.toFixed(2)} via Mercado Pago...`);
+  const handleAddTokens = (price: number) => {
+    let tokensToAdd = 0;
+    if (companyProfile.plan === 'Gold') {
+        tokensToAdd = price * 3;
+    } else {
+        tokensToAdd = price; // Prata plan or default
+    }
+
+    alert(`Simulando compra de ${tokensToAdd} Tokens por R$${price.toFixed(2)} via Mercado Pago...`);
     setCompanyProfile(prev => ({
       ...prev,
-      tokens: prev.tokens + amount
+      tokens: prev.tokens + tokensToAdd
     }));
     toast({
         title: 'Recarga bem-sucedida!',
-        description: `${amount} tokens foram adicionados à sua carteira.`,
+        description: `${tokensToAdd} tokens foram adicionados à sua carteira.`,
     });
     setIsTokenModalOpen(false);
+  }
+
+  const benefitsMap = {
+      'Analytics (Acesso Completo ao Dashboard)': BarChart3,
+      'MiiT Max (Acesso Total ao Ranking e Pódio)': Trophy,
+      'Suporte Prioritário': ShieldCheck,
+      'Analytics (Acesso ao Dashboard)': BarChart3,
+      'Suporte Chat Comunidade': ShieldCheck
   }
 
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
-        <Link href="/account" className="absolute left-0">
+        <Link href="/account/profile/config" className="absolute left-0">
           <Button variant="ghost" size="icon">
             <ArrowLeft />
             <span className="sr-only">Voltar</span>
@@ -129,12 +146,15 @@ export default function SubscriptionPage() {
                                 <span className="text-muted-foreground">{plan.period}</span>
                             </div>
                             <ul className="space-y-2 text-sm">
-                                {plan.benefits.map((benefit, index) => (
-                                    <li key={index} className="flex items-center gap-3">
-                                        <Check className="w-4 h-4 text-green-400" />
-                                        <span className="text-muted-foreground">{benefit}</span>
-                                    </li>
-                                ))}
+                                {plan.benefits.map((benefit, index) => {
+                                    const Icon = benefitsMap[benefit as keyof typeof benefitsMap] || Check;
+                                    return (
+                                        <li key={index} className="flex items-center gap-3">
+                                            <Icon className="w-4 h-4 text-green-400" />
+                                            <span className="text-muted-foreground">{benefit}</span>
+                                        </li>
+                                    )
+                                })}
                             </ul>
                              <Button
                                 size="lg"
@@ -187,15 +207,18 @@ export default function SubscriptionPage() {
                                       <h4 className="font-bold text-lg text-foreground">{pkg.name}</h4>
                                       {pkg.bestValue && <Badge className="bg-lime-400/20 text-lime-300">Melhor Oferta</Badge>}
                                     </div>
-                                    <p className="text-lime-400 font-semibold">{pkg.tokens.toLocaleString('pt-BR')} Tokens</p>
+                                    <p className="text-lime-400 font-semibold">
+                                        {companyProfile.plan === 'Gold' ? (pkg.price * 3).toLocaleString('pt-BR') : pkg.price.toLocaleString('pt-BR')} Tokens
+                                    </p>
                                 </div>
-                                <Button onClick={() => handleAddTokens(pkg.tokens, pkg.price)}>
+                                <Button onClick={() => handleAddTokens(pkg.price)}>
                                     R$ {pkg.price.toFixed(2)}
                                 </Button>
                            </CardContent>
                          </Card>
                     ))}
                 </div>
+                 <p className='text-xs text-muted-foreground text-center'>Seu plano <span className='font-bold text-primary'>{companyProfile.plan}</span> garante uma conversão de R$1 para {companyProfile.plan === 'Gold' ? '3 tokens' : '1 token'}.</p>
               </DialogContent>
             </Dialog>
           </CardContent>
