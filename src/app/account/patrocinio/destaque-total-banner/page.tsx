@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, ChangeEvent } from 'react';
-import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info } from 'lucide-react';
+import { ArrowLeft, Building, Upload, DollarSign, Sparkles, CheckCircle, AlertTriangle, Calendar as CalendarIcon, Loader2, Info, Gift, Ticket as EventTicket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -170,6 +170,15 @@ export default function DestaqueTotalBannerPage() {
     sendSponsorshipRequest();
   };
 
+  const bannerLabels = {
+    empresa: { label: 'Nome da Empresa', icon: Building },
+    ofertas: { label: 'Nome da Oferta', icon: Gift },
+    eventos: { label: 'Nome do Evento', icon: EventTicket },
+  };
+
+  const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels];
+
+
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
       <header className="relative mb-8 flex items-center justify-center text-center">
@@ -214,8 +223,8 @@ export default function DestaqueTotalBannerPage() {
       <div className="space-y-6">
         <div className="space-y-2">
             <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Info className="h-5 w-5"/>
-                Nome da Oferta <span className="text-red-500">*</span>
+                <BannerIcon className="h-5 w-5"/>
+                {bannerNameLabel} <span className="text-red-500">*</span>
             </label>
             <Input 
                 id="bannerName"
@@ -431,5 +440,7 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
+    
 
     
