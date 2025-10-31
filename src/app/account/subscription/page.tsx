@@ -56,11 +56,19 @@ const plans = {
   },
 };
 
-const tokenPackages = [
-    { name: 'Bronze', tokens: 500, price: 50, bestValue: false },
-    { name: 'Prata', tokens: 1200, price: 100, bestValue: true },
-    { name: 'Ouro', tokens: 3000, price: 200, bestValue: false },
-]
+const tokenPackagesConfig = {
+  Prata: [
+    { name: 'Bronze', tokens: 30, price: 30, bestValue: false },
+    { name: 'Prata', tokens: 50, price: 50, bestValue: true },
+    { name: 'Ouro', tokens: 100, price: 100, bestValue: false },
+  ],
+  Gold: [
+    { name: 'Bronze', tokens: 90, price: 30, bestValue: false },
+    { name: 'Prata', tokens: 150, price: 50, bestValue: true },
+    { name: 'Ouro', tokens: 300, price: 100, bestValue: false },
+    { name: 'Platinum', tokens: 1000, price: 300, bestValue: false },
+  ],
+};
 
 export default function SubscriptionPage() {
   const { companyProfile, setCompanyProfile } = useCompany();
@@ -73,14 +81,7 @@ export default function SubscriptionPage() {
       alert(`Simulando upgrade para o plano ${newPlan}...`);
   }
 
-  const handleAddTokens = (price: number) => {
-    let tokensToAdd = 0;
-    if (companyProfile.plan === 'Gold') {
-        tokensToAdd = price * 3;
-    } else {
-        tokensToAdd = price; // Prata plan or default
-    }
-
+  const handleAddTokens = (tokensToAdd: number, price: number) => {
     alert(`Simulando compra de ${tokensToAdd} Tokens por R$${price.toFixed(2)} via Mercado Pago...`);
     setCompanyProfile(prev => ({
       ...prev,
@@ -92,7 +93,7 @@ export default function SubscriptionPage() {
     });
     setIsTokenModalOpen(false);
   }
-
+  
   const benefitsMap = {
       'Analytics (Acesso Completo ao Dashboard)': BarChart3,
       'MiiT Max (Acesso Total ao Ranking e Pódio)': Trophy,
@@ -100,7 +101,10 @@ export default function SubscriptionPage() {
       'Analytics (Acesso ao Dashboard)': BarChart3,
       'Suporte Chat Comunidade': ShieldCheck
   }
-
+  
+  const tokenPackages = tokenPackagesConfig[companyProfile.plan] || [];
+  const tokenConversionRate = companyProfile.plan === 'Gold' ? 3 : 1;
+  const isPlanActive = companyProfile.plan === 'Prata' || companyProfile.plan === 'Gold';
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -187,7 +191,10 @@ export default function SubscriptionPage() {
             </div>
             <Dialog open={isTokenModalOpen} onOpenChange={setIsTokenModalOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-orange-600 hover:bg-orange-700 h-11">
+                 <Button 
+                    className={cn("h-11", isPlanActive ? "bg-orange-600 hover:bg-orange-700" : "bg-muted text-muted-foreground")}
+                    disabled={!isPlanActive}
+                 >
                   Adicionar Tokens
                 </Button>
               </DialogTrigger>
@@ -195,7 +202,7 @@ export default function SubscriptionPage() {
                 <DialogHeader>
                   <DialogTitle>Recarga de Tokens</DialogTitle>
                   <DialogDescription>
-                    Escolha um pacote para adicionar mais tokens à sua carteira.
+                    Selecione um pacote. Com seu plano {companyProfile.plan}, a taxa de conversão é R$1 = {tokenConversionRate} token(s).
                   </DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-3">
@@ -208,17 +215,17 @@ export default function SubscriptionPage() {
                                       {pkg.bestValue && <Badge className="bg-lime-400/20 text-lime-300">Melhor Oferta</Badge>}
                                     </div>
                                     <p className="text-lime-400 font-semibold">
-                                        {companyProfile.plan === 'Gold' ? (pkg.price * 3).toLocaleString('pt-BR') : pkg.price.toLocaleString('pt-BR')} Tokens
+                                        {pkg.tokens.toLocaleString('pt-BR')} Tokens
                                     </p>
                                 </div>
-                                <Button onClick={() => handleAddTokens(pkg.price)}>
+                                <Button onClick={() => handleAddTokens(pkg.tokens, pkg.price)}>
                                     R$ {pkg.price.toFixed(2)}
                                 </Button>
                            </CardContent>
                          </Card>
                     ))}
                 </div>
-                 <p className='text-xs text-muted-foreground text-center'>Seu plano <span className='font-bold text-primary'>{companyProfile.plan}</span> garante uma conversão de R$1 para {companyProfile.plan === 'Gold' ? '3 tokens' : '1 token'}.</p>
+                 <p className='text-xs text-muted-foreground text-center'>Seu plano <span className='font-bold text-primary'>{companyProfile.plan}</span> garante uma conversão de R$1 para {tokenConversionRate === 3 ? '3 tokens' : '1 token'}.</p>
               </DialogContent>
             </Dialog>
           </CardContent>
