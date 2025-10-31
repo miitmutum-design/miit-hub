@@ -1,6 +1,6 @@
 
 'use client';
-import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp, Info } from 'lucide-react';
+import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp, Info, Video } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import AdminHeader from '@/components/common/AdminHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -121,24 +121,36 @@ export default function AdminDashboardPage() {
                 <CardTitle>Inventário de Patrocínio</CardTitle>
                 <CardDescription>Acompanhe a ocupação dos seus principais espaços de anúncio.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                  <StatCard
-                    title="Slots Carrossel (Hoje)"
+                    title="Slots Banner Principal (Hoje)"
                     value="3/3"
                     icon={ShoppingCart}
                     description="Ocupação do Destaque Total Banner."
                 />
                  <StatCard
-                    title="Slots Vitrine (Hoje)"
+                    title="Slots Vitrine Carrossel (Hoje)"
+                    value="6/8"
+                    icon={ShoppingCart}
+                    description="Ocupação da Vitrine de Rolagem Horizontal."
+                />
+                <StatCard
+                    title="Slots Vitrine Estática (Hoje)"
                     value="7/9"
                     icon={ShoppingCart}
-                    description="Ocupação da Vitrine Estática."
+                    description="Ocupação da Vitrine de Posição Fixa."
+                />
+                 <StatCard
+                    title="Vídeos Exibidos (Hoje)"
+                    value="1"
+                    icon={Video}
+                    description="Campanhas de vídeo agendadas."
                 />
                 <StatCard
                     title="Próximo Slot Livre"
                     value="05/08/2024"
                     icon={CalendarCheck}
-                    description="Data mais próxima com vaga no Carrossel."
+                    description="Data mais próxima com vaga no Banner."
                 />
             </CardContent>
         </Card>
