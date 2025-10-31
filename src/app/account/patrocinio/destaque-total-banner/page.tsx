@@ -215,7 +215,7 @@ export default function DestaqueTotalBannerPage() {
         <div className="space-y-2">
             <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Info className="h-5 w-5"/>
-                Nome da Empresa <span className="text-red-500">*</span>
+                Nome da Oferta <span className="text-red-500">*</span>
             </label>
             <Input 
                 id="bannerName"
