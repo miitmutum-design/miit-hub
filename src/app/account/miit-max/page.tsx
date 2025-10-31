@@ -30,33 +30,71 @@ import { categories } from '@/lib/data';
 
 type RankingMetric = 'views' | 'interactions' | 'rating';
 type PerformanceType = 'geral' | 'organico' | 'patrocinado';
+type Period = 'weekly' | 'monthly' | 'yearly';
+
 
 const mockRankingData = {
-  views: [
-    { rank: 1, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 1234, unit: 'visitas' },
-    { rank: 2, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 980, unit: 'visitas' },
-    { rank: 3, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 850, unit: 'visitas' },
-    { rank: 4, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 254, unit: 'visitas' },
-    { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 210, unit: 'visitas' },
-  ],
-  interactions: [
-    { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 87, unit: 'interações' },
-    { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 70, unit: 'interações' },
-    { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 55, unit: 'interações' },
-    { rank: 4, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 32, unit: 'interações' },
-    { rank: 5, companyId: '4', name: 'Bellinha Kids', logo: null, score: 25, unit: 'interações' },
-  ],
-  rating: [
-    { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 4.9, unit: 'estrelas' },
-    { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 4.8, unit: 'estrelas' },
-    { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 4.6, unit: 'estrelas' },
-    { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 4.5, unit: 'estrelas' },
-    { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 4.4, unit: 'estrelas' },
-  ],
+  weekly: {
+    views: [
+      { rank: 1, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 1234, unit: 'visitas' },
+      { rank: 2, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 980, unit: 'visitas' },
+      { rank: 3, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 850, unit: 'visitas' },
+      { rank: 4, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 254, unit: 'visitas' },
+      { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 210, unit: 'visitas' },
+    ],
+    interactions: [
+      { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 87, unit: 'interações' },
+      { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 70, unit: 'interações' },
+      { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 55, unit: 'interações' },
+      { rank: 4, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 32, unit: 'interações' },
+      { rank: 5, companyId: '4', name: 'Bellinha Kids', logo: null, score: 25, unit: 'interações' },
+    ],
+    rating: [
+      { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 4.9, unit: 'estrelas' },
+      { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 4.8, unit: 'estrelas' },
+      { rank: 3, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 4.6, unit: 'estrelas' },
+      { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 4.5, unit: 'estrelas' },
+      { rank: 5, companyId: '2', name: 'Page Turners', logo: null, score: 4.4, unit: 'estrelas' },
+    ],
+  },
+  monthly: {
+    views: [
+      { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 4120, unit: 'visitas' },
+      { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 3800, unit: 'visitas' },
+      { rank: 3, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 3200, unit: 'visitas' },
+      { rank: 4, companyId: '2', name: 'Page Turners', logo: null, score: 900, unit: 'visitas' },
+      { rank: 5, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 850, unit: 'visitas' },
+    ],
+    interactions: [
+      { rank: 1, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 350, unit: 'interações' },
+      { rank: 2, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 280, unit: 'interações' },
+      { rank: 3, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 150, unit: 'interações' },
+      { rank: 4, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 120, unit: 'interações' },
+      { rank: 5, companyId: '4', name: 'Bellinha Kids', logo: null, score: 95, unit: 'interações' },
+    ],
+    rating: mockRankingData.weekly.rating, // Assuming rating is consistent
+  },
+  yearly: {
+     views: [
+      { rank: 1, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 45000, unit: 'visitas' },
+      { rank: 2, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 42000, unit: 'visitas' },
+      { rank: 3, companyId: '2', name: 'Page Turners', logo: null, score: 25000, unit: 'visitas' },
+      { rank: 4, companyId: '3', name: 'Flor de Lótus Móveis', logo: null, score: 22000, unit: 'visitas' },
+      { rank: 5, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 15000, unit: 'visitas' },
+    ],
+    interactions: [
+      { rank: 1, companyId: '1', name: 'União Construtora', logo: "https://storage.googleapis.com/deis-project-d58f4.appspot.com/71e19d7c-3f98-4228-a681-912b7a9775f0.png", score: 4000, unit: 'interações' },
+      { rank: 2, companyId: 'company-gold', name: 'Empresa Gold', logo: null, score: 3800, unit: 'interações' },
+      { rank: 3, companyId: '2', name: 'Page Turners', logo: null, score: 2000, unit: 'interações' },
+      { rank: 4, companyId: '4', name: 'Bellinha Kids', logo: null, score: 1500, unit: 'interações' },
+      { rank: 5, companyId: 'company-silver', name: 'Empresa Prata', logo: null, score: 1200, unit: 'interações' },
+    ],
+    rating: mockRankingData.weekly.rating, // Assuming rating is consistent
+  }
 };
 
 
-const Podium = ({ data, companyId }: { data: (typeof mockRankingData.views)[0][], companyId: string }) => {
+const Podium = ({ data, companyId }: { data: (typeof mockRankingData.weekly.views)[0][], companyId: string }) => {
     const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd
     const podiumData = podiumOrder.map(index => data[index]).filter(Boolean);
 
@@ -139,7 +177,7 @@ const Countdown = () => {
     );
 }
 
-const YourPositionCard = ({ companyId, data, performanceType }: { companyId: string, data: (typeof mockRankingData.views)[0][], performanceType: PerformanceType}) => {
+const YourPositionCard = ({ companyId, data, performanceType }: { companyId: string, data: (typeof mockRankingData.weekly.views)[0][], performanceType: PerformanceType}) => {
     const yourRank = data.find(item => item.companyId === companyId);
     
     if (!yourRank || yourRank.rank <= 3) return null;
@@ -176,12 +214,16 @@ export default function MiitMaxPage() {
     const [metricTab, setMetricTab] = useState<RankingMetric>('views');
     const [performanceType, setPerformanceType] = useState<PerformanceType>('geral');
     const [categoryFilter, setCategoryFilter] = useState('all');
+    const [period, setPeriod] = useState<Period>('weekly');
 
     const { companyProfile } = useCompany();
 
     // In a real app, this logic would be much more complex,
     // involving queries based on the filters.
-    const rankingData = useMemo(() => mockRankingData[metricTab], [metricTab]);
+    const rankingData = useMemo(() => {
+        return mockRankingData[period][metricTab];
+    }, [period, metricTab]);
+
     const topThree = useMemo(() => rankingData.slice(0, 3), [rankingData]);
 
     return (
@@ -229,11 +271,17 @@ export default function MiitMaxPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                        <Countdown />
+                           <Countdown />
                         </CardContent>
                     </Card>
                 </div>
 
+                <div className="bg-card p-1 rounded-lg grid grid-cols-3 gap-1">
+                    <Button variant={period === 'weekly' ? 'secondary' : 'ghost'} onClick={() => setPeriod('weekly')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={period === 'weekly' ? 'active' : 'inactive'}>Semanal</Button>
+                    <Button variant={period === 'monthly' ? 'secondary' : 'ghost'} onClick={() => setPeriod('monthly')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={period === 'monthly' ? 'active' : 'inactive'}>Mensal</Button>
+                    <Button variant={period === 'yearly' ? 'secondary' : 'ghost'} onClick={() => setPeriod('yearly')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={period === 'yearly' ? 'active' : 'inactive'}>Anual</Button>
+                </div>
+                
                 <div className="bg-card p-1 rounded-lg grid grid-cols-3 gap-1">
                     <Button variant={performanceType === 'geral' ? 'secondary' : 'ghost'} onClick={() => setPerformanceType('geral')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={performanceType === 'geral' ? 'active' : 'inactive'}>Geral</Button>
                     <Button variant={performanceType === 'organico' ? 'secondary' : 'ghost'} onClick={() => setPerformanceType('organico')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={performanceType === 'organico' ? 'active' : 'inactive'}>Orgânico</Button>
@@ -243,7 +291,7 @@ export default function MiitMaxPage() {
 
             <Card className="mb-8 bg-card">
                  <CardHeader>
-                    <CardTitle className="text-center text-2xl font-bold font-headline text-primary">Pódio da Semana</CardTitle>
+                    <CardTitle className="text-center text-2xl font-bold font-headline text-primary">Pódio {period === 'weekly' ? 'da Semana' : period === 'monthly' ? 'do Mês' : 'do Ano'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Podium data={topThree} companyId={companyProfile.id} />
@@ -261,27 +309,33 @@ export default function MiitMaxPage() {
                 
                 <Card>
                     <CardContent className="p-0">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-16 text-center">Posição</TableHead>
-                                    <TableHead>Empresa</TableHead>
-                                    <TableHead className="text-right">Pontuação</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {rankingData.map((item) => (
-                                    <TableRow key={item.companyId} className={cn(item.companyId === companyProfile.id && 'bg-lime-900/40')}>
-                                        <TableCell className="font-bold text-lg text-center">{item.rank}º</TableCell>
-                                        <TableCell className="font-medium">{item.name}</TableCell>
-                                        <TableCell className="text-right">
-                                            <span className="font-bold text-primary">{item.score}</span>
-                                            <span className="text-xs text-muted-foreground ml-1">{item.unit}</span>
-                                        </TableCell>
+                        {rankingData.length > 0 ? (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-16 text-center">Posição</TableHead>
+                                        <TableHead>Empresa</TableHead>
+                                        <TableHead className="text-right">Pontuação</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {rankingData.map((item) => (
+                                        <TableRow key={item.companyId} className={cn(item.companyId === companyProfile.id && 'bg-lime-900/40')}>
+                                            <TableCell className="font-bold text-lg text-center">{item.rank}º</TableCell>
+                                            <TableCell className="font-medium">{item.name}</TableCell>
+                                            <TableCell className="text-right">
+                                                <span className="font-bold text-primary">{item.score}</span>
+                                                <span className="text-xs text-muted-foreground ml-1">{item.unit}</span>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <div className="text-center p-8 text-muted-foreground">
+                                Ainda não há dados suficientes para este período.
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </Tabs>
@@ -289,7 +343,3 @@ export default function MiitMaxPage() {
         </div>
     );
 }
-
-    
-
-    
