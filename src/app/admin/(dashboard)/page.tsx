@@ -123,7 +123,24 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                  <StatCard
-                    title="Slots Banner Principal (Hoje)"
+                    title={
+                        <div className="flex items-center gap-2">
+                            Slots Banner Principal (Hoje)
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Controle de Inventário</p>
+                                        <p>Ocupação atual do Carrossel Principal da Home Page. O máximo é 3 vagas. Este número indica quantas vagas estão preenchidas/agendadas para exibição no dia de hoje.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="3/3"
                     icon={ShoppingCart}
                     description="Ocupação do Destaque Total Banner."
