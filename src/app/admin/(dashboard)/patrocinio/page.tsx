@@ -21,6 +21,7 @@ import {
   ArrowUpDown,
   Crown,
   Shield,
+  Trash2,
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -59,6 +60,17 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -183,6 +195,14 @@ export default function AdminSponsorshipPage() {
         description: "A solicitação foi marcada como 'Contatado'."
     })
   };
+  
+  const handleDeleteRequest = (requestId: string) => {
+      setRequests(prev => prev.filter(req => req.id !== requestId));
+      toast({
+          title: "Solicitação Excluída",
+          description: "A solicitação foi removida permanentemente.",
+      });
+  }
 
   const handleApproveSponsorship = () => {
     if (!selectedRequest) return;
@@ -376,22 +396,42 @@ export default function AdminSponsorshipPage() {
                         </Badge>
                     </TableCell>
                     <TableCell>
-                        <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => openDetailsModal(req as SponsorshipRequest)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => openEmailModal(req as SponsorshipRequest)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
-                            {req.status === 'Pendente' && (
-                                <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
-                            )}
-                        </DropdownMenuContent>
-                        </DropdownMenu>
+                        <AlertDialog>
+                            <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                <DropdownMenuItem onClick={() => openDetailsModal(req as SponsorshipRequest)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => openEmailModal(req as SponsorshipRequest)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
+                                {req.status === 'Pendente' && (
+                                    <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                        <Trash2 className="mr-2 h-4 w-4" />Excluir
+                                    </Button>
+                                </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                            </DropdownMenu>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Esta ação não pode ser desfeita. Isso excluirá permanentemente a solicitação de {req.companyName}.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteRequest(req.id)} className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </TableCell>
                     </TableRow>
                 )
