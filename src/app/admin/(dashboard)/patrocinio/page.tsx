@@ -10,6 +10,12 @@ import {
   Eye,
   Check,
   Mail,
+  X,
+  Building,
+  Link as LinkIcon,
+  CircleDollarSign,
+  Calendar,
+  Image as ImageIcon
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -36,15 +42,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
-const mockSponsorshipRequests = [
+const initialSponsorshipRequests = [
     {
         id: 'req1',
         companyId: '1',
         companyName: 'União Construtora',
-        message: 'Gostaria de saber mais sobre o plano de Destaque Total no Topo. Temos interesse em anunciar por 3 meses. Quais são os próximos passos?',
+        companyEmail: 'contato@uniaoconstrutora.com',
+        campaignType: 'Destaque Total Banner',
+        destinationUrl: 'https://uniaoconstrutora.com.br',
+        imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhbmFseXRpY3N8ZW58MHx8fHwxNzYxNjg3NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+        tokens: 70,
+        durationDays: 7,
         requestedAt: new Date().toISOString(),
         status: 'Pendente'
     },
@@ -52,7 +76,12 @@ const mockSponsorshipRequests = [
         id: 'req2',
         companyId: 'company-gold',
         companyName: 'Empresa Gold',
-        message: 'Tenho interesse na Vitrine de Patrocinadores. Como funciona a rotação justa?',
+        companyEmail: 'contato@gold.com',
+        campaignType: 'Vitrine de Carrossel',
+        destinationUrl: 'https://instagram.com/empresagold',
+        imageUrl: 'https://i.pravatar.cc/150?u=company-gold',
+        tokens: 40,
+        durationDays: 5,
         requestedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
         status: 'Pendente'
     },
@@ -60,21 +89,60 @@ const mockSponsorshipRequests = [
         id: 'req3',
         companyId: '3',
         companyName: 'Flor de Lótus Móveis',
-        message: 'Já somos parceiros e queremos renovar nosso destaque no carrossel. Por favor, entrem em contato.',
+        companyEmail: 'contato@flordelotus.com',
+        campaignType: 'Vídeo Promocional',
+        destinationUrl: 'https://wa.me/5521999999993',
+        imageUrl: 'https://i.pravatar.cc/150?u=company-lotus',
+        tokens: 120,
+        durationDays: 10,
         requestedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
         status: 'Contatado'
     }
 ];
 
+type SponsorshipRequest = typeof initialSponsorshipRequests[0];
 
 export default function AdminSponsorshipPage() {
+  const [requests, setRequests] = useState(initialSponsorshipRequests);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRequest, setSelectedRequest] = useState<SponsorshipRequest | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  
+  const { toast } = useToast();
 
-  const filteredRequests = mockSponsorshipRequests.filter(
+  const handleMarkAsContacted = (requestId: string) => {
+    setRequests(prev => 
+        prev.map(req => req.id === requestId ? {...req, status: 'Contatado'} : req)
+    );
+    toast({
+        title: "Status Atualizado",
+        description: "A solicitação foi marcada como 'Contatado'."
+    })
+  };
+
+  const handleSendEmail = () => {
+    toast({
+        title: "E-mail Enviado (Simulação)",
+        description: "Seu e-mail para o cliente foi enviado com sucesso."
+    });
+    setIsEmailModalOpen(false);
+  }
+
+  const filteredRequests = requests.filter(
     (req) =>
-      req.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      req.message.toLowerCase().includes(searchQuery.toLowerCase())
+      req.companyName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const openDetailsModal = (req: SponsorshipRequest) => {
+      setSelectedRequest(req);
+      setIsDetailsModalOpen(true);
+  }
+  
+  const openEmailModal = (req: SponsorshipRequest) => {
+      setSelectedRequest(req);
+      setIsEmailModalOpen(true);
+  }
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -91,7 +159,7 @@ export default function AdminSponsorshipPage() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Buscar por empresa ou mensagem..."
+                placeholder="Buscar por empresa..."
                 className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -119,7 +187,7 @@ export default function AdminSponsorshipPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Empresa</TableHead>
-                <TableHead className="hidden md:table-cell">Mensagem</TableHead>
+                <TableHead className="hidden md:table-cell">Campanha</TableHead>
                 <TableHead>Data</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>
@@ -131,7 +199,7 @@ export default function AdminSponsorshipPage() {
               {filteredRequests.map((req) => (
                 <TableRow key={req.id}>
                   <TableCell className="font-medium">{req.companyName}</TableCell>
-                  <TableCell className="hidden md:table-cell max-w-sm truncate">{req.message}</TableCell>
+                  <TableCell className="hidden md:table-cell">{req.campaignType}</TableCell>
                   <TableCell>{format(new Date(req.requestedAt), 'dd/MM/yyyy')}</TableCell>
                   <TableCell>
                     <Badge variant={req.status === 'Pendente' ? 'destructive' : 'default'} className={req.status === 'Pendente' ? 'bg-orange-600/20 text-orange-400 border-none' : 'bg-lime-500/10 text-lime-300 border-lime-400/20'}>
@@ -148,9 +216,11 @@ export default function AdminSponsorshipPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuItem><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
-                        <DropdownMenuItem><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
-                        <DropdownMenuItem><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openDetailsModal(req)}><Eye className="mr-2 h-4 w-4" />Ver Detalhes</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openEmailModal(req)}><Mail className="mr-2 h-4 w-4" />Enviar Email</DropdownMenuItem>
+                        {req.status === 'Pendente' && (
+                            <DropdownMenuItem onClick={() => handleMarkAsContacted(req.id)}><Check className="mr-2 h-4 w-4" />Marcar como Contatado</DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -160,6 +230,70 @@ export default function AdminSponsorshipPage() {
           </Table>
         </CardContent>
       </Card>
+
+    {/* Details Modal */}
+    <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
+        <DialogContent className="sm:max-w-lg bg-card border-border/50">
+            <DialogHeader>
+                <DialogTitle>Detalhes da Solicitação</DialogTitle>
+                <DialogDescription>
+                    Revise as informações da solicitação de patrocínio.
+                </DialogDescription>
+            </DialogHeader>
+            {selectedRequest && (
+                <div className="py-4 space-y-4 text-sm">
+                   <div className="flex items-center gap-3">
+                        <ImageIcon className="w-5 h-5 text-muted-foreground"/>
+                        <p><strong>Imagem:</strong></p>
+                        <Image src={selectedRequest.imageUrl} alt="Banner" width={40} height={40} className="rounded-md object-cover" />
+                   </div>
+                    <div className="flex items-center gap-3"><Building className="w-5 h-5 text-muted-foreground"/><p><strong>Empresa:</strong> {selectedRequest.companyName}</p></div>
+                    <div className="flex items-center gap-3"><p><strong>Campanha:</strong> {selectedRequest.campaignType}</p></div>
+                    <div className="flex items-center gap-3"><LinkIcon className="w-5 h-5 text-muted-foreground"/><p className="truncate"><strong>Link:</strong> <a href={selectedRequest.destinationUrl} target="_blank" className="text-primary hover:underline">{selectedRequest.destinationUrl}</a></p></div>
+                    <div className="flex items-center gap-3"><CircleDollarSign className="w-5 h-5 text-muted-foreground"/><p><strong>Tokens:</strong> {selectedRequest.tokens}</p></div>
+                    <div className="flex items-center gap-3"><Calendar className="w-5 h-5 text-muted-foreground"/><p><strong>Duração:</strong> {selectedRequest.durationDays} dias</p></div>
+                </div>
+            )}
+            <DialogFooter>
+                <Button variant="secondary" onClick={() => setIsDetailsModalOpen(false)}>Fechar</Button>
+                <Button className="bg-lime-500 hover:bg-lime-600 text-black">
+                   Aprovar Patrocínio
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    
+    {/* Email Modal */}
+    <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+        <DialogContent className="sm:max-w-lg bg-card border-border/50">
+            <DialogHeader>
+                <DialogTitle>Enviar E-mail</DialogTitle>
+                 <DialogDescription>
+                    Escreva uma mensagem para {selectedRequest?.companyName}.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+                 <div>
+                    <Label htmlFor="email-to">Para</Label>
+                    <Input id="email-to" value={selectedRequest?.companyEmail || ''} readOnly/>
+                </div>
+                 <div>
+                    <Label htmlFor="email-subject">Assunto</Label>
+                    <Input id="email-subject" placeholder="Assunto do E-mail"/>
+                </div>
+                <div>
+                    <Label htmlFor="email-body">Mensagem</Label>
+                    <Textarea id="email-body" placeholder="Escreva sua mensagem aqui..." className="min-h-[150px]"/>
+                </div>
+            </div>
+            <DialogFooter>
+                 <Button variant="secondary" onClick={() => setIsEmailModalOpen(false)}>Cancelar</Button>
+                <Button onClick={handleSendEmail}>
+                   <Mail className="mr-2 h-4 w-4"/> Enviar
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
     </main>
   );
 }
