@@ -198,7 +198,9 @@ export default function VitrineCarrosselPage() {
 
         <Card className="bg-card">
             <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-headline">Carteira de Tokens</CardTitle>
+            <CardTitle className="text-lg font-headline">
+              Carteira de Tokens {companyProfile.plan && `(${companyProfile.plan})`}
+            </CardTitle>
             <Link href="/account/subscription">
                 <Button variant="outline" size="sm">
                     Recarregar
@@ -434,7 +436,3 @@ export default function VitrineCarrosselPage() {
     </div>
   );
 }
-
-    
-
-    
