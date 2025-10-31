@@ -66,6 +66,14 @@ export default function VitrineEstaticaPage() {
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
   const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
   const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
+  
+  const bannerLabels = {
+      empresa: { label: 'Nome da Empresa', icon: Building },
+      ofertas: { label: 'Nome da Oferta', icon: Gift },
+      eventos: { label: 'Nome do Evento', icon: Ticket },
+  };
+
+  const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels] || bannerLabels.empresa;
 
 
   const handleImageClick = () => {
@@ -188,14 +196,6 @@ export default function VitrineEstaticaPage() {
     setIsCalendarModalOpen(false);
     sendSponsorshipRequest();
   };
-  
-    const bannerLabels = {
-        empresa: { label: 'Nome da Empresa', icon: Building },
-        ofertas: { label: 'Nome da Oferta', icon: Gift },
-        eventos: { label: 'Nome do Evento', icon: Ticket },
-    };
-
-    const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels] || bannerLabels.empresa;
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
@@ -344,7 +344,6 @@ export default function VitrineEstaticaPage() {
                 onBlur={handleTokenInputBlur}
                 placeholder={`Ex: ${dailyCost}`}
                 min={dailyCost}
-                step={1}
                 className="bg-card border-border/50 h-12"
             />
             {sponsorshipDays > 0 ? (
