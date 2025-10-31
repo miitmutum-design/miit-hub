@@ -443,12 +443,3 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
-
-// Add a soft variant to the button
-declare module "@/components/ui/button" {
-    interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-        variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "soft";
-    }
-}
-const originalButtonVariants = require("@/components/ui/button").buttonVariants;
-originalButtonVariants.cva.config.variants.variant.soft = "bg-primary/20 text-primary-foreground hover:bg-primary/30";
