@@ -42,6 +42,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
@@ -103,10 +106,13 @@ const initialSponsorshipRequests = [
 ];
 
 type SponsorshipRequest = typeof initialSponsorshipRequests[0];
+type StatusFilter = "todos" | "Pendente" | "Contatado";
+
 
 export default function AdminSponsorshipPage() {
   const [requests, setRequests] = useState(initialSponsorshipRequests);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('todos');
   const [selectedRequest, setSelectedRequest] = useState<SponsorshipRequest | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -192,7 +198,8 @@ export default function AdminSponsorshipPage() {
 
   const filteredRequests = requests.filter(
     (req) =>
-      req.companyName.toLowerCase().includes(searchQuery.toLowerCase())
+      (req.companyName.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (statusFilter === 'todos' || req.status === statusFilter)
   );
   
   const openDetailsModal = (req: SponsorshipRequest) => {
@@ -236,9 +243,13 @@ export default function AdminSponsorshipPage() {
                 </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filtrar por Status</DropdownMenuLabel>
-                <DropdownMenuItem>Pendentes</DropdownMenuItem>
-                <DropdownMenuItem>Contatados</DropdownMenuItem>
+                    <DropdownMenuLabel>Filtrar por Status</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioGroup value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
+                        <DropdownMenuRadioItem value="todos">Todos</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="Pendente">Pendentes</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="Contatado">Contatados</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -263,7 +274,11 @@ export default function AdminSponsorshipPage() {
                   <TableCell className="hidden md:table-cell">{req.campaignType}</TableCell>
                   <TableCell>{format(new Date(req.requestedAt), 'dd/MM/yyyy')}</TableCell>
                   <TableCell>
-                    <Badge variant={req.status === 'Pendente' ? 'destructive' : 'default'} className={req.status === 'Pendente' ? 'bg-orange-600/20 text-orange-400 border-none' : 'bg-lime-500/10 text-lime-300 border-lime-400/20'}>
+                    <Badge variant={req.status === 'Pendente' ? 'destructive' : 'default'} className={
+                        req.status === 'Pendente' 
+                        ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' 
+                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    }>
                       {req.status}
                     </Badge>
                   </TableCell>
