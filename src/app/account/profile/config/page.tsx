@@ -91,7 +91,7 @@ export default function ConsumerConfigPage() {
                 <Separator />
                 <ConfigItem icon={CircleDollarSign} title="Patrocínio" description="Impulsionar meu negócio" href="/account/patrocinio" />
                 <Separator />
-                <ConfigItem icon={BarChart3} title="Analytics" description="Ver métricas de desempenho" onClick={() => handleFeatureClick('Analytics')} />
+                <ConfigItem icon={BarChart3} title="Analytics" description="Ver métricas de desempenho" href="/account/analytics" />
             </div>
         </CardContent>
       </Card>
