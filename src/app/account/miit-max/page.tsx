@@ -1,8 +1,8 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { ArrowLeft, Crown, Star, Eye, Handshake, Trophy } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { ArrowLeft, Crown, Star, Eye, Handshake, Trophy, Rocket, Target, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -89,6 +89,71 @@ const Podium = ({ data, companyId }: { data: (typeof mockRankingData.views)[0][]
     );
 };
 
+const Countdown = () => {
+    const calculateTimeLeft = () => {
+        const endOfWeek = new Date();
+        endOfWeek.setDate(endOfWeek.getDate() + (7 - endOfWeek.getDay()));
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        const difference = +endOfWeek - +new Date();
+        let timeLeft = {};
+
+        if (difference > 0) {
+            timeLeft = {
+                dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                horas: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                minutos: Math.floor((difference / 1000 / 60) % 60),
+            };
+        }
+        return timeLeft as {dias: number, horas: number, minutos: number};
+    };
+
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000 * 60); // Update every minute
+        return () => clearTimeout(timer);
+    });
+
+    return (
+        <div className="flex justify-center items-baseline gap-4 text-center">
+            {timeLeft.dias > 0 && <div><span className="text-2xl font-bold">{timeLeft.dias}</span><p className="text-xs">dias</p></div>}
+            {timeLeft.horas > 0 && <div><span className="text-2xl font-bold">{timeLeft.horas}</span><p className="text-xs">horas</p></div>}
+            {timeLeft.minutos > 0 && <div><span className="text-2xl font-bold">{timeLeft.minutos}</span><p className="text-xs">minutos</p></div>}
+        </div>
+    );
+}
+
+const YourPositionCard = ({ companyId, data }: { companyId: string, data: (typeof mockRankingData.views)[0][]}) => {
+    const yourRank = data.find(item => item.companyId === companyId);
+    
+    if (!yourRank || yourRank.rank <= 3) return null; // Don't show if in top 3 or not ranked
+    
+    const rankAbove = data.find(item => item.rank === yourRank.rank - 1);
+    
+    const scoreDifference = rankAbove ? rankAbove.score - yourRank.score : 0;
+
+    return (
+        <Card className="bg-gradient-to-br from-lime-900/30 to-card border-lime-400/30">
+            <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                    <Target className="w-5 h-5 text-lime-400" />
+                    Sua Posição
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>Você está em <strong>{yourRank.rank}º lugar</strong>. Faltam <strong>{scoreDifference.toLocaleString('pt-BR')} {rankAbove?.unit}</strong> para alcançar a próxima posição.</p>
+                <div className="bg-lime-900/50 p-3 rounded-lg text-sm">
+                    <p className="font-semibold flex items-center gap-2"><Rocket className="w-4 h-4"/> Dica de Impulsionamento:</p>
+                    <p className="text-lime-300/80 mt-1">Crie uma nova oferta de destaque para atrair mais clientes e aumentar suas interações!</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
 
 export default function MiitMaxPage() {
     const [activeTab, setActiveTab] = useState<RankingMetric>('views');
@@ -119,6 +184,21 @@ export default function MiitMaxPage() {
                     <Podium data={topThree} companyId={companyProfile.id} />
                 </CardContent>
             </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                 <YourPositionCard companyId={companyProfile.id} data={rankingData} />
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                           <Calendar className="w-5 h-5 text-primary"/>
+                            Fim da Rodada
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                       <Countdown />
+                    </CardContent>
+                </Card>
+            </div>
 
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as RankingMetric)} className="w-full">
                 <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
