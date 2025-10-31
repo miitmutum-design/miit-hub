@@ -41,7 +41,7 @@ const plans = {
     price: 'R$ 499',
     period: '/ano',
     benefits: [
-      '100% mais Tokens',
+      'Oferta Ilimitada',
       'Eventos Ilimitados',
       '1º a ver novos recursos',
       'Suporte Prioritário',
