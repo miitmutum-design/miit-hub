@@ -15,7 +15,8 @@ import {
   Link as LinkIcon,
   CircleDollarSign,
   Calendar,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Loader2,
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -57,6 +58,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { mockCompanyProfiles } from '@/contexts/CompanyContext';
 
 const initialSponsorshipRequests = [
     {
@@ -108,6 +110,7 @@ export default function AdminSponsorshipPage() {
   const [selectedRequest, setSelectedRequest] = useState<SponsorshipRequest | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   
   const { toast } = useToast();
 
@@ -120,6 +123,46 @@ export default function AdminSponsorshipPage() {
         description: "A solicitação foi marcada como 'Contatado'."
     })
   };
+
+  const handleApproveSponsorship = () => {
+    if (!selectedRequest) return;
+    
+    setIsApproving(true);
+    
+    // Simulate transaction
+    setTimeout(() => {
+        const companyProfile = mockCompanyProfiles[selectedRequest.companyId as keyof typeof mockCompanyProfiles];
+
+        if (!companyProfile || companyProfile.tokens < selectedRequest.tokens) {
+            toast({
+                variant: 'destructive',
+                title: "ERRO: Tokens Insuficientes",
+                description: "O saldo de tokens da empresa é insuficiente. Entre em contato com a loja."
+            });
+            setIsApproving(false);
+            return;
+        }
+
+        // 1. Simulate debiting tokens (in a real app, this would be a backend update)
+        // For now, we don't update the mock context data from here.
+
+        // 2. Simulate creating schedule and transaction records
+        console.log("Creating schedule for:", selectedRequest);
+        console.log("Creating transaction record for:", selectedRequest.companyId, "amount:", -selectedRequest.tokens);
+
+        // 3. Remove from local state and close modal
+        setRequests(prev => prev.filter(req => req.id !== selectedRequest.id));
+        
+        setIsApproving(false);
+        setIsDetailsModalOpen(false);
+
+        toast({
+            title: "Patrocínio Aprovado!",
+            description: "Agendamento criado e tokens debitados com sucesso."
+        });
+
+    }, 1500);
+  }
 
   const handleSendEmail = () => {
     toast({
@@ -256,8 +299,8 @@ export default function AdminSponsorshipPage() {
             )}
             <DialogFooter>
                 <Button variant="secondary" onClick={() => setIsDetailsModalOpen(false)}>Fechar</Button>
-                <Button className="bg-lime-500 hover:bg-lime-600 text-black">
-                   Aprovar Patrocínio
+                <Button className="bg-lime-500 hover:bg-lime-600 text-black" onClick={handleApproveSponsorship} disabled={isApproving}>
+                   {isApproving ? <Loader2 className="animate-spin" /> : 'Aprovar Patrocínio'}
                 </Button>
             </DialogFooter>
         </DialogContent>
