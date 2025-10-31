@@ -28,7 +28,7 @@ const plans = {
     price: 'R$ 49',
     period: '/mês',
     benefits: [
-      '50% mais Tokens Inclusos',
+      '1 Oferta por Mês',
       '10 Eventos',
       'Suporte Padrão',
     ],
