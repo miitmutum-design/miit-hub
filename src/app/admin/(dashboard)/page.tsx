@@ -91,7 +91,24 @@ export default function AdminDashboardPage() {
                     </Link>
                 </StatCard>
                  <StatCard
-                    title="Conteúdo Patrocinado Ativo"
+                    title={
+                        <div className="flex items-center gap-2">
+                            Conteúdo Patrocinado Ativo
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button className="text-lime-400 focus:outline-none">
+                                            <Info className="h-4 w-4" />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                        <p className="font-bold">Definição da Métrica</p>
+                                        <p>Total de Ofertas, Eventos e Vídeos que estão atualmente impulsionados por Tokens e agendados para exibição (vigentes). Esta métrica mede o inventário de conteúdo que está gerando receita.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                    }
                     value="18"
                     icon={TrendingUp}
                     description="Ofertas e eventos impulsionados."
