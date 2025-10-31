@@ -40,7 +40,7 @@ const plans = {
   },
   Gold: {
     name: 'Gold',
-    price: 'R$ 499',
+    price: 'R$ 1000,00',
     period: '/ano',
     benefits: [
       'Ofertas Ilimitadas',
