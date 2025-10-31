@@ -64,10 +64,11 @@ export default function DestaqueTotalBannerPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const dailyCost = companyProfile.plan === 'Gold' ? 7 : 10;
+  const isFormDisabled = companyProfile.tokens < dailyCost;
+
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const isTokenAmountValid = tokensToSpend > 0 && tokensToSpend % dailyCost === 0;
-  const sponsorshipDays = isTokenAmountValid ? Math.floor(tokensToSpend / dailyCost) : 0;
-  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient && isTokenAmountValid;
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
+  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
 
 
   const handleImageClick = () => {
@@ -88,6 +89,7 @@ export default function DestaqueTotalBannerPage() {
   };
 
   const handleTokenInputBlur = () => {
+    if (tokensToSpend === 0) return;
     if (tokensToSpend < dailyCost) {
         setTokensToSpend(dailyCost);
         return;
@@ -154,7 +156,7 @@ export default function DestaqueTotalBannerPage() {
   }
 
   const handleSubmit = async () => {
-    if (!isFormValid) {
+    if (!isFormValid || isFormDisabled) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios ou Saldo Insuficiente",
@@ -226,152 +228,154 @@ export default function DestaqueTotalBannerPage() {
         <CardContent className="p-6 pt-0">
             <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
             <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
+             {isFormDisabled && (
+                <div className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
+                    <AlertTriangle className="h-4 w-4" />
+                    Saldo insuficiente para patrocinar. Por favor, recarregue.
+                </div>
+            )}
         </CardContent>
       </Card>
 
-      <div className="text-center mb-6">
-        <p className="text-muted-foreground">Qual a intenção da sua campanha no banner principal?</p>
-      </div>
-      
-       <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
-            <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
-            <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Oferta</TabsTrigger>
-            <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Evento</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
-      <div className="space-y-6">
-        <div className="space-y-2">
-            <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <BannerIcon className="h-5 w-5"/>
-                {bannerNameLabel} <span className="text-red-500">*</span>
-            </label>
-            <Input 
-                id="bannerName"
-                type="text"
-                value={bannerName}
-                onChange={(e) => setBannerName(e.target.value)}
-                placeholder="Nome que aparecerá no banner"
-                className="bg-card border-border/50 h-12"
-                maxLength={50}
-            />
+      <fieldset disabled={isFormDisabled} className="space-y-6 group">
+        <div className="text-center group-disabled:opacity-50">
+          <p className="text-muted-foreground">Qual a intenção da sua campanha no banner principal?</p>
         </div>
-        <div className="space-y-6">
-            <div className="space-y-2">
-                <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Upload className="h-5 w-5"/>
-                    Imagem do Banner (1920x1080px) <span className="text-red-500">*</span>
-                </label>
-                 <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="relative w-full h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
-                >
-                    {bannerImage ? (
-                        <Image
-                            src={bannerImage}
-                            alt="Pré-visualização do Banner"
-                            fill
-                            className="object-cover rounded-lg"
-                        />
-                    ) : (
-                        <div className="flex flex-col items-center gap-2">
-                            <Upload className="h-8 w-8" />
-                            <span>Fazer upload da imagem</span>
-                        </div>
-                    )}
-                </button>
-                <input
-                    type="file"
-                    ref={imageInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*"
-                />
-            </div>
-            
-            <div className="space-y-4">
-                <label className="text-sm font-medium text-muted-foreground">
-                    Tipo de Link de Destino <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-4">
-                    <div onClick={() => setIsWhatsappModalOpen(true)}>
-                        <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            WhatsApp
-                            {linkType === 'whatsapp' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                     <div onClick={() => setIsInstagramModalOpen(true)}>
-                        <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            Instagram
-                            {linkType === 'instagram' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                     <div onClick={() => setIsSiteModalOpen(true)}>
-                        <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
-                            Site
-                            {linkType === 'site' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
-                        </Label>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
+        <Tabs defaultValue="empresa" value={sponsorshipType} onValueChange={setSponsorshipType} className="w-full group-disabled:opacity-50">
+          <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
+              <TabsTrigger value="empresa" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300"><Building className="h-4 w-4"/> Empresa</TabsTrigger>
+              <TabsTrigger value="ofertas" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Oferta</TabsTrigger>
+              <TabsTrigger value="eventos" className="flex gap-2 data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300">Evento</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        <div className="space-y-6 group-disabled:opacity-50">
+          <div className="space-y-2">
+              <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <BannerIcon className="h-5 w-5"/>
+                  {bannerNameLabel} <span className="text-red-500">*</span>
+              </label>
+              <Input 
+                  id="bannerName"
+                  type="text"
+                  value={bannerName}
+                  onChange={(e) => setBannerName(e.target.value)}
+                  placeholder="Nome que aparecerá no banner"
+                  className="bg-card border-border/50 h-12"
+                  maxLength={50}
+              />
+          </div>
+          <div className="space-y-2">
+              <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Upload className="h-5 w-5"/>
+                  Imagem do Banner (1920x1080px) <span className="text-red-500">*</span>
+              </label>
+              <button
+                  type="button"
+                  onClick={handleImageClick}
+                  className="relative w-full h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:hover:border-border"
+              >
+                  {bannerImage ? (
+                      <Image
+                          src={bannerImage}
+                          alt="Pré-visualização do Banner"
+                          fill
+                          className="object-cover rounded-lg"
+                      />
+                  ) : (
+                      <div className="flex flex-col items-center gap-2">
+                          <Upload className="h-8 w-8" />
+                          <span>Fazer upload da imagem</span>
+                      </div>
+                  )}
+              </button>
+              <input
+                  type="file"
+                  ref={imageInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept="image/*"
+              />
+          </div>
+          
+          <div className="space-y-4">
+              <label className="text-sm font-medium text-muted-foreground">
+                  Tipo de Link de Destino <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-3 gap-4">
+                  <div onClick={() => !isFormDisabled && setIsWhatsappModalOpen(true)}>
+                      <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
+                          WhatsApp
+                          {linkType === 'whatsapp' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
+                      </Label>
+                  </div>
+                    <div onClick={() => !isFormDisabled && setIsInstagramModalOpen(true)}>
+                      <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
+                          Instagram
+                          {linkType === 'instagram' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
+                      </Label>
+                  </div>
+                    <div onClick={() => !isFormDisabled && setIsSiteModalOpen(true)}>
+                      <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
+                          Site
+                          {linkType === 'site' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
+                      </Label>
+                  </div>
+              </div>
+          </div>
 
-        <div className="space-y-2">
-            <label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <DollarSign className="h-5 w-5"/>
-                Tokens para Impulsionar
-            </label>
-            <Input 
-                id="tokensToSpend"
-                type="number"
-                value={tokensToSpend === 0 ? '' : tokensToSpend}
-                onChange={handleTokenInputChange}
-                onBlur={handleTokenInputBlur}
-                placeholder={`Ex: ${dailyCost}`}
-                min={dailyCost}
-                step={1}
-                className="bg-card border-border/50 h-12"
-            />
-             {tokensToSpend > 0 && !isTokenAmountValid ? (
-                 <p className="text-sm text-destructive">
-                    O valor deve ser um múltiplo de {dailyCost}.
-                 </p>
-             ) : sponsorshipDays > 0 ? (
-                <p className="text-sm text-lime-400">
-                    Seu patrocínio ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
-                </p>
-             ) : (
-                <p className="text-sm text-muted-foreground">
-                    Custo: {dailyCost} tokens por dia.
-                </p>
-             )}
-             {!isBalanceSufficient && tokensToSpend > 0 && (
-                <p className="text-sm text-red-500 flex items-center gap-1.5">
-                    <AlertTriangle className="h-4 w-4" />
-                    Saldo de tokens insuficiente.
-                </p>
-            )}
+          <div className="space-y-2">
+              <label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <DollarSign className="h-5 w-5"/>
+                  Tokens para Impulsionar
+              </label>
+              <Input 
+                  id="tokensToSpend"
+                  type="number"
+                  value={tokensToSpend === 0 ? '' : tokensToSpend}
+                  onChange={handleTokenInputChange}
+                  onBlur={handleTokenInputBlur}
+                  placeholder={`Ex: ${dailyCost}`}
+                  min={dailyCost}
+                  step={1}
+                  className="bg-card border-border/50 h-12"
+              />
+              {sponsorshipDays > 0 ? (
+                  <p className="text-sm text-lime-400">
+                      Seu patrocínio ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
+                  </p>
+              ) : (
+                  <p className="text-sm text-muted-foreground">
+                      Custo: {dailyCost} tokens por dia.
+                  </p>
+              )}
+              {!isBalanceSufficient && tokensToSpend > 0 && (
+                  <p className="text-sm text-red-500 flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" />
+                      Saldo de tokens insuficiente.
+                  </p>
+              )}
+          </div>
         </div>
 
         <div className="pt-8 pb-24">
-             <Button
-                size="lg"
-                className={cn(
-                  "w-full h-12 text-lg font-bold transition-colors",
-                  isFormValid
-                    ? "bg-lime-500 hover:bg-lime-600 text-black"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                )}
-                onClick={handleSubmit}
-                disabled={!isFormValid || isSubmitting}
-             >
-                {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
-                {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
-            </Button>
+            <Button
+              size="lg"
+              className={cn(
+                "w-full h-12 text-lg font-bold transition-colors",
+                isFormValid && !isFormDisabled
+                  ? "bg-lime-500 hover:bg-lime-600 text-black"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              )}
+              onClick={handleSubmit}
+              disabled={!isFormValid || isSubmitting || isFormDisabled}
+            >
+              {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
+              {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
+          </Button>
         </div>
-      </div>
+      </fieldset>
       
       {/* WhatsApp Modal */}
       <Dialog open={isWhatsappModalOpen} onOpenChange={setIsWhatsappModalOpen}>

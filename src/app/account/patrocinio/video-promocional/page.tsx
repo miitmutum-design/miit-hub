@@ -51,10 +51,11 @@ export default function VideoPromocionalPage() {
   const videoInputRef = useRef<HTMLInputElement>(null);
 
   const dailyCost = companyProfile.plan === 'Gold' ? 10 : 12;
+  const isFormDisabled = companyProfile.tokens < dailyCost;
+
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const isTokenAmountValid = tokensToSpend > 0 && tokensToSpend % dailyCost === 0;
-  const sponsorshipDays = isTokenAmountValid ? Math.floor(tokensToSpend / dailyCost) : 0;
-  const isFormValid = campaignTitle.trim() !== '' && videoFile && tokensToSpend > 0 && isBalanceSufficient && isTokenAmountValid;
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
+  const isFormValid = campaignTitle.trim() !== '' && videoFile && tokensToSpend > 0 && isBalanceSufficient;
 
 
   const handleVideoClick = () => {
@@ -82,6 +83,7 @@ export default function VideoPromocionalPage() {
   };
 
   const handleTokenInputBlur = () => {
+    if (tokensToSpend === 0) return;
     if (tokensToSpend < dailyCost) {
         setTokensToSpend(dailyCost);
         return;
@@ -112,7 +114,7 @@ export default function VideoPromocionalPage() {
   }
 
   const handleSubmit = async () => {
-    if (!isFormValid) {
+    if (!isFormValid || isFormDisabled) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios ou Saldo Insuficiente",
@@ -177,111 +179,115 @@ export default function VideoPromocionalPage() {
             <CardContent className="p-6 pt-0">
                 <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
                 <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
+                {isFormDisabled && (
+                    <div className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
+                        <AlertTriangle className="h-4 w-4" />
+                        Saldo insuficiente para patrocinar. Por favor, recarregue.
+                    </div>
+                )}
             </CardContent>
         </Card>
       
-        <div className="space-y-2">
-            <Label htmlFor="campaignTitle" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Text className="h-5 w-5"/>
-                Título da Campanha <span className="text-red-500">*</span>
-            </Label>
-            <Input 
-                id="campaignTitle"
-                type="text"
-                value={campaignTitle}
-                onChange={(e) => setCampaignTitle(e.target.value)}
-                placeholder="Ex: Promoção de Inverno"
-                className="bg-card border-border/50 h-12"
-            />
-        </div>
+        <fieldset disabled={isFormDisabled} className="space-y-6 group">
+          <div className="space-y-2 group-disabled:opacity-50">
+              <Label htmlFor="campaignTitle" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Text className="h-5 w-5"/>
+                  Título da Campanha <span className="text-red-500">*</span>
+              </Label>
+              <Input 
+                  id="campaignTitle"
+                  type="text"
+                  value={campaignTitle}
+                  onChange={(e) => setCampaignTitle(e.target.value)}
+                  placeholder="Ex: Promoção de Inverno"
+                  className="bg-card border-border/50 h-12"
+              />
+          </div>
 
-        <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <Upload className="h-5 w-5"/>
-                Upload do Vídeo (máx 30s) <span className="text-red-500">*</span>
-            </Label>
-            <button
-                type="button"
-                onClick={handleVideoClick}
-                className="relative w-full aspect-video rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
-            >
-                {videoPreview ? (
-                    <video
-                        src={videoPreview}
-                        controls={false}
-                        className="object-cover w-full h-full rounded-lg"
-                    />
-                ) : (
-                    <div className="flex flex-col items-center gap-2 text-center p-2">
-                        <Film className="h-8 w-8" />
-                        <span className="text-sm">Clique para fazer upload do vídeo</span>
-                    </div>
-                )}
-            </button>
-            <input
-                type="file"
-                ref={videoInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-                accept="video/*"
-            />
-            {videoFile && <p className="text-xs text-muted-foreground">Arquivo selecionado: {videoFile.name}</p>}
-        </div>
-        
-        <div className="space-y-2">
-            <Label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <DollarSign className="h-5 w-5"/>
-                Tokens para Impulsionar
-            </Label>
-            <Input 
-                id="tokensToSpend"
-                type="number"
-                value={tokensToSpend === 0 ? '' : tokensToSpend}
-                onChange={handleTokenInputChange}
-                onBlur={handleTokenInputBlur}
-                placeholder={`Ex: ${dailyCost}`}
-                min={dailyCost}
-                step={1}
-                className="bg-card border-border/50 h-12"
-            />
-            {tokensToSpend > 0 && !isTokenAmountValid ? (
-                <p className="text-sm text-destructive">
-                    O valor deve ser um múltiplo de {dailyCost}.
-                </p>
-            ) : sponsorshipDays > 0 ? (
-                <p className="text-sm text-lime-400">
-                    Seu vídeo ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
-                </p>
-            ) : (
-                <p className="text-sm text-muted-foreground">
-                    Custo: {dailyCost} tokens por dia.
-                </p>
-            )}
-            {!isBalanceSufficient && tokensToSpend > 0 && (
-                <p className="text-sm text-red-500 flex items-center gap-1.5">
-                    <AlertTriangle className="h-4 w-4" />
-                    Saldo de tokens insuficiente.
-                </p>
-            )}
-        </div>
+          <div className="space-y-2 group-disabled:opacity-50">
+              <Label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Upload className="h-5 w-5"/>
+                  Upload do Vídeo (máx 30s) <span className="text-red-500">*</span>
+              </Label>
+              <button
+                  type="button"
+                  onClick={handleVideoClick}
+                  className="relative w-full aspect-video rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:hover:border-border"
+              >
+                  {videoPreview ? (
+                      <video
+                          src={videoPreview}
+                          controls={false}
+                          className="object-cover w-full h-full rounded-lg"
+                      />
+                  ) : (
+                      <div className="flex flex-col items-center gap-2 text-center p-2">
+                          <Film className="h-8 w-8" />
+                          <span className="text-sm">Clique para fazer upload do vídeo</span>
+                      </div>
+                  )}
+              </button>
+              <input
+                  type="file"
+                  ref={videoInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept="video/*"
+              />
+              {videoFile && <p className="text-xs text-muted-foreground">Arquivo selecionado: {videoFile.name}</p>}
+          </div>
+          
+          <div className="space-y-2 group-disabled:opacity-50">
+              <Label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <DollarSign className="h-5 w-5"/>
+                  Tokens para Impulsionar
+              </Label>
+              <Input 
+                  id="tokensToSpend"
+                  type="number"
+                  value={tokensToSpend === 0 ? '' : tokensToSpend}
+                  onChange={handleTokenInputChange}
+                  onBlur={handleTokenInputBlur}
+                  placeholder={`Ex: ${dailyCost}`}
+                  min={dailyCost}
+                  step={1}
+                  className="bg-card border-border/50 h-12"
+              />
+              {sponsorshipDays > 0 ? (
+                  <p className="text-sm text-lime-400">
+                      Seu vídeo ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
+                  </p>
+              ) : (
+                  <p className="text-sm text-muted-foreground">
+                      Custo: {dailyCost} tokens por dia.
+                  </p>
+              )}
+              {!isBalanceSufficient && tokensToSpend > 0 && (
+                  <p className="text-sm text-red-500 flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" />
+                      Saldo de tokens insuficiente.
+                  </p>
+              )}
+          </div>
 
 
-        <div className="pt-8 pb-24">
-            <Button
-                size="lg"
-                className={cn(
-                  "w-full h-12 text-lg font-bold transition-colors",
-                  isFormValid
-                    ? "bg-lime-500 hover:bg-lime-600 text-black"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                )}
-                onClick={handleSubmit}
-                disabled={!isFormValid || isSubmitting}
-            >
-                {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
-                {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
-            </Button>
-        </div>
+          <div className="pt-8 pb-24">
+              <Button
+                  size="lg"
+                  className={cn(
+                    "w-full h-12 text-lg font-bold transition-colors",
+                    isFormValid && !isFormDisabled
+                      ? "bg-lime-500 hover:bg-lime-600 text-black"
+                      : "bg-muted text-muted-foreground cursor-not-allowed"
+                  )}
+                  onClick={handleSubmit}
+                  disabled={!isFormValid || isSubmitting || isFormDisabled}
+              >
+                  {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
+                  {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
+              </Button>
+          </div>
+        </fieldset>
       </div>
       
       {/* Calendar Modal */}

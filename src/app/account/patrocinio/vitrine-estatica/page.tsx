@@ -61,10 +61,11 @@ export default function VitrineEstaticaPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const dailyCost = companyProfile.plan === 'Gold' ? 4 : 6;
+  const isFormDisabled = companyProfile.tokens < dailyCost;
+
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const isTokenAmountValid = tokensToSpend > 0 && tokensToSpend % dailyCost === 0;
-  const sponsorshipDays = isTokenAmountValid ? Math.floor(tokensToSpend / dailyCost) : 0;
-  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient && isTokenAmountValid;
+  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
+  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
 
 
   const handleImageClick = () => {
@@ -85,6 +86,7 @@ export default function VitrineEstaticaPage() {
   };
 
   const handleTokenInputBlur = () => {
+    if (tokensToSpend === 0) return;
     if (tokensToSpend < dailyCost) {
         setTokensToSpend(dailyCost);
         return;
@@ -152,7 +154,7 @@ export default function VitrineEstaticaPage() {
   }
 
   const handleSubmit = async () => {
-    if (!isFormValid) {
+    if (!isFormValid || isFormDisabled) {
         toast({
             variant: 'destructive',
             title: "Campos Obrigatórios ou Saldo Insuficiente",
@@ -225,14 +227,21 @@ export default function VitrineEstaticaPage() {
             <CardContent className="p-6 pt-0">
                 <p className="text-sm text-muted-foreground">Seu Saldo Atual</p>
                 <p className="text-3xl font-bold text-lime-400">{companyProfile.tokens} Tokens</p>
+                {isFormDisabled && (
+                    <div className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
+                        <AlertTriangle className="h-4 w-4" />
+                        Saldo insuficiente para patrocinar. Por favor, recarregue.
+                    </div>
+                )}
             </CardContent>
         </Card>
 
-        <div className="text-center">
+      <fieldset disabled={isFormDisabled} className="space-y-6 group">
+        <div className="text-center group-disabled:opacity-50">
             <p className="text-muted-foreground">Qual a intenção da sua campanha na vitrine?</p>
         </div>
       
-        <div className="w-full">
+        <div className="w-full group-disabled:opacity-50">
             <div className="grid grid-cols-3 gap-2 rounded-lg bg-card p-1">
                 <Button variant={sponsorshipType === 'empresa' ? 'default' : 'ghost'} onClick={() => setSponsorshipType('empresa')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300 flex-1 justify-center gap-2" data-state={sponsorshipType === 'empresa' ? 'active' : 'inactive'}>
                     <Building className="h-4 w-4"/> Empresa
@@ -246,7 +255,7 @@ export default function VitrineEstaticaPage() {
             </div>
         </div>
       
-        <div className="space-y-2">
+        <div className="space-y-2 group-disabled:opacity-50">
             <label htmlFor="bannerName" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <BannerIcon className="h-5 w-5"/>
                 {bannerNameLabel} <span className="text-red-500">*</span>
@@ -261,7 +270,7 @@ export default function VitrineEstaticaPage() {
             />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 group-disabled:opacity-50">
             <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Upload className="h-5 w-5"/>
                 Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
@@ -270,7 +279,7 @@ export default function VitrineEstaticaPage() {
                 <button
                     type="button"
                     onClick={handleImageClick}
-                    className="relative w-40 h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors"
+                    className="relative w-40 h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:hover:border-border"
                 >
                     {bannerImage ? (
                         <Image
@@ -296,25 +305,25 @@ export default function VitrineEstaticaPage() {
             />
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-4 group-disabled:opacity-50">
             <label className="text-sm font-medium text-muted-foreground">
                 Tipo de Link de Destino <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-4">
-                <div onClick={() => setIsWhatsappModalOpen(true)}>
-                    <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
+                <div onClick={() => !isFormDisabled && setIsWhatsappModalOpen(true)}>
+                    <Label htmlFor="whatsapp" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'whatsapp' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
                         WhatsApp
                         {linkType === 'whatsapp' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                     </Label>
                 </div>
-                 <div onClick={() => setIsInstagramModalOpen(true)}>
-                    <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
+                 <div onClick={() => !isFormDisabled && setIsInstagramModalOpen(true)}>
+                    <Label htmlFor="instagram" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'instagram' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
                         Instagram
                         {linkType === 'instagram' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                     </Label>
                 </div>
-                 <div onClick={() => setIsSiteModalOpen(true)}>
-                    <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover hover:bg-accent')}>
+                 <div onClick={() => !isFormDisabled && setIsSiteModalOpen(true)}>
+                    <Label htmlFor="site" className={cn("flex flex-col items-center justify-center rounded-md border-2 p-4 transition-colors", linkType === 'site' ? 'border-primary bg-primary/10' : 'border-muted bg-popover', !isFormDisabled && "cursor-pointer hover:bg-accent")}>
                         Site
                         {linkType === 'site' && <CheckCircle className="w-4 h-4 text-primary mt-1" />}
                     </Label>
@@ -322,7 +331,7 @@ export default function VitrineEstaticaPage() {
             </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 group-disabled:opacity-50">
             <label htmlFor="tokensToSpend" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <DollarSign className="h-5 w-5"/>
                 Tokens para Impulsionar
@@ -338,11 +347,7 @@ export default function VitrineEstaticaPage() {
                 step={1}
                 className="bg-card border-border/50 h-12"
             />
-            {tokensToSpend > 0 && !isTokenAmountValid ? (
-                <p className="text-sm text-destructive">
-                    O valor deve ser um múltiplo de {dailyCost}.
-                </p>
-            ) : sponsorshipDays > 0 ? (
+            {sponsorshipDays > 0 ? (
                 <p className="text-sm text-lime-400">
                     Sua vitrine ficará ativa por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
                 </p>
@@ -365,18 +370,18 @@ export default function VitrineEstaticaPage() {
                 size="lg"
                 className={cn(
                   "w-full h-12 text-lg font-bold transition-colors",
-                  isFormValid
+                  isFormValid && !isFormDisabled
                     ? "bg-lime-500 hover:bg-lime-600 text-black"
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 )}
                 onClick={handleSubmit}
-                disabled={!isFormValid || isSubmitting}
+                disabled={!isFormValid || isSubmitting || isFormDisabled}
             >
                 {isSubmitting ? <Loader2 className="animate-spin h-5 w-5 mr-2" /> : <Sparkles className="mr-2 h-5 w-5"/>}
                 {isSubmitting ? 'Verificando...' : 'Solicitar Patrocínio'}
             </Button>
         </div>
-      </div>
+      </fieldset>
       
       {/* WhatsApp Modal */}
       <Dialog open={isWhatsappModalOpen} onOpenChange={setIsWhatsappModalOpen}>
