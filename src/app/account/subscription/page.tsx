@@ -43,7 +43,7 @@ const plans = {
     benefits: [
       'Oferta Ilimitada',
       'Eventos Ilimitados',
-      '1º a ver novos recursos',
+      'Mais Tokens ( R$1 = 3 Tokens)',
       'Suporte Prioritário',
     ],
     borderColor: 'border-yellow-400/50',
