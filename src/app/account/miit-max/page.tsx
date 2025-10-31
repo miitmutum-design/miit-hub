@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { ArrowLeft, Crown, Star, Eye, Handshake, Trophy, Rocket, Target, Calendar } from 'lucide-react';
+import { ArrowLeft, Crown, Star, Eye, Handshake, Trophy, Rocket, Target, Calendar, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -24,9 +24,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { categories } from '@/lib/data';
 
 
 type RankingMetric = 'views' | 'interactions' | 'rating';
+type PerformanceType = 'geral' | 'organico' | 'patrocinado';
 
 const mockRankingData = {
   views: [
@@ -112,7 +115,7 @@ const Countdown = () => {
         };
 
         calculateTimeLeft();
-        const timer = setInterval(calculateTimeLeft, 1000 * 60); // Update every minute
+        const timer = setInterval(calculateTimeLeft, 1000 * 60);
 
         return () => clearInterval(timer);
     }, []);
@@ -136,14 +139,18 @@ const Countdown = () => {
     );
 }
 
-const YourPositionCard = ({ companyId, data }: { companyId: string, data: (typeof mockRankingData.views)[0][]}) => {
+const YourPositionCard = ({ companyId, data, performanceType }: { companyId: string, data: (typeof mockRankingData.views)[0][], performanceType: PerformanceType}) => {
     const yourRank = data.find(item => item.companyId === companyId);
     
-    if (!yourRank || yourRank.rank <= 3) return null; // Don't show if in top 3 or not ranked
+    if (!yourRank || yourRank.rank <= 3) return null;
     
     const rankAbove = data.find(item => item.rank === yourRank.rank - 1);
     
     const scoreDifference = rankAbove ? rankAbove.score - yourRank.score : 0;
+
+    const tip = performanceType === 'patrocinado' 
+        ? 'Crie uma nova oferta de destaque para atrair mais clientes e aumentar suas interações!'
+        : 'Otimize seu perfil! Adicione mais fotos, produtos e peça para seus clientes avaliarem sua empresa.';
 
     return (
         <Card className="bg-gradient-to-br from-lime-900/30 to-card border-lime-400/30">
@@ -157,7 +164,7 @@ const YourPositionCard = ({ companyId, data }: { companyId: string, data: (typeo
                 <p>Você está em <strong>{yourRank.rank}º lugar</strong>. Faltam <strong>{scoreDifference.toLocaleString('pt-BR')} {rankAbove?.unit}</strong> para alcançar a próxima posição.</p>
                 <div className="bg-lime-900/50 p-3 rounded-lg text-sm">
                     <p className="font-semibold flex items-center gap-2"><Rocket className="w-4 h-4"/> Dica de Impulsionamento:</p>
-                    <p className="text-lime-300/80 mt-1">Crie uma nova oferta de destaque para atrair mais clientes e aumentar suas interações!</p>
+                    <p className="text-lime-300/80 mt-1">{tip}</p>
                 </div>
             </CardContent>
         </Card>
@@ -166,10 +173,15 @@ const YourPositionCard = ({ companyId, data }: { companyId: string, data: (typeo
 
 
 export default function MiitMaxPage() {
-    const [activeTab, setActiveTab] = useState<RankingMetric>('views');
+    const [metricTab, setMetricTab] = useState<RankingMetric>('views');
+    const [performanceType, setPerformanceType] = useState<PerformanceType>('geral');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+
     const { companyProfile } = useCompany();
 
-    const rankingData = useMemo(() => mockRankingData[activeTab], [activeTab]);
+    // In a real app, this logic would be much more complex,
+    // involving queries based on the filters.
+    const rankingData = useMemo(() => mockRankingData[metricTab], [metricTab]);
     const topThree = useMemo(() => rankingData.slice(0, 3), [rankingData]);
 
     return (
@@ -186,6 +198,49 @@ export default function MiitMaxPage() {
                 </h1>
             </header>
 
+            <div className="space-y-4 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <Card>
+                         <CardHeader>
+                             <CardTitle className="text-base flex items-center gap-2">
+                                <Filter className="w-4 h-4 text-primary"/>
+                                 Filtrar por Categoria
+                             </CardTitle>
+                         </CardHeader>
+                         <CardContent>
+                            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecione uma categoria" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Todas as Categorias</SelectItem>
+                                    {categories.map(cat => (
+                                        <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                         </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-primary"/>
+                                Fim da Rodada
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                        <Countdown />
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="bg-card p-1 rounded-lg grid grid-cols-3 gap-1">
+                    <Button variant={performanceType === 'geral' ? 'secondary' : 'ghost'} onClick={() => setPerformanceType('geral')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={performanceType === 'geral' ? 'active' : 'inactive'}>Geral</Button>
+                    <Button variant={performanceType === 'organico' ? 'secondary' : 'ghost'} onClick={() => setPerformanceType('organico')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={performanceType === 'organico' ? 'active' : 'inactive'}>Orgânico</Button>
+                    <Button variant={performanceType === 'patrocinado' ? 'secondary' : 'ghost'} onClick={() => setPerformanceType('patrocinado')} className="data-[state=active]:bg-lime-900/50 data-[state=active]:text-lime-300" data-state={performanceType === 'patrocinado' ? 'active' : 'inactive'}>Patrocinado</Button>
+                </div>
+            </div>
+
             <Card className="mb-8 bg-card">
                  <CardHeader>
                     <CardTitle className="text-center text-2xl font-bold font-headline text-primary">Pódio da Semana</CardTitle>
@@ -195,22 +250,9 @@ export default function MiitMaxPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                 <YourPositionCard companyId={companyProfile.id} data={rankingData} />
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                           <Calendar className="w-5 h-5 text-primary"/>
-                            Fim da Rodada
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                       <Countdown />
-                    </CardContent>
-                </Card>
-            </div>
-
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as RankingMetric)} className="w-full">
+            <YourPositionCard companyId={companyProfile.id} data={rankingData} performanceType={performanceType} />
+            
+            <Tabs value={metricTab} onValueChange={(value) => setMetricTab(value as RankingMetric)} className="w-full mt-8">
                 <TabsList className="grid w-full grid-cols-3 bg-card mb-6">
                     <TabsTrigger value="views" className="flex items-center gap-2"><Eye className="h-4 w-4"/> Visualizações</TabsTrigger>
                     <TabsTrigger value="interactions" className="flex items-center gap-2"><Handshake className="h-4 w-4"/> Interações</TabsTrigger>
@@ -247,5 +289,7 @@ export default function MiitMaxPage() {
         </div>
     );
 }
+
+    
 
     
