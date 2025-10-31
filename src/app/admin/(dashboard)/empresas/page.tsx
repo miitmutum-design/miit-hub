@@ -333,6 +333,7 @@ export default function AdminEmpresasPage() {
                       <TableHead>Nome da Empresa</TableHead>
                       <TableHead>Categoria</TableHead>
                       <TableHead>Data de Cadastro</TableHead>
+                       <TableHead>Chave de Acesso</TableHead>
                       <TableHead>
                         <span className="sr-only">Ações</span>
                       </TableHead>
@@ -348,6 +349,14 @@ export default function AdminEmpresasPage() {
                           </TableCell>
                           <TableCell>{company.category}</TableCell>
                           <TableCell>{company.joinDate}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono text-xs">{company.accessKey}</span>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
+                                    <Copy className="h-4 w-4"/>
+                                </Button>
+                            </div>
+                        </TableCell>
                           <TableCell>
                              <AlertDialog>
                                 <DropdownMenu>
