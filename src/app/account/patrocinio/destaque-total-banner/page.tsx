@@ -65,8 +65,9 @@ export default function DestaqueTotalBannerPage() {
 
   const dailyCost = companyProfile.plan === 'Gold' ? 7 : 10;
   const isBalanceSufficient = tokensToSpend <= companyProfile.tokens;
-  const sponsorshipDays = tokensToSpend > 0 ? Math.floor(tokensToSpend / dailyCost) : 0;
-  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient;
+  const isTokenAmountValid = tokensToSpend > 0 && tokensToSpend % dailyCost === 0;
+  const sponsorshipDays = isTokenAmountValid ? Math.floor(tokensToSpend / dailyCost) : 0;
+  const isFormValid = destinationUrl && bannerImage && tokensToSpend > 0 && bannerName.trim() !== '' && isBalanceSufficient && isTokenAmountValid;
 
 
   const handleImageClick = () => {
@@ -311,10 +312,15 @@ export default function DestaqueTotalBannerPage() {
                 value={tokensToSpend === 0 ? '' : tokensToSpend}
                 onChange={(e) => setTokensToSpend(parseInt(e.target.value, 10) || 0)}
                 placeholder={`Ex: ${dailyCost}`}
-                min="1"
+                min={dailyCost}
+                step={dailyCost}
                 className="bg-card border-border/50 h-12"
             />
-             {tokensToSpend > 0 ? (
+             {tokensToSpend > 0 && !isTokenAmountValid ? (
+                 <p className="text-sm text-destructive">
+                    O valor deve ser um múltiplo de {dailyCost}.
+                 </p>
+             ) : sponsorshipDays > 0 ? (
                 <p className="text-sm text-lime-400">
                     Seu patrocínio ficará ativo por: <strong>{sponsorshipDays} dia{sponsorshipDays !== 1 ? 's' : ''}</strong>.
                 </p>
