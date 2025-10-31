@@ -54,147 +54,11 @@ const AccountItem = ({ icon: Icon, title, subtitle, href = "#", isDestructive = 
     );
 };
 
-
-// Mock database of access keys
-const accessKeysDB = [
-    { key: 'ABCD-EFGH-IJKL', isUsed: false, companyIds: ['company-gold', 'company-silver'] },
-    { key: '1234-5678-9012', isUsed: true, companyIds: ['company-silver'] },
-    { key: 'QWER-TYUI-OPAS', isUsed: false, companyIds: ['company-silver'] },
-];
-
-type RedeemResult = {
-  success: boolean;
-  message: string;
-  companyId?: string;
-  companies?: { id: string; name: string }[];
-};
-
-const redeemAccessKeyMockAPI = (key: string): Promise<RedeemResult> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const dbKey = accessKeysDB.find(k => k.key === key);
-            if (!dbKey) {
-                resolve({ success: false, message: 'Chave de acesso inválida.' });
-            } else if (dbKey.isUsed) {
-                resolve({ success: false, message: 'Chave de acesso já utilizada.' });
-            } else {
-                if (dbKey.companyIds.length === 1) {
-                    // Mark key as used for single company keys
-                    dbKey.isUsed = true;
-                    resolve({ success: true, message: 'Chave resgatada com sucesso!', companyId: dbKey.companyIds[0] });
-                } else {
-                    // For multiple companies, return the list to choose from
-                    const companies = dbKey.companyIds.map(id => ({
-                      id,
-                      name: mockCompanyProfiles[id as keyof typeof mockCompanyProfiles].name
-                    }));
-                    resolve({ success: true, message: 'Selecione uma empresa.', companies });
-                }
-            }
-        }, 1000); // Simulate network delay
-    });
-};
-
-const finalizeKeyRedemptionMockAPI = (key: string) => {
-    const dbKey = accessKeysDB.find(k => k.key === key);
-    if (dbKey) {
-        dbKey.isUsed = true;
-    }
-}
-
-
 export default function AccountPage() {
   const { companyProfile, setCompanyProfile, logoutCompany } = useCompany();
   const { toast } = useToast();
   const router = useRouter();
   
-  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
-  const [isSelectCompanyModalOpen, setIsSelectCompanyModalOpen] = useState(false);
-  const [isRedeeming, setIsRedeeming] = useState(false);
-  
-  const [accessKey, setAccessKey] = useState('ABCD-EFGH-IJKL');
-  const [companiesToSelect, setCompaniesToSelect] = useState<{id: string, name: string}[]>([]);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
-
-  
-  const isCompany = companyProfile.userType === 'Company';
-  const profileHref = isCompany ? '/account/empresas' : '/account/profile';
-  const settingsHref = isCompany ? '/account/profile/config' : '/account/profile/config';
-
-  const handleAccessKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/-/g, '').toUpperCase();
-    if (rawValue.length > 12) return;
-
-    const formattedValue = rawValue
-      .split('')
-      .map((char, index) => {
-        if (index > 0 && index % 4 === 0) {
-          return `-${char}`;
-        }
-        return char;
-      })
-      .join('');
-    
-    setAccessKey(formattedValue);
-  };
-  
-  const handleRedeemKey = async () => {
-    if (accessKey.replace(/-/g, '').length !== 12) {
-      toast({
-        variant: "destructive",
-        title: "Chave Inválida",
-        description: "Por favor, insira uma chave válida de 12 caracteres.",
-      });
-      return;
-    }
-    
-    setIsRedeeming(true);
-    const result = await redeemAccessKeyMockAPI(accessKey);
-    setIsRedeeming(false);
-
-    if (result.success) {
-      if (result.companyId) {
-        // Single company case
-        const newProfile = mockCompanyProfiles[result.companyId as keyof typeof mockCompanyProfiles];
-        if (newProfile) {
-            setCompanyProfile(newProfile);
-            setIsRedeemModalOpen(false);
-            setAccessKey('');
-            router.push('/account/subscription');
-        }
-      } else if (result.companies) {
-        // Multiple companies case
-        setCompaniesToSelect(result.companies);
-        setSelectedCompanyId(result.companies[0]?.id || null);
-        setIsRedeemModalOpen(false);
-        setIsSelectCompanyModalOpen(true);
-      }
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Falha no Resgate",
-            description: result.message,
-        });
-    }
-  }
-
-  const handleSelectCompany = () => {
-    if (!selectedCompanyId) {
-        toast({ variant: "destructive", title: "Nenhuma empresa selecionada." });
-        return;
-    }
-
-    const newProfile = mockCompanyProfiles[selectedCompanyId as keyof typeof mockCompanyProfiles];
-    if (newProfile) {
-        setCompanyProfile(newProfile);
-        finalizeKeyRedemptionMockAPI(accessKey); // Mark key as used
-        setIsSelectCompanyModalOpen(false);
-        setAccessKey('');
-        router.push('/account/subscription');
-    }
-  };
-
-
   const handleLogout = () => {
     logoutCompany();
     toast({
@@ -212,6 +76,11 @@ export default function AccountPage() {
     }
     toast(messages[status]);
   }
+  
+  const isCompany = companyProfile.userType === 'Company';
+  const profileHref = isCompany ? '/account/empresas' : '/account/profile';
+  const settingsHref = isCompany ? '/account/profile/config' : '/account/profile/config';
+
 
   const availabilityOptions = {
     'AUTO': {
@@ -307,82 +176,18 @@ export default function AccountPage() {
 
         {/* Business CTA - Only show if not a company */}
         {!isCompany && (
-            <Dialog open={isRedeemModalOpen} onOpenChange={setIsRedeemModalOpen}>
-                <DialogTrigger asChild>
-                    <div className="bg-gradient-to-br from-green-900/40 via-green-800/30 to-card p-6 rounded-lg mt-8 text-center cursor-pointer">
-                        <h3 className="text-2xl font-bold font-headline text-white">Empresa?</h3>
-                        <p className="text-muted-foreground mt-2 mb-4">Cadastre seu negócio e alcance mais clientes</p>
-                        <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold pointer-events-none">
-                            Criar Perfil Empresarial
-                        </Button>
-                    </div>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md bg-card border-border/50">
-                    <DialogHeader>
-                        <DialogTitle className="text-center text-2xl font-bold font-headline">Resgatar Chave de Acesso</DialogTitle>
-
-                        <DialogDescription className="text-center text-muted-foreground pt-2">
-                            Insira a chave de 12 caracteres que você recebeu para acessar o painel da sua empresa.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="py-4 space-y-2">
-                        <Input 
-                            placeholder="XXXX-XXXX-XXXX" 
-                            value={accessKey}
-                            onChange={handleAccessKeyChange}
-                            className="h-14 text-2xl tracking-widest text-center bg-input border-border/50"
-                            maxLength={14}
-                            disabled={isRedeeming}
-                        />
-                        <p className="text-sm text-muted-foreground text-center">{accessKey.replace(/-/g, '').length}/12 caracteres</p>
-                    </div>
-                    <DialogFooter>
-                        <Button onClick={handleRedeemKey} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold" disabled={isRedeeming}>
-                            {isRedeeming ? 'Validando...' : 'Resgatar Chave'}
-                        </Button>
-                    </DialogFooter>
-                    <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Fechar</span>
-                    </DialogClose>
-                </DialogContent>
-            </Dialog>
+           <div 
+             onClick={() => router.push('/account/resgatar-chave')}
+             className="bg-gradient-to-br from-green-900/40 via-green-800/30 to-card p-6 rounded-lg mt-8 text-center cursor-pointer"
+            >
+                <h3 className="text-2xl font-bold font-headline text-white">Empresa?</h3>
+                <p className="text-muted-foreground mt-2 mb-4">Cadastre seu negócio e alcance mais clientes</p>
+                <Button size="lg" className="w-full h-12 text-lg bg-orange-600 hover:bg-orange-700 text-white font-bold pointer-events-none">
+                    Criar Perfil Empresarial
+                </Button>
+            </div>
         )}
       </div>
-
-       {/* Company Selection Modal */}
-      <Dialog open={isSelectCompanyModalOpen} onOpenChange={setIsSelectCompanyModalOpen}>
-        <DialogContent className="sm:max-w-md bg-card border-border/50">
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold font-headline">Selecione sua Empresa</DialogTitle>
-            <DialogDescription className="text-center text-muted-foreground pt-2">
-              Esta chave de acesso está vinculada a várias empresas. Escolha qual painel você deseja acessar.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <RadioGroup value={selectedCompanyId || ''} onValueChange={setSelectedCompanyId} className="space-y-2">
-              {companiesToSelect.map(company => (
-                <Label key={company.id} htmlFor={company.id} className="flex items-center gap-3 p-3 rounded-md border border-border/50 has-[:checked]:border-primary has-[:checked]:bg-primary/10 cursor-pointer">
-                  <RadioGroupItem value={company.id} id={company.id} />
-                  <span>{company.name}</span>
-                </Label>
-              ))}
-            </RadioGroup>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleSelectCompany} size="lg" className="w-full h-12 text-lg bg-lime-500 hover:bg-lime-600 text-black font-bold">
-              Confirmar Empresa
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
     </div>
   );
 }
-
-    
-
-    
-
-
