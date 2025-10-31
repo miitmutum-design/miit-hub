@@ -22,6 +22,7 @@ import {
   Crown,
   Shield,
   Trash2,
+  Info,
 } from 'lucide-react';
 import AdminHeader from '@/components/common/AdminHeader';
 import {
@@ -59,6 +60,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -294,7 +296,34 @@ export default function AdminSponsorshipPage() {
       
       <Card>
         <CardHeader>
-             <CardTitle>Caixa de Entrada</CardTitle>
+            <div className="flex items-center gap-2">
+                <CardTitle>Caixa de Entrada</CardTitle>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-lime-400">
+                            <Info className="h-4 w-4" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Entenda a Caixa de Entrada</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4 space-y-4">
+                           <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+                                <li><strong>Empresa:</strong> Nome da loja que solicitou o patrocínio e seu Plano de Assinatura (para priorização).</li>
+                                <li><strong>Data:</strong> Data de Submissão da Solicitação. Indica há quanto tempo o pedido está aguardando (priorize leads mais antigos).</li>
+                                <li><strong>Status:</strong> A fase atual da venda: Pendente (Novo Lead), Contatado (Em Negociação).</li>
+                                <li><strong>Ações:</strong> Menu para 'Ver Detalhes' (informações do pedido) ou 'Marcar como Contatado' (próximo passo de vendas).</li>
+                           </ul>
+                        </div>
+                         <DialogFooter>
+                            <DialogClose asChild>
+                                <Button>Entendi</Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
             <CardDescription>
                 Gerencie as solicitações de patrocínio enviadas pelas empresas.
             </CardDescription>
