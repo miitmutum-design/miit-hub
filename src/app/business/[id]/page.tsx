@@ -60,6 +60,12 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   ]
 };
 
+// Mock tracking functions
+const trackEvent = (eventName: string, properties: Record<string, any>) => {
+  console.log(`[Analytics] Event: ${eventName}`, properties);
+  // In a real app, this would send data to Firebase/Analytics
+};
+
 export default function BusinessPage() {
   const params = useParams();
   const id = params.id as string;
@@ -81,7 +87,16 @@ export default function BusinessPage() {
   
   useEffect(() => {
     setIsAvailable(isCompanyActuallyOpen(displayData));
-  }, [displayData]);
+    
+    // Track profile view
+    if (id !== 'placeholder') {
+        trackEvent('profile_view', {
+            companyId: id,
+            companyName: displayData.name,
+            timestamp: new Date().toISOString(),
+        });
+    }
+  }, [displayData, id]);
 
 
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
@@ -118,6 +133,30 @@ export default function BusinessPage() {
         }
     }
   };
+
+  const handleContactClick = (type: 'whatsapp' | 'instagram' | 'website') => {
+      trackEvent('contact_click', {
+          companyId: id,
+          type,
+          timestamp: new Date().toISOString(),
+      });
+  };
+
+  const handleOfferClick = (offerId: string) => {
+      trackEvent('offer_click', {
+          companyId: id,
+          offerId,
+          timestamp: new Date().toISOString(),
+      })
+  }
+
+  const handleEventClick = (eventId: string) => {
+      trackEvent('event_click', {
+          companyId: id,
+          eventId,
+          timestamp: new Date().toISOString(),
+      })
+  }
 
   const address = ('address' in displayData && displayData.address) || 'Endereço não informado';
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
@@ -303,13 +342,13 @@ export default function BusinessPage() {
                 </div>
                 
                 {isAvailable ? (
-                    <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
+                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleContactClick('whatsapp')} className="flex items-start gap-4 cursor-pointer group">
                         <Phone className="h-5 w-5 text-primary mt-1"/>
                         <div>
                             <p className="font-semibold">Whatsapp</p>
                             <p className="text-primary group-hover:underline">{formatPhoneNumber(displayData.phone)}</p>
                         </div>
-                    </Link>
+                    </a>
                 ) : (
                     <div className="flex items-start gap-4 opacity-50">
                         <Phone className="h-5 w-5 text-muted-foreground mt-1"/>
@@ -321,13 +360,13 @@ export default function BusinessPage() {
                 )}
 
                 {instagramHandle && (
-                  <Link href={instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 cursor-pointer group">
+                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleContactClick('instagram')} className="flex items-start gap-4 cursor-pointer group">
                       <InstagramIcon className="h-5 w-5 text-primary mt-1"/>
                       <div>
                           <p className="font-semibold">Instagram</p>
                           <p className="text-primary group-hover:underline">@{instagramHandle}</p>
                       </div>
-                  </Link>
+                  </a>
                 )}
                 
                 <div className="flex items-start gap-4">
@@ -357,7 +396,7 @@ export default function BusinessPage() {
                       <Globe className="h-5 w-5 text-primary mt-1"/>
                       <div>
                           <p className="font-semibold">Site</p>
-                          <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} className="text-primary font-semibold text-sm mt-1 inline-block hover:underline">Ver o site</Link>
+                          <Link href={`/webview?url=${encodeURIComponent(displayData.websiteUrl)}`} onClick={() => handleContactClick('website')} className="text-primary font-semibold text-sm mt-1 inline-block hover:underline">Ver o site</Link>
                       </div>
                   </div>
                 )}
@@ -369,20 +408,22 @@ export default function BusinessPage() {
             {activeOffers.length > 0 && isAvailable ? (
                 <div className="space-y-4">
                 {activeOffers.map(offer => (
-                    <Link key={offer.id} href={`/negocio/offers/${offer.id}`} className="block">
-                        <Card className="bg-card border-border/50">
-                            <CardContent className="p-4 flex items-center gap-4">
-                                <div className="bg-primary/10 p-3 rounded-lg">
-                                    <Ticket className="h-6 w-6 text-primary"/>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-foreground">{offer.title}</p>
-                                    <p className="text-sm text-muted-foreground">Válido até {new Date(offer.validUntil).toLocaleDateString()}</p>
-                                </div>
-                                <Badge variant="secondary">{offer.discount}</Badge>
-                            </CardContent>
-                        </Card>
-                    </Link>
+                    <div key={offer.id} onClick={() => handleOfferClick(offer.id)}>
+                        <Link href={`/negocio/offers/${offer.id}`} className="block">
+                            <Card className="bg-card border-border/50">
+                                <CardContent className="p-4 flex items-center gap-4">
+                                    <div className="bg-primary/10 p-3 rounded-lg">
+                                        <Ticket className="h-6 w-6 text-primary"/>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-bold text-foreground">{offer.title}</p>
+                                        <p className="text-sm text-muted-foreground">Válido até {new Date(offer.validUntil).toLocaleDateString()}</p>
+                                    </div>
+                                    <Badge variant="secondary">{offer.discount}</Badge>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    </div>
                 ))}
                 </div>
             ) : (
@@ -400,19 +441,21 @@ export default function BusinessPage() {
              {activeEvents.length > 0 && isAvailable ? (
                 <div className="space-y-4">
                 {activeEvents.map(event => (
-                    <Link key={event.id} href={`/negocio/eventos/${event.id}`} className="block">
-                        <Card className="bg-card border-border/50">
-                            <CardContent className="p-4 flex items-center gap-4">
-                                <div className="bg-primary/10 p-3 rounded-lg">
-                                    <Calendar className="h-6 w-6 text-primary"/>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-foreground">{event.title}</p>
-                                    <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </Link>
+                    <div key={event.id} onClick={() => handleEventClick(event.id)}>
+                        <Link href={`/negocio/eventos/${event.id}`} className="block">
+                            <Card className="bg-card border-border/50">
+                                <CardContent className="p-4 flex items-center gap-4">
+                                    <div className="bg-primary/10 p-3 rounded-lg">
+                                        <Calendar className="h-6 w-6 text-primary"/>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-bold text-foreground">{event.title}</p>
+                                        <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    </div>
                 ))}
                 </div>
             ) : (
