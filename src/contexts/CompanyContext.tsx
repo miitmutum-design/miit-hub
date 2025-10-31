@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Define the shape of notification preferences
 export interface NotificationSettings {
@@ -178,6 +178,7 @@ export const mockCompanyProfiles: { [key: string]: CompanyProfile } = {
 
 // Define the context shape
 interface CompanyContextType {
+  deviceId: string | null;
   companyProfile: CompanyProfile;
   setCompanyProfile: React.Dispatch<React.SetStateAction<CompanyProfile>>;
   logoutCompany: () => void;
@@ -202,6 +203,17 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
   const [claimedOffers, setClaimedOffers] = useState<ClaimedOffer[]>([]);
   const [claimedEvents, setClaimedEvents] = useState<ClaimedEvent[]>([]);
   const [hasNotifications, setHasNotifications] = useState(true); // Default to true for demo
+  const [deviceId, setDeviceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // This code runs only on the client
+    let storedDeviceId = localStorage.getItem('deviceId');
+    if (!storedDeviceId) {
+      storedDeviceId = `device-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      localStorage.setItem('deviceId', storedDeviceId);
+    }
+    setDeviceId(storedDeviceId);
+  }, []);
 
   const logoutCompany = () => {
     setCompanyProfile(initialDemoProfile);
@@ -257,6 +269,7 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CompanyContext.Provider value={{ 
+        deviceId,
         companyProfile, 
         setCompanyProfile, 
         logoutCompany, 

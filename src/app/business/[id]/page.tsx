@@ -60,16 +60,34 @@ const defaultBusinessData: Business & Partial<CompanyProfile> = {
   ]
 };
 
-// Mock tracking functions
-const trackEvent = (eventName: string, properties: Record<string, any>) => {
-  console.log(`[Analytics] Event: ${eventName}`, properties);
-  // In a real app, this would send data to Firebase/Analytics
+const trackEventOnce = (eventName: string, deviceId: string | null, properties: Record<string, any>) => {
+  if (!deviceId) return; // Don't track if deviceId is not available yet
+
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const trackedEventsLog = JSON.parse(localStorage.getItem('analyticsLog') || '{}');
+
+  // Create a unique key for the event to check for daily uniqueness
+  // e.g., 'profile_view-company123-2024-07-29'
+  // or 'contact_click-company123-whatsapp-2024-07-29'
+  const eventKey = `${eventName}-${properties.companyId}-${properties.type || properties.offerId || properties.eventId || ''}-${today}`;
+
+  if (trackedEventsLog[eventKey]) {
+      console.log(`[Analytics] Event already tracked today: ${eventName}`, properties);
+      return; // Event already tracked today, do nothing
+  }
+
+  // Log the event if it's the first time today
+  console.log(`[Analytics] Event: ${eventName}`, { deviceId, ...properties });
+  
+  // Mark this event as tracked for today
+  trackedEventsLog[eventKey] = true;
+  localStorage.setItem('analyticsLog', JSON.stringify(trackedEventsLog));
 };
 
 export default function BusinessPage() {
   const params = useParams();
   const id = params.id as string;
-  const { toggleFavorite, isFavorited, companyProfile } = useCompany();
+  const { deviceId, toggleFavorite, isFavorited, companyProfile } = useCompany();
   const { toast } = useToast();
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
@@ -88,15 +106,15 @@ export default function BusinessPage() {
   useEffect(() => {
     setIsAvailable(isCompanyActuallyOpen(displayData));
     
-    // Track profile view
-    if (id !== 'placeholder') {
-        trackEvent('profile_view', {
+    // Track profile view once per day
+    if (id !== 'placeholder' && deviceId) {
+        trackEventOnce('profile_view', deviceId, {
             companyId: id,
             companyName: displayData.name,
             timestamp: new Date().toISOString(),
         });
     }
-  }, [displayData, id]);
+  }, [displayData, id, deviceId]);
 
 
   const activeOffers = businessOffers.filter(offer => new Date(offer.validUntil) > new Date() && offer.companyId === id);
@@ -135,7 +153,7 @@ export default function BusinessPage() {
   };
 
   const handleContactClick = (type: 'whatsapp' | 'instagram' | 'website') => {
-      trackEvent('contact_click', {
+      trackEventOnce('contact_click', deviceId, {
           companyId: id,
           type,
           timestamp: new Date().toISOString(),
@@ -143,7 +161,7 @@ export default function BusinessPage() {
   };
 
   const handleOfferClick = (offerId: string) => {
-      trackEvent('offer_click', {
+      trackEventOnce('offer_click', deviceId, {
           companyId: id,
           offerId,
           timestamp: new Date().toISOString(),
@@ -151,7 +169,7 @@ export default function BusinessPage() {
   }
 
   const handleEventClick = (eventId: string) => {
-      trackEvent('event_click', {
+      trackEventOnce('event_click', deviceId, {
           companyId: id,
           eventId,
           timestamp: new Date().toISOString(),
