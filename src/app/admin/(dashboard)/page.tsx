@@ -1,5 +1,6 @@
 
 'use client';
+import { useState } from 'react';
 import { Building2, Star, Shapes, Clock, CheckCircle, XCircle, DollarSign, CalendarCheck, ShoppingCart, TrendingUp, Info, Video } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import AdminHeader from '@/components/common/AdminHeader';
@@ -13,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { cn } from '@/lib/utils';
 
 
 const pendingCompanies = [
@@ -27,8 +29,54 @@ const categorySuggestions = [
     { name: 'Consultoria' },
 ]
 
+const chartData7d = [
+  { day: "Seg", "5-stars": 5, "4-stars": 7, "3-stars": 2, "2-stars": 1, "1-star": 0 },
+  { day: "Ter", "5-stars": 8, "4-stars": 6, "3-stars": 3, "2-stars": 2, "1-star": 1 },
+  { day: "Qua", "5-stars": 10, "4-stars": 5, "3-stars": 1, "2-stars": 0, "1-star": 0 },
+  { day: "Qui", "5-stars": 6, "4-stars": 8, "3-stars": 4, "2-stars": 1, "1-star": 0 },
+  { day: "Sex", "5-stars": 12, "4-stars": 9, "3-stars": 3, "2-stars": 1, "1-star": 1 },
+  { day: "Sáb", "5-stars": 15, "4-stars": 10, "3-stars": 5, "2-stars": 3, "1-star": 2 },
+  { day: "Dom", "5-stars": 18, "4-stars": 12, "3-stars": 6, "2-stars": 4, "1-star": 2 },
+];
+
+const chartData30d = [
+  { day: "Sem 1", "5-stars": 40, "4-stars": 35, "3-stars": 15, "2-stars": 5, "1-star": 2 },
+  { day: "Sem 2", "5-stars": 55, "4-stars": 40, "3-stars": 20, "2-stars": 8, "1-star": 3 },
+  { day: "Sem 3", "5-stars": 60, "4-stars": 45, "3-stars": 18, "2-stars": 10, "1-star": 4 },
+  { day: "Sem 4", "5-stars": 70, "4-stars": 50, "3-stars": 22, "2-stars": 12, "1-star": 5 },
+];
+
+const chartData365d = [
+  { day: "Jan", "5-stars": 300, "4-stars": 250, "3-stars": 100, "2-stars": 50, "1-star": 20 },
+  { day: "Fev", "5-stars": 320, "4-stars": 260, "3-stars": 110, "2-stars": 55, "1-star": 22 },
+  { day: "Mar", "5-stars": 350, "4-stars": 280, "3-stars": 120, "2-stars": 60, "1-star": 25 },
+  { day: "Abr", "5-stars": 380, "4-stars": 300, "3-stars": 130, "2-stars": 65, "1-star": 28 },
+  { day: "Mai", "5-stars": 400, "4-stars": 320, "3-stars": 140, "2-stars": 70, "1-star": 30 },
+  { day: "Jun", "5-stars": 420, "4-stars": 340, "3-stars": 150, "2-stars": 75, "1-star": 32 },
+];
+
+type Period = '7d' | '30d' | '365d';
+
 
 export default function AdminDashboardPage() {
+    const [period, setPeriod] = useState<Period>('7d');
+
+    const getChartData = () => {
+        switch (period) {
+            case '30d': return chartData30d;
+            case '365d': return chartData365d;
+            default: return chartData7d;
+        }
+    };
+    
+    const getChartTitle = () => {
+         switch (period) {
+            case '30d': return 'Últimos 30 dias';
+            case '365d': return 'Últimos 365 dias';
+            default: return 'Últimos 7 dias';
+        }
+    }
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
         <AdminHeader title="Dashboard" />
@@ -350,9 +398,16 @@ export default function AdminDashboardPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-8">
-                    <div>
-                        <h3 className="text-sm font-medium text-muted-foreground mb-4">Resumo de Avaliações (Últimos 7 dias)</h3>
-                        <ReviewsChart />
+                     <div>
+                        <div className="flex items-center justify-between mb-4">
+                           <h3 className="text-sm font-medium text-muted-foreground">Resumo de Avaliações ({getChartTitle()})</h3>
+                           <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
+                                <Button size="sm" variant={period === '7d' ? 'soft' : 'ghost'} onClick={() => setPeriod('7d')} className="px-2 py-1 h-auto text-xs">7 Dias</Button>
+                                <Button size="sm" variant={period === '30d' ? 'soft' : 'ghost'} onClick={() => setPeriod('30d')} className="px-2 py-1 h-auto text-xs">30 Dias</Button>
+                                <Button size="sm" variant={period === '365d' ? 'soft' : 'ghost'} onClick={() => setPeriod('365d')} className="px-2 py-1 h-auto text-xs">365 Dias</Button>
+                           </div>
+                        </div>
+                        <ReviewsChart data={getChartData()} />
                     </div>
                      <div className="border-t border-border/50 pt-6">
                         <div className="flex items-center gap-2 mb-4">
@@ -389,4 +444,11 @@ export default function AdminDashboardPage() {
   );
 }
 
-    
+// Add a soft variant to the button
+declare module "@/components/ui/button" {
+    interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+        variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "soft";
+    }
+}
+const originalButtonVariants = require("@/components/ui/button").buttonVariants;
+originalButtonVariants.cva.config.variants.variant.soft = "bg-primary/20 text-primary-foreground hover:bg-primary/30";

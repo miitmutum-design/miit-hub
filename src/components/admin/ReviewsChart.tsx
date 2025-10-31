@@ -17,16 +17,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-const chartData = [
-  { day: "Seg", "5-stars": 5, "4-stars": 7, "3-stars": 2, "2-stars": 1, "1-star": 0 },
-  { day: "Ter", "5-stars": 8, "4-stars": 6, "3-stars": 3, "2-stars": 2, "1-star": 1 },
-  { day: "Qua", "5-stars": 10, "4-stars": 5, "3-stars": 1, "2-stars": 0, "1-star": 0 },
-  { day: "Qui", "5-stars": 6, "4-stars": 8, "3-stars": 4, "2-stars": 1, "1-star": 0 },
-  { day: "Sex", "5-stars": 12, "4-stars": 9, "3-stars": 3, "2-stars": 1, "1-star": 1 },
-  { day: "Sáb", "5-stars": 15, "4-stars": 10, "3-stars": 5, "2-stars": 3, "1-star": 2 },
-  { day: "Dom", "5-stars": 18, "4-stars": 12, "3-stars": 6, "2-stars": 4, "1-star": 2 },
-]
-
 const chartConfig = {
   "5-stars": {
     label: "5 Estrelas",
@@ -50,10 +40,14 @@ const chartConfig = {
   },
 }
 
-export default function ReviewsChart() {
+type ReviewsChartProps = {
+  data: any[];
+};
+
+export default function ReviewsChart({ data }: ReviewsChartProps) {
   return (
     <ChartContainer config={chartConfig} className="min-h-[150px] w-full">
-      <BarChart accessibilityLayer data={chartData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+      <BarChart accessibilityLayer data={data} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey="day"
