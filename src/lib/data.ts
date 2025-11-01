@@ -211,7 +211,7 @@ export const businessEvents: Event[] = [
         companyId: '1',
         businessName: 'The Daily Grind',
         title: 'Degustação de Cafés Especiais',
-        date: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(), // Expired
+        date: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
         description: 'Uma viagem sensorial pelos melhores grãos do Brasil.',
         limitPerUser: 1,
     },
