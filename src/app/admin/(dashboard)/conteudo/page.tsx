@@ -82,14 +82,14 @@ const OfferDetailsModal = ({ offerId }: { offerId: string | null }) => {
             <DialogHeader>
                 <DialogTitle>Detalhes da Oferta</DialogTitle>
             </DialogHeader>
-            <div className="py-4 space-y-4">
-                <p><strong>Título:</strong> {offer.title}</p>
-                <p><strong>Empresa:</strong> {offer.businessName}</p>
-                <p><strong>Descrição:</strong> {offer.description}</p>
-                <p><strong>Código:</strong> <Badge>{offer.couponCode}</Badge></p>
-                <p><strong>Desconto:</strong> {offer.discount}</p>
-                <p><strong>Validade:</strong> {format(new Date(offer.validUntil), 'dd/MM/yyyy')}</p>
-                <p><strong>Termos:</strong> {offer.terms}</p>
+            <div className="py-4 space-y-4 text-sm">
+                <div><strong>Título:</strong> {offer.title}</div>
+                <div><strong>Empresa:</strong> {offer.businessName}</div>
+                <div><strong>Descrição:</strong> {offer.description}</div>
+                <div><strong>Código:</strong> <Badge>{offer.couponCode}</Badge></div>
+                <div><strong>Desconto:</strong> {offer.discount}</div>
+                <div><strong>Validade:</strong> {format(new Date(offer.validUntil), 'dd/MM/yyyy')}</div>
+                <div><strong>Termos:</strong> {offer.terms}</div>
             </div>
         </DialogContent>
     )
@@ -105,12 +105,12 @@ const EventDetailsModal = ({ eventId }: { eventId: string | null }) => {
             <DialogHeader>
                 <DialogTitle>Detalhes do Evento</DialogTitle>
             </DialogHeader>
-            <div className="py-4 space-y-4">
-                <p><strong>Título:</strong> {event.title}</p>
-                <p><strong>Empresa:</strong> {event.businessName}</p>
-                <p><strong>Descrição:</strong> {event.description}</p>
-                <p><strong>Data:</strong> {format(parseISO(event.date), 'dd/MM/yyyy HH:mm')}</p>
-                <p><strong>Limite por Usuário:</strong> {event.limitPerUser}</p>
+            <div className="py-4 space-y-4 text-sm">
+                <div><strong>Título:</strong> {event.title}</div>
+                <div><strong>Empresa:</strong> {event.businessName}</div>
+                <div><strong>Descrição:</strong> {event.description}</div>
+                <div><strong>Data:</strong> {format(parseISO(event.date), 'dd/MM/yyyy HH:mm')}</div>
+                <div><strong>Limite por Usuário:</strong> {event.limitPerUser}</div>
             </div>
         </DialogContent>
     )
