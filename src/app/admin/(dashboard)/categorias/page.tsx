@@ -48,21 +48,28 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { categorySuggestions, activeCategories as initialActiveCategories } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
+type ActiveCategory = { name: string; count: number };
+
 export default function AdminCategoriasPage() {
-    const [activeCategories, setActiveCategories] = useState(initialActiveCategories);
+    const [activeCategories, setActiveCategories] = useState<ActiveCategory[]>(initialActiveCategories);
     const [suggestions, setSuggestions] = useState(categorySuggestions);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [categoryToEdit, setCategoryToEdit] = useState<ActiveCategory | null>(null);
+    const [editedCategoryName, setEditedCategoryName] = useState('');
+
     const { toast } = useToast();
 
     const handleApprove = (suggestionName: string) => {
-        // Add to active categories if it doesn't exist
-        if (!activeCategories.some(cat => cat.name === suggestionName)) {
-            setActiveCategories(prev => [...prev, { name: suggestionName, count: 0 }]);
+        if (!activeCategories.some(cat => cat.name.toLowerCase() === suggestionName.toLowerCase())) {
+            setActiveCategories(prev => [...prev, { name: suggestionName, count: 0 }].sort((a, b) => a.name.localeCompare(b.name)));
         }
-        // Remove from suggestions
         setSuggestions(prev => prev.filter(s => s.name !== suggestionName));
         toast({
             title: 'Categoria Aprovada',
@@ -87,6 +94,51 @@ export default function AdminCategoriasPage() {
             variant: 'destructive'
         });
     };
+
+    const handleAddCategory = () => {
+        const trimmedName = newCategoryName.trim();
+        if (!trimmedName) {
+            toast({ variant: 'destructive', title: 'Nome inválido', description: 'O nome da categoria não pode estar vazio.'});
+            return;
+        }
+        if (activeCategories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase())) {
+            toast({ variant: 'destructive', title: 'Categoria Duplicada', description: `A categoria "${trimmedName}" já existe.`});
+            return;
+        }
+        setActiveCategories(prev => [...prev, { name: trimmedName, count: 0 }].sort((a, b) => a.name.localeCompare(b.name)));
+        toast({ title: 'Categoria Adicionada', description: `"${trimmedName}" foi adicionada com sucesso.`});
+        setNewCategoryName('');
+        setIsAddModalOpen(false);
+    };
+    
+    const handleEditCategory = () => {
+        const trimmedName = editedCategoryName.trim();
+        if (!categoryToEdit || !trimmedName) {
+            toast({ variant: 'destructive', title: 'Nome inválido', description: 'O nome da categoria não pode estar vazio.'});
+            return;
+        }
+        if (activeCategories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase() && cat.name !== categoryToEdit.name)) {
+            toast({ variant: 'destructive', title: 'Categoria Duplicada', description: `A categoria "${trimmedName}" já existe.`});
+            return;
+        }
+
+        setActiveCategories(prev => prev.map(cat => cat.name === categoryToEdit.name ? { ...cat, name: trimmedName } : cat));
+        toast({ title: 'Categoria Atualizada', description: 'O nome da categoria foi alterado com sucesso.' });
+        setCategoryToEdit(null);
+        setEditedCategoryName('');
+        setIsEditModalOpen(false);
+    }
+
+    const openEditModal = (category: ActiveCategory) => {
+        setCategoryToEdit(category);
+        setEditedCategoryName(category.name);
+        setIsEditModalOpen(true);
+    }
+
+    const filteredActiveCategories = useMemo(() => {
+        if (!searchQuery) return activeCategories;
+        return activeCategories.filter(cat => cat.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }, [searchQuery, activeCategories]);
 
 
   return (
@@ -134,7 +186,7 @@ export default function AdminCategoriasPage() {
                 Adicione, edite ou remova as categorias principais.
                 </CardDescription>
             </div>
-             <Dialog>
+             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                 <DialogTrigger asChild>
                     <Button size="sm" className="gap-1 h-8">
                         <PlusCircle className="h-3.5 w-3.5" />
@@ -147,13 +199,13 @@ export default function AdminCategoriasPage() {
                     </DialogHeader>
                     <div className="py-4">
                         <Label htmlFor="category-name">Nome da Categoria</Label>
-                        <Input id="category-name" placeholder="Ex: Restaurante"/>
+                        <Input id="category-name" placeholder="Ex: Restaurante" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} />
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button type="button" variant="secondary">Cancelar</Button>
                         </DialogClose>
-                        <Button type="submit">Salvar Categoria</Button>
+                        <Button type="button" onClick={handleAddCategory}>Salvar Categoria</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -165,10 +217,12 @@ export default function AdminCategoriasPage() {
                   type="search"
                   placeholder="Buscar categoria..."
                   className="w-full appearance-none bg-background pl-8 shadow-none"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             <div className="space-y-2">
-                {activeCategories.map((category) => (
+                {filteredActiveCategories.map((category) => (
                     <div key={category.name} className="flex items-center justify-between rounded-lg border bg-card p-3 shadow-sm">
                         <div>
                             <span className="font-medium">{category.name}</span>
@@ -182,7 +236,7 @@ export default function AdminCategoriasPage() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => openEditModal(category)}>
                                         <Pencil className="mr-2 h-4 w-4" />
                                         Editar
                                     </DropdownMenuItem>
@@ -213,6 +267,23 @@ export default function AdminCategoriasPage() {
           </CardContent>
         </Card>
       </div>
+
+       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Editar Categoria</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    <Label htmlFor="edit-category-name">Nome da Categoria</Label>
+                    <Input id="edit-category-name" value={editedCategoryName} onChange={(e) => setEditedCategoryName(e.target.value)} />
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="secondary" onClick={() => setIsEditModalOpen(false)}>Cancelar</Button>
+                    <Button type="button" onClick={handleEditCategory}>Salvar Alterações</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
     </main>
   );
 }
