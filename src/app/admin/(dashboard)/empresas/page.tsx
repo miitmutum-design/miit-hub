@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Loader2,
   RefreshCw,
+  Shapes,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -22,9 +23,11 @@ import {
 } from '@/components/ui/card';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -48,10 +51,10 @@ import {
 } from '@/components/ui/dialog';
 import AdminHeader from '@/components/common/AdminHeader';
 import { Button } from '@/components/ui/button';
-import { adminCompanies as initialAdminCompanies } from '@/lib/data';
+import { adminCompanies as initialAdminCompanies, categories } from '@/lib/data';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -66,12 +69,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Label } from '@/components/ui/label';
+
+type CompanyStatus = 'Aprovada' | 'Pendente';
 
 export default function AdminEmpresasPage() {
   const [adminCompanies, setAdminCompanies] = useState(initialAdminCompanies);
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [accessKey, setAccessKey] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('Todas');
+  const [activeCategories, setActiveCategories] = useState(categories.map(c => c.name));
+
   const { toast } = useToast();
   const router = useRouter();
 
@@ -83,7 +94,6 @@ export default function AdminEmpresasPage() {
 
   const generateAccessKey = () => {
     setIsGenerating(true);
-    // In a real app, you'd check for uniqueness in the database.
     setTimeout(() => {
       const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
       let key = '';
@@ -139,8 +149,6 @@ export default function AdminEmpresasPage() {
   };
 
   const handleContinueToRegistration = () => {
-    // In a real app, this would create a new company document in Firestore
-    // with a 'pending' status and associate the generated key with it.
     const newCompanyId = `new-${Date.now()}`;
     console.log(
       `Creating new company with ID: ${newCompanyId} and key: ${accessKey}`
@@ -148,6 +156,185 @@ export default function AdminEmpresasPage() {
     setIsKeyModalOpen(false);
     router.push(`/admin/empresas/editar/${newCompanyId}`);
   };
+
+  const handleApprove = (companyId: string) => {
+    setAdminCompanies(prev => prev.map(c => c.id === companyId ? { ...c, status: 'Aprovada' as CompanyStatus } : c));
+    toast({ title: "Empresa Aprovada!", description: "A empresa agora está visível no aplicativo." });
+  };
+  
+  const handleDelete = (companyId: string) => {
+    setAdminCompanies(prev => prev.filter(c => c.id !== companyId));
+    toast({ title: "Empresa Excluída", variant: "destructive" });
+  };
+
+  const handleAddNewCategory = () => {
+    if (newCategoryName.trim() === '') {
+        toast({ variant: "destructive", title: "Nome inválido", description: "O nome da categoria não pode estar vazio." });
+        return;
+    }
+    if (!activeCategories.find(cat => cat.toLowerCase() === newCategoryName.toLowerCase())) {
+        setActiveCategories(prev => [...prev, newCategoryName]);
+        toast({ title: "Categoria Adicionada", description: `"${newCategoryName}" foi adicionada à lista.` });
+    }
+    setNewCategoryName('');
+    setIsAddCategoryModalOpen(false);
+  }
+
+  const CompaniesTable = ({ companies }: { companies: typeof initialAdminCompanies }) => (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome da Empresa</TableHead>
+              <TableHead className="flex items-center gap-2">
+                Categoria
+                <Dialog open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-5 w-5 text-lime-400">
+                            <PlusCircle className="h-4 w-4" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Adicionar Nova Categoria</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4">
+                            <Label htmlFor="category-name">Nome da Categoria</Label>
+                            <Input id="category-name" placeholder="Ex: Restaurante" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} />
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">Cancelar</Button>
+                            </DialogClose>
+                            <Button type="button" onClick={handleAddNewCategory}>Salvar Categoria</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-5 w-5">
+                            <ListFilter className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DropdownMenuLabel>Filtrar Categoria</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuCheckboxItem checked={categoryFilter === 'Todas'} onSelect={() => setCategoryFilter('Todas')}>Todas as Categorias</DropdownMenuCheckboxItem>
+                        {activeCategories.map(cat => (
+                             <DropdownMenuCheckboxItem key={cat} checked={categoryFilter === cat} onSelect={() => setCategoryFilter(cat)}>{cat}</DropdownMenuCheckboxItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+              </TableHead>
+              <TableHead>Data de Cadastro</TableHead>
+              <TableHead>Chave de Acesso</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Ativo no PWA</TableHead>
+              <TableHead>
+                <span className="sr-only">Ações</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {companies.map((company) => (
+              <TableRow key={company.id}>
+                <TableCell className="font-medium">
+                  {company.name}
+                </TableCell>
+                <TableCell>{company.category}</TableCell>
+                <TableCell>{company.joinDate}</TableCell>
+                <TableCell>
+                    <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs">{company.accessKey}</span>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
+                            <Copy className="h-4 w-4"/>
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRegenerateKey(company.id)}>
+                            <RefreshCw className="h-4 w-4 text-lime-400"/>
+                        </Button>
+                    </div>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      company.status === 'Aprovada'
+                        ? 'default'
+                        : 'destructive'
+                    }
+                    className={
+                      company.status === 'Aprovada'
+                        ? 'bg-lime-500/20 text-lime-300 border-lime-400/20'
+                        : 'bg-orange-600/20 text-orange-400 border-none'
+                    }
+                  >
+                    {company.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Switch defaultChecked={company.isActive} />
+                </TableCell>
+                <TableCell>
+                  <AlertDialog>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                           <Link href={`/admin/empresas/editar/${company.id}`}><DropdownMenuItem>Ver Detalhes</DropdownMenuItem></Link>
+                           {company.status === 'Pendente' && <DropdownMenuItem onClick={() => handleApprove(company.id)}>Aprovar</DropdownMenuItem>}
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">Excluir</Button>
+                          </AlertDialogTrigger>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                       <AlertDialogContent>
+                        <AlertDialogHeader>
+                        <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Esta ação não pode ser desfeita. Isso excluirá permanentemente a empresa e todos os seus dados.
+                        </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(company.id)} className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+      <CardFooter>
+        <div className="text-xs text-muted-foreground">
+          Mostrando <strong>1-{companies.length}</strong> de{' '}
+          <strong>{companies.length}</strong> empresas
+        </div>
+      </CardFooter>
+    </Card>
+  );
+
+  const filteredCompanies = useMemo(() => {
+    return adminCompanies.filter(company => {
+        if (categoryFilter === 'Todas') return true;
+        return company.category === categoryFilter;
+    });
+  }, [adminCompanies, categoryFilter]);
+  
+  const allTabCompanies = filteredCompanies;
+  const approvedCompanies = filteredCompanies.filter(c => c.status === 'Aprovada');
+  const pendingCompanies = filteredCompanies.filter(c => c.status === 'Pendente');
+
 
   return (
     <>
@@ -241,205 +428,13 @@ export default function AdminEmpresasPage() {
             </div>
           </div>
           <TabsContent value="todas">
-            <Card>
-              <CardHeader>
-                <CardTitle>Empresas</CardTitle>
-                <CardDescription>
-                  Gerencie as empresas cadastradas.
-                </CardDescription>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Buscar por nome ou email..."
-                    className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                  />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome da Empresa</TableHead>
-                      <TableHead>Categoria</TableHead>
-                      <TableHead>Data de Cadastro</TableHead>
-                      <TableHead>Chave de Acesso</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Ativo no PWA</TableHead>
-                      <TableHead>
-                        <span className="sr-only">Ações</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {adminCompanies.map((company) => (
-                      <TableRow key={company.id}>
-                        <TableCell className="font-medium">
-                          {company.name}
-                        </TableCell>
-                        <TableCell>{company.category}</TableCell>
-                        <TableCell>{company.joinDate}</TableCell>
-                        <TableCell>
-                            <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs">{company.accessKey}</span>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
-                                    <Copy className="h-4 w-4"/>
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRegenerateKey(company.id)}>
-                                    <RefreshCw className="h-4 w-4 text-lime-400"/>
-                                </Button>
-                            </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              company.status === 'Aprovada'
-                                ? 'default'
-                                : 'destructive'
-                            }
-                            className={
-                              company.status === 'Aprovada'
-                                ? 'bg-lime-500/20 text-lime-300 border-lime-400/20'
-                                : 'bg-orange-600/20 text-orange-400 border-none'
-                            }
-                          >
-                            {company.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Switch defaultChecked={company.isActive} />
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                               <Link href={`/admin/empresas/editar/${company.id}`}><DropdownMenuItem>Ver Detalhes</DropdownMenuItem></Link>
-                              <DropdownMenuItem>Aprovar</DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">
-                                Excluir
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <div className="text-xs text-muted-foreground">
-                  Mostrando <strong>1-10</strong> de{' '}
-                  <strong>{adminCompanies.length}</strong> empresas
-                </div>
-              </CardFooter>
-            </Card>
+            <CompaniesTable companies={allTabCompanies} />
+          </TabsContent>
+          <TabsContent value="aprovadas">
+            <CompaniesTable companies={approvedCompanies} />
           </TabsContent>
           <TabsContent value="pendentes">
-            <Card>
-              <CardHeader>
-                <CardTitle>Empresas Pendentes</CardTitle>
-                <CardDescription>
-                  Empresas aguardando sua aprovação.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome da Empresa</TableHead>
-                      <TableHead>Categoria</TableHead>
-                      <TableHead>Data de Cadastro</TableHead>
-                       <TableHead>Chave de Acesso</TableHead>
-                      <TableHead>
-                        <span className="sr-only">Ações</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {adminCompanies
-                      .filter((c) => c.status === 'Pendente')
-                      .map((company) => (
-                        <TableRow key={company.id}>
-                          <TableCell className="font-medium">
-                            {company.name}
-                          </TableCell>
-                          <TableCell>{company.category}</TableCell>
-                          <TableCell>{company.joinDate}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs">{company.accessKey}</span>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copyToClipboard(company.accessKey)}>
-                                    <Copy className="h-4 w-4"/>
-                                </Button>
-                                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleRegenerateKey(company.id)}>
-                                    <RefreshCw className="h-4 w-4 text-lime-400"/>
-                                </Button>
-                            </div>
-                        </TableCell>
-                          <TableCell>
-                             <AlertDialog>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      aria-haspopup="true"
-                                      size="icon"
-                                      variant="ghost"
-                                    >
-                                      <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">Toggle menu</span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                                    <Link href={`/admin/empresas/editar/${company.id}`}>
-                                      <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-                                    </Link>
-                                    <DropdownMenuItem>Aprovar</DropdownMenuItem>
-                                    <AlertDialogTrigger asChild>
-                                        <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">Excluir</Button>
-                                    </AlertDialogTrigger>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Esta ação não pode ser desfeita. Isso excluirá permanentemente os dados pendentes de "{company.name}".
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <div className="text-xs text-muted-foreground">
-                  Total de{' '}
-                  <strong>
-                    {adminCompanies.filter((c) => c.status === 'Pendente')
-                      .length}
-                  </strong>{' '}
-                  empresas pendentes.
-                </div>
-              </CardFooter>
-            </Card>
+            <CompaniesTable companies={pendingCompanies} />
           </TabsContent>
         </Tabs>
       </main>
