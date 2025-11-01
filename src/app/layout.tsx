@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
-    const headersList = React.use(headers());
+    const headersList = headers();
     const pathname = headersList.get('x-pathname') || '';
     const showNav = !pathname.startsWith('/webview') && !pathname.startsWith('/admin');
 
