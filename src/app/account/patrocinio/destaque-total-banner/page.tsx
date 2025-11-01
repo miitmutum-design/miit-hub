@@ -298,12 +298,12 @@ export default function DestaqueTotalBannerPage() {
           <div className="space-y-2">
               <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Upload className="h-5 w-5"/>
-                  Imagem do Banner (1920x1080px) <span className="text-red-500">*</span>
+                  Imagem do Banner (16:8) <span className="text-red-500">*</span>
               </label>
               <button
                   type="button"
                   onClick={handleImageClick}
-                  className="relative w-full h-40 rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:hover:border-border"
+                  className="relative w-full aspect-[2/1] rounded-lg border-2 border-dashed border-border bg-card flex items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors disabled:cursor-not-allowed disabled:hover:border-border"
               >
                   {bannerImage ? (
                       <Image
@@ -524,3 +524,5 @@ export default function DestaqueTotalBannerPage() {
     </div>
   );
 }
+
+    
