@@ -13,9 +13,10 @@ export const metadata: Metadata = {
   description: 'Your guide to local businesses and offers.',
 };
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
+async function LayoutContent({ children }: { children: React.ReactNode }) {
     const headersList = headers();
     const pathname = headersList.get('x-pathname') || '';
+    
     const showNav = !pathname.startsWith('/webview') && !pathname.startsWith('/admin');
 
     return (
