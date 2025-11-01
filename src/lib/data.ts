@@ -317,7 +317,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=carlos',
         rating: 5,
         comment: 'Serviço impecável! A equipe da União Construtora foi extremamente profissional e entregou minha obra antes do prazo. Recomendo de olhos fechados.',
-        date: '2024-07-24T00:00:00.000Z'
+        date: '2024-07-24T10:00:00Z'
     },
     {
         id: 'r2',
@@ -328,7 +328,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=ana',
         rating: 1,
         comment: 'Péssima experiência. O sofá que comprei veio com defeito e a loja se recusou a trocar. O atendimento pós-venda é horrível. Não comprem aqui!',
-        date: '2024-07-23T00:00:00.000Z'
+        date: '2024-07-23T15:30:00Z'
     },
      {
         id: 'r3',
@@ -339,7 +339,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=pedro',
         rating: 4,
         comment: 'O software é muito bom, mas o suporte técnico poderia ser um pouco mais ágil para resolver problemas complexos. No geral, estou satisfeito.',
-        date: '2024-07-22T00:00:00.000Z'
+        date: '2024-07-22T12:00:00Z'
     },
     {
         id: 'r4',
@@ -350,7 +350,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=fernanda',
         rating: 5,
         comment: 'Construí minha casa com eles e foi a melhor decisão. Qualidade, pontualidade e um ótimo preço. Superou minhas expectativas!',
-        date: '2024-07-21T00:00:00.000Z'
+        date: '2024-07-21T18:45:00Z'
     }
 ];
 
