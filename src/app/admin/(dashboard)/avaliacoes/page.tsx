@@ -23,6 +23,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
@@ -46,10 +48,12 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 
 type TabValue = "todas" | "5" | "4" | "3" | "2" | "1";
+type SortOrder = "desc" | "asc";
 
 export default function AdminAvaliacoesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState<TabValue>('todas');
+    const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
     const filteredAndSortedReviews = useMemo(() => {
         let reviews = [...adminReviews];
@@ -70,11 +74,18 @@ export default function AdminAvaliacoesPage() {
             );
         }
 
-        // Sort by date (most recent first)
-        reviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        // Sort by date based on sortOrder
+        reviews.sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            if (sortOrder === 'desc') {
+                return dateB - dateA;
+            }
+            return dateA - dateB;
+        });
 
         return reviews;
-    }, [searchQuery, activeTab]);
+    }, [searchQuery, activeTab, sortOrder]);
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -95,14 +106,16 @@ export default function AdminAvaliacoesPage() {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filtro
+                    Ordenar
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
-                <DropdownMenuItem>Mais Recentes</DropdownMenuItem>
-                <DropdownMenuItem>Mais Antigas</DropdownMenuItem>
+                <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={sortOrder} onValueChange={(value) => setSortOrder(value as SortOrder)}>
+                    <DropdownMenuRadioItem value="desc">Mais Recentes</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="asc">Mais Antigas</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
