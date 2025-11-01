@@ -270,7 +270,7 @@ export default function VitrineCarrosselPage() {
         <div className="space-y-2 group-disabled:opacity-50">
             <label htmlFor="banner-image" className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Upload className="h-5 w-5"/>
-                Upload de Ícone/Logo (500x500px) <span className="text-red-500">*</span>
+                Upload de Ícone/Logo (1:1) <span className="text-red-500">*</span>
             </label>
             <div className="flex justify-center">
                 <button
@@ -465,5 +465,3 @@ export default function VitrineCarrosselPage() {
     </div>
   );
 }
-
-    
