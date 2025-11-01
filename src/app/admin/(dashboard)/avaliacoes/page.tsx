@@ -43,17 +43,51 @@ import { adminReviews } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import { useState, useMemo } from 'react';
+
+type TabValue = "todas" | "5" | "4" | "3" | "2" | "1";
 
 export default function AdminAvaliacoesPage() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState<TabValue>('todas');
+
+    const filteredAndSortedReviews = useMemo(() => {
+        let reviews = [...adminReviews];
+
+        // Filter by rating based on active tab
+        if (activeTab !== 'todas') {
+            const rating = parseInt(activeTab, 10);
+            reviews = reviews.filter(review => review.rating === rating);
+        }
+
+        // Filter by search query
+        if (searchQuery) {
+            const lowerCaseQuery = searchQuery.toLowerCase();
+            reviews = reviews.filter(review => 
+                review.userName.toLowerCase().includes(lowerCaseQuery) ||
+                review.companyName.toLowerCase().includes(lowerCaseQuery) ||
+                review.comment.toLowerCase().includes(lowerCaseQuery)
+            );
+        }
+
+        // Sort by date (most recent first)
+        reviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        return reviews;
+    }, [searchQuery, activeTab]);
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <AdminHeader title="Moderar Avaliações" />
-      <Tabs defaultValue="todas">
+      <Tabs defaultValue="todas" onValueChange={(value) => setActiveTab(value as TabValue)}>
         <div className="flex items-center">
           <TabsList>
             <TabsTrigger value="todas">Todas</TabsTrigger>
-            <TabsTrigger value="5-estrelas">5 estrelas</TabsTrigger>
-            <TabsTrigger value="1-estrela">1 estrela</TabsTrigger>
+            <TabsTrigger value="5">5 estrelas</TabsTrigger>
+            <TabsTrigger value="4">4 estrelas</TabsTrigger>
+            <TabsTrigger value="3">3 estrelas</TabsTrigger>
+            <TabsTrigger value="2">2 estrelas</TabsTrigger>
+            <TabsTrigger value="1">1 estrela</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
@@ -73,7 +107,7 @@ export default function AdminAvaliacoesPage() {
             </DropdownMenu>
           </div>
         </div>
-        <Card>
+        <Card className="mt-4">
             <CardHeader>
                 <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -81,12 +115,14 @@ export default function AdminAvaliacoesPage() {
                   type="search"
                   placeholder="Buscar por loja, usuário ou comentário..."
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {adminReviews.map((review) => (
+                    {filteredAndSortedReviews.map((review) => (
                         <Card key={review.id} className="bg-muted/30">
                             <CardContent className="p-4 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
                                 <div className="flex gap-4">
@@ -107,7 +143,7 @@ export default function AdminAvaliacoesPage() {
                                             </div>
                                         </div>
                                         <p className="text-sm text-muted-foreground mt-2">{review.comment}</p>
-                                        <p className="text-xs text-muted-foreground mt-3">{review.date}</p>
+                                        <p className="text-xs text-muted-foreground mt-3">{new Date(review.date).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric'})}</p>
                                     </div>
                                 </div>
                                 <div className="flex md:flex-col items-center justify-end md:justify-start gap-2">
