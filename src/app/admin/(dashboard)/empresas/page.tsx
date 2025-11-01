@@ -11,6 +11,7 @@ import {
   Loader2,
   RefreshCw,
   Shapes,
+  ArrowUpDown,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -72,6 +73,7 @@ import {
 import { Label } from '@/components/ui/label';
 
 type CompanyStatus = 'Aprovada' | 'Pendente';
+type SortKey = 'name' | 'joinDate';
 
 export default function AdminEmpresasPage() {
   const [adminCompanies, setAdminCompanies] = useState(initialAdminCompanies);
@@ -82,6 +84,8 @@ export default function AdminEmpresasPage() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('Todas');
   const [activeCategories, setActiveCategories] = useState(categories.map(c => c.name));
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' }>({ key: 'joinDate', direction: 'descending' });
+
 
   const { toast } = useToast();
   const router = useRouter();
@@ -180,13 +184,50 @@ export default function AdminEmpresasPage() {
     setIsAddCategoryModalOpen(false);
   }
 
+  const requestSort = (key: SortKey) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredCompanies = useMemo(() => {
+    return adminCompanies.filter(company => {
+        if (categoryFilter === 'Todas') return true;
+        return company.category === categoryFilter;
+    });
+  }, [adminCompanies, categoryFilter]);
+
+  const sortedCompanies = useMemo(() => {
+    let sortableItems = [...filteredCompanies];
+    if (sortConfig.key) {
+        sortableItems.sort((a, b) => {
+            if (sortConfig.key === 'name') {
+                 if (a.name < b.name) return sortConfig.direction === 'ascending' ? -1 : 1;
+                 if (a.name > b.name) return sortConfig.direction === 'ascending' ? 1 : -1;
+            } else if (sortConfig.key === 'joinDate') {
+                 if (new Date(a.joinDate) < new Date(b.joinDate)) return sortConfig.direction === 'ascending' ? -1 : 1;
+                 if (new Date(a.joinDate) > new Date(b.joinDate)) return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+    }
+    return sortableItems;
+  }, [filteredCompanies, sortConfig]);
+
   const CompaniesTable = ({ companies }: { companies: typeof initialAdminCompanies }) => (
     <Card>
       <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome da Empresa</TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => requestSort('name')}>
+                    Nome da Empresa
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              </TableHead>
               <TableHead className="flex items-center gap-2">
                 Categoria
                 <Dialog open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen}>
@@ -227,7 +268,12 @@ export default function AdminEmpresasPage() {
                     </DropdownMenuContent>
                 </DropdownMenu>
               </TableHead>
-              <TableHead>Data de Cadastro</TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => requestSort('joinDate')}>
+                    Data de Cadastro
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              </TableHead>
               <TableHead>Chave de Acesso</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Ativo no PWA</TableHead>
@@ -323,17 +369,10 @@ export default function AdminEmpresasPage() {
       </CardFooter>
     </Card>
   );
-
-  const filteredCompanies = useMemo(() => {
-    return adminCompanies.filter(company => {
-        if (categoryFilter === 'Todas') return true;
-        return company.category === categoryFilter;
-    });
-  }, [adminCompanies, categoryFilter]);
   
-  const allTabCompanies = filteredCompanies;
-  const approvedCompanies = filteredCompanies.filter(c => c.status === 'Aprovada');
-  const pendingCompanies = filteredCompanies.filter(c => c.status === 'Pendente');
+  const allTabCompanies = sortedCompanies;
+  const approvedCompanies = sortedCompanies.filter(c => c.status === 'Aprovada');
+  const pendingCompanies = sortedCompanies.filter(c => c.status === 'Pendente');
 
 
   return (
