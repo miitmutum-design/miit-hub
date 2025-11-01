@@ -259,8 +259,8 @@ export const adminCompanies = [
     id: '3',
     name: 'Flor de Lótus Móveis',
     category: 'Móveis',
-    status: 'Aprovada' as const,
-    isActive: true,
+    status: 'Pendente' as const,
+    isActive: false,
     joinDate: '05/07/2024',
     accessKey: 'IJKL-5678-MNOP',
     paymentStatus: 'Plano Prata PAGO' as const

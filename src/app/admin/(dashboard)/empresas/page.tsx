@@ -13,6 +13,11 @@ import {
   Shapes,
   ArrowUpDown,
   CircleDollarSign,
+  FileSignature,
+  HelpCircle,
+  Shield,
+  Crown,
+  Trash2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -297,6 +302,11 @@ export default function AdminEmpresasPage() {
                 const isPaid = company.paymentStatus === 'Plano Prata PAGO' || company.paymentStatus === 'Plano Gold PAGO';
                 const isToggleDisabled = company.status === 'Pendente' || isPaid;
                 const isToggleOn = isPaid || company.isActive;
+
+                const isPendingApproval = isPaid && company.status === 'Pendente';
+                const isPendingPayment = company.status === 'Aprovada' && !isPaid;
+                const isColdLead = company.status === 'Pendente' && !isPaid;
+
               return (
               <TableRow key={company.id}>
                 <TableCell className="font-medium">
@@ -325,9 +335,12 @@ export default function AdminEmpresasPage() {
                     className={
                       company.status === 'Aprovada'
                         ? 'bg-lime-500/20 text-lime-300 border-lime-400/20'
-                        : 'bg-orange-600/20 text-orange-400 border-none'
+                        : 'bg-orange-600/20 text-orange-400 border-none flex items-center gap-1.5'
                     }
                   >
+                    {isPendingApproval && <FileSignature className="h-3 w-3" />}
+                    {isPendingPayment && <CircleDollarSign className="h-3 w-3" />}
+                    {isColdLead && <HelpCircle className="h-3 w-3" />}
                     {company.status}
                   </Badge>
                 </TableCell>
@@ -359,7 +372,10 @@ export default function AdminEmpresasPage() {
                            <Link href={`/admin/empresas/editar/${company.id}`}><DropdownMenuItem>Ver Detalhes</DropdownMenuItem></Link>
                            {company.status === 'Pendente' && <DropdownMenuItem onClick={() => handleApprove(company.id)}>Aprovar</DropdownMenuItem>}
                           <AlertDialogTrigger asChild>
-                            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">Excluir</Button>
+                            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 h-auto font-normal relative items-center rounded-sm flex cursor-default select-none text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Excluir
+                            </Button>
                           </AlertDialogTrigger>
                         </DropdownMenuContent>
                       </DropdownMenu>
