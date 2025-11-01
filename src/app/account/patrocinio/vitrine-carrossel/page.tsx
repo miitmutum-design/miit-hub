@@ -192,13 +192,13 @@ export default function VitrineCarrosselPage() {
     sendSponsorshipRequest();
   };
   
-    const bannerLabels = {
-        empresa: { label: 'Nome da Empresa', icon: Building },
-        ofertas: { label: 'Nome da Oferta', icon: Gift },
-        eventos: { label: 'Nome do Evento', icon: Ticket },
-    };
+  const bannerLabels = {
+      empresa: { label: 'Nome da Empresa', icon: Building },
+      ofertas: { label: 'Nome da Oferta', icon: Gift },
+      eventos: { label: 'Nome do Evento', icon: Ticket },
+  };
 
-    const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels] || bannerLabels.empresa;
+  const { label: bannerNameLabel, icon: BannerIcon } = bannerLabels[sponsorshipType as keyof typeof bannerLabels] || bannerLabels.empresa;
 
   return (
     <div className="container mx-auto max-w-lg py-6 sm:py-8">
