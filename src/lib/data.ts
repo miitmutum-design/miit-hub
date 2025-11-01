@@ -249,55 +249,61 @@ export const adminCompanies = [
     id: '1',
     name: 'União Construtora',
     category: 'Construção',
-    status: 'Aprovada',
+    status: 'Aprovada' as const,
     isActive: true,
     joinDate: '10/07/2024',
-    accessKey: 'ABCD-1234-EFGH'
+    accessKey: 'ABCD-1234-EFGH',
+    paymentStatus: 'Plano Gold PAGO' as const
   },
   {
     id: '3',
     name: 'Flor de Lótus Móveis',
     category: 'Móveis',
-    status: 'Aprovada',
+    status: 'Aprovada' as const,
     isActive: true,
     joinDate: '05/07/2024',
-    accessKey: 'IJKL-5678-MNOP'
+    accessKey: 'IJKL-5678-MNOP',
+    paymentStatus: 'Plano Prata PAGO' as const
   },
   {
     id: 'company-gold',
     name: 'Empresa Gold',
     category: 'Tecnologia',
-    status: 'Aprovada',
+    status: 'Aprovada' as const,
     isActive: false,
     joinDate: '01/07/2024',
-    accessKey: 'QRST-9012-UVWX'
+    accessKey: 'QRST-9012-UVWX',
+    paymentStatus: 'Plano Expirado' as const
   },
   {
     id: 'company-silver',
     name: 'Empresa Prata',
     category: 'Serviços',
-    status: 'Pendente',
+    status: 'Pendente' as const,
     isActive: false,
     joinDate: '28/06/2024',
-    accessKey: 'YZAB-3456-CDEF'
+    accessKey: 'YZAB-3456-CDEF',
+    paymentStatus: 'Plano Grátis' as const
   },
     {
     id: '5',
     name: 'Nova Hamburgueria',
     category: 'Alimentação',
-    status: 'Pendente',
+    status: 'Pendente' as const,
     isActive: false,
     joinDate: '25/06/2024',
-    accessKey: 'GHIJ-7890-KLMN'
+    accessKey: 'GHIJ-7890-KLMN',
+    paymentStatus: 'Plano Grátis' as const
   },
   {
     id: '6',
     name: 'Jardim Secreto Flores',
     category: 'Floricultura',
-    status: 'Pendente',
+    status: 'Pendente' as const,
     isActive: false,
     joinDate: '22/06/2024',
-    accessKey: 'OPQR-1234-STUV'
+    accessKey: 'OPQR-1234-STUV',
+    paymentStatus: 'Plano Grátis' as const
   }
 ];
 

@@ -37,11 +37,14 @@ function SearchResults({ query }: { query: string }) {
   const searchedBusinesses = allBusinesses.filter(business => {
       const companyAdminData = adminCompanies.find(c => c.id === business.id);
       const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
-      const fullProfile = { ...business, ...profile };
+      const fullProfile = { ...business, ...profile, ...companyAdminData };
       
+      const isPaid = fullProfile.paymentStatus === 'Plano Prata PAGO' || fullProfile.paymentStatus === 'Plano Gold PAGO';
+
       // Check for approval and active status
-      const isApproved = companyAdminData?.status === 'Aprovada';
-      const isActiveOnPWA = companyAdminData?.isActive === true;
+      const isApproved = fullProfile.status === 'Aprovada';
+      const isActiveOnPWA = isPaid || fullProfile.isActive;
+
       if (!isApproved || !isActiveOnPWA) {
           return false;
       }

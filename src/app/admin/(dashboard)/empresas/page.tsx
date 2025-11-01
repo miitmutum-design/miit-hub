@@ -12,12 +12,12 @@ import {
   RefreshCw,
   Shapes,
   ArrowUpDown,
+  CircleDollarSign,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -293,7 +293,11 @@ export default function AdminEmpresasPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {companies.map((company) => (
+            {companies.map((company) => {
+                const isPaid = company.paymentStatus === 'Plano Prata PAGO' || company.paymentStatus === 'Plano Gold PAGO';
+                const isToggleDisabled = company.status === 'Pendente' || isPaid;
+                const isToggleOn = isPaid || company.isActive;
+              return (
               <TableRow key={company.id}>
                 <TableCell className="font-medium">
                   {company.name}
@@ -328,11 +332,14 @@ export default function AdminEmpresasPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Switch
-                     checked={company.isActive}
-                     onCheckedChange={(checked) => handleActivationToggle(company.id, checked)}
-                     disabled={company.status === 'Pendente'}
-                   />
+                  <div className='flex items-center gap-2'>
+                    <Switch
+                        checked={isToggleOn}
+                        onCheckedChange={(checked) => handleActivationToggle(company.id, checked)}
+                        disabled={isToggleDisabled}
+                    />
+                    {isPaid && <CircleDollarSign className="h-4 w-4 text-yellow-400" />}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <AlertDialog>
@@ -371,7 +378,7 @@ export default function AdminEmpresasPage() {
                   </AlertDialog>
                 </TableCell>
               </TableRow>
-            ))}
+            )})}
           </TableBody>
         </Table>
       </CardContent>
