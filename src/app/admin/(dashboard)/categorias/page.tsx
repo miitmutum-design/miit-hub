@@ -50,10 +50,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { categorySuggestions, activeCategories as initialActiveCategories } from '@/lib/data';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminCategoriasPage() {
     const [activeCategories, setActiveCategories] = useState(initialActiveCategories);
     const [suggestions, setSuggestions] = useState(categorySuggestions);
+    const { toast } = useToast();
 
     const handleApprove = (suggestionName: string) => {
         // Add to active categories if it doesn't exist
@@ -62,14 +64,28 @@ export default function AdminCategoriasPage() {
         }
         // Remove from suggestions
         setSuggestions(prev => prev.filter(s => s.name !== suggestionName));
+        toast({
+            title: 'Categoria Aprovada',
+            description: `"${suggestionName}" agora é uma categoria ativa.`,
+        });
     };
 
     const handleReject = (suggestionName: string) => {
         setSuggestions(prev => prev.filter(s => s.name !== suggestionName));
+        toast({
+            title: 'Sugestão Rejeitada',
+            description: `A sugestão "${suggestionName}" foi removida.`,
+            variant: 'destructive'
+        });
     };
     
     const handleDeleteActive = (categoryName: string) => {
         setActiveCategories(prev => prev.filter(cat => cat.name !== categoryName));
+         toast({
+            title: 'Categoria Excluída',
+            description: `A categoria "${categoryName}" foi removida da lista.`,
+            variant: 'destructive'
+        });
     };
 
 
@@ -77,15 +93,15 @@ export default function AdminCategoriasPage() {
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <AdminHeader title="Gerenciar Categorias" />
       <div className="grid gap-4 md:grid-cols-2 md:gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Sugestões de Empresas</CardTitle>
-            <CardDescription>
-              Aprove ou rejeite as categorias sugeridas pelas empresas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {suggestions.length > 0 ? (
+        {suggestions.length > 0 && (
+            <Card>
+            <CardHeader>
+                <CardTitle>Sugestões de Empresas</CardTitle>
+                <CardDescription>
+                Aprove ou rejeite as categorias sugeridas pelas empresas.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
                 <div className="space-y-3">
                 {suggestions.map((suggestion) => (
                     <div
@@ -106,13 +122,11 @@ export default function AdminCategoriasPage() {
                     </div>
                 ))}
                 </div>
-            ) : (
-                <div className="text-center text-muted-foreground p-4">Nenhuma sugestão pendente.</div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+            </Card>
+        )}
 
-        <Card>
+        <Card className={suggestions.length === 0 ? 'md:col-span-2' : ''}>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
                 <CardTitle>Categorias Ativas</CardTitle>
