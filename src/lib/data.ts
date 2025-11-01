@@ -251,7 +251,7 @@ export const adminCompanies = [
     category: 'Construção',
     status: 'Aprovada' as const,
     isActive: true,
-    joinDate: '10/07/2024',
+    joinDate: '2024-07-10T00:00:00.000Z',
     accessKey: 'ABCD-1234-EFGH',
     paymentStatus: 'Plano Gold PAGO' as const
   },
@@ -261,7 +261,7 @@ export const adminCompanies = [
     category: 'Móveis',
     status: 'Pendente' as const,
     isActive: false,
-    joinDate: '05/07/2024',
+    joinDate: '2024-07-05T00:00:00.000Z',
     accessKey: 'IJKL-5678-MNOP',
     paymentStatus: 'Plano Prata PAGO' as const
   },
@@ -271,7 +271,7 @@ export const adminCompanies = [
     category: 'Tecnologia',
     status: 'Aprovada' as const,
     isActive: false,
-    joinDate: '01/07/2024',
+    joinDate: '2024-07-01T00:00:00.000Z',
     accessKey: 'QRST-9012-UVWX',
     paymentStatus: 'Plano Expirado' as const
   },
@@ -281,7 +281,7 @@ export const adminCompanies = [
     category: 'Serviços',
     status: 'Pendente' as const,
     isActive: false,
-    joinDate: '28/06/2024',
+    joinDate: '2024-06-28T00:00:00.000Z',
     accessKey: 'YZAB-3456-CDEF',
     paymentStatus: 'Plano Grátis' as const
   },
@@ -291,7 +291,7 @@ export const adminCompanies = [
     category: 'Alimentação',
     status: 'Pendente' as const,
     isActive: false,
-    joinDate: '25/06/2024',
+    joinDate: '2024-06-25T00:00:00.000Z',
     accessKey: 'GHIJ-7890-KLMN',
     paymentStatus: 'Plano Grátis' as const
   },
@@ -301,7 +301,7 @@ export const adminCompanies = [
     category: 'Floricultura',
     status: 'Pendente' as const,
     isActive: false,
-    joinDate: '22/06/2024',
+    joinDate: '2024-06-22T00:00:00.000Z',
     accessKey: 'OPQR-1234-STUV',
     paymentStatus: 'Plano Grátis' as const
   }
@@ -317,7 +317,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=carlos',
         rating: 5,
         comment: 'Serviço impecável! A equipe da União Construtora foi extremamente profissional e entregou minha obra antes do prazo. Recomendo de olhos fechados.',
-        date: '24/07/2024'
+        date: '2024-07-24T00:00:00.000Z'
     },
     {
         id: 'r2',
@@ -328,7 +328,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=ana',
         rating: 1,
         comment: 'Péssima experiência. O sofá que comprei veio com defeito e a loja se recusou a trocar. O atendimento pós-venda é horrível. Não comprem aqui!',
-        date: '23/07/2024'
+        date: '2024-07-23T00:00:00.000Z'
     },
      {
         id: 'r3',
@@ -339,7 +339,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=pedro',
         rating: 4,
         comment: 'O software é muito bom, mas o suporte técnico poderia ser um pouco mais ágil para resolver problemas complexos. No geral, estou satisfeito.',
-        date: '22/07/2024'
+        date: '2024-07-22T00:00:00.000Z'
     },
     {
         id: 'r4',
@@ -350,7 +350,7 @@ export const adminReviews = [
         userAvatar: 'https://i.pravatar.cc/150?u=fernanda',
         rating: 5,
         comment: 'Construí minha casa com eles e foi a melhor decisão. Qualidade, pontualidade e um ótimo preço. Superou minhas expectativas!',
-        date: '21/07/2024'
+        date: '2024-07-21T00:00:00.000Z'
     }
 ];
 
