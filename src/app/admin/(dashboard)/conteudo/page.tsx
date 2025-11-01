@@ -63,7 +63,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { businessOffers, businessEvents } from '@/lib/data';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getOfferById, getEventById } from '@/lib/data';
@@ -109,7 +109,7 @@ const EventDetailsModal = ({ eventId }: { eventId: string | null }) => {
                 <p><strong>Título:</strong> {event.title}</p>
                 <p><strong>Empresa:</strong> {event.businessName}</p>
                 <p><strong>Descrição:</strong> {event.description}</p>
-                <p><strong>Data:</strong> {format(new Date(event.date), 'dd/MM/yyyy HH:mm')}</p>
+                <p><strong>Data:</strong> {format(parseISO(event.date), 'dd/MM/yyyy HH:mm')}</p>
                 <p><strong>Limite por Usuário:</strong> {event.limitPerUser}</p>
             </div>
         </DialogContent>
@@ -299,7 +299,43 @@ export default function AdminConteudoPage() {
                             <TableRow key={event.id}>
                                 <TableCell className="font-medium">{event.title}</TableCell>
                                 <TableCell>{event.businessName}</TableCell>
-                                <TableCell>{format(new Date(event.date), 'dd/MM/yyyy HH:mm')}</TableCell>
+                                <TableCell>
+                                  {(() => {
+                                    try {
+                                      if (!event.date) return "Sem data";
+
+                                      let dateValue;
+
+                                      // 🔹 Case it's a Firestore timestamp
+                                      if ((event.date as any).seconds) {
+                                        dateValue = new Date((event.date as any).seconds * 1000);
+                                      }
+                                      // 🔹 Case it's an ISO string (2025-10-27T15:00:00Z)
+                                      else if (typeof event.date === "string" && !isNaN(Date.parse(event.date))) {
+                                        dateValue = parseISO(event.date);
+                                      }
+                                      // 🔹 Case it's a BR string (27/10/2025 15:00)
+                                      else if (typeof event.date === "string" && event.date.includes("/")) {
+                                        const [day, month, yearAndTime] = event.date.split("/");
+                                        const [year, time] = yearAndTime.split(" ");
+                                        dateValue = new Date(`${year}-${month}-${day}T${time || "00:00"}`);
+                                      } 
+                                      // 🔹 Case it's already a Date object
+                                      else if (event.date instanceof Date) {
+                                        dateValue = event.date;
+                                      }
+
+                                      if (!dateValue || isNaN(dateValue.getTime())) {
+                                        return "Data inválida";
+                                      }
+
+                                      return format(dateValue, "dd/MM/yyyy HH:mm");
+                                    } catch (err) {
+                                      console.warn("Erro ao formatar data:", event.date, err);
+                                      return "Data inválida";
+                                    }
+                                  })()}
+                                </TableCell>
                                 <TableCell>
                                 <Badge variant={isPast ? 'destructive' : 'default'} className={isPast ? 'bg-orange-600/20 text-orange-400 border-none' : 'bg-lime-500/10 text-lime-300 border-lime-400/20'}>
                                     {isPast ? 'Finalizado' : 'Futuro'}
