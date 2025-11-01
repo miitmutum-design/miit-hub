@@ -191,6 +191,14 @@ export default function AdminEmpresasPage() {
     }
     setSortConfig({ key, direction });
   };
+  
+  const handleActivationToggle = (companyId: string, isActive: boolean) => {
+      setAdminCompanies(prev => prev.map(c => c.id === companyId ? { ...c, isActive } : c));
+      toast({
+          title: `Empresa ${isActive ? 'ativada' : 'desativada'}`,
+          description: `A visibilidade da empresa no PWA foi atualizada.`
+      });
+  };
 
   const filteredCompanies = useMemo(() => {
     return adminCompanies.filter(company => {
@@ -228,45 +236,47 @@ export default function AdminEmpresasPage() {
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               </TableHead>
-              <TableHead className="flex items-center gap-2">
-                Categoria
-                <Dialog open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-5 w-5 text-lime-400">
-                            <PlusCircle className="h-4 w-4" />
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Adicionar Nova Categoria</DialogTitle>
-                        </DialogHeader>
-                        <div className="py-4">
-                            <Label htmlFor="category-name">Nome da Categoria</Label>
-                            <Input id="category-name" placeholder="Ex: Restaurante" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} />
-                        </div>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button type="button" variant="secondary">Cancelar</Button>
-                            </DialogClose>
-                            <Button type="button" onClick={handleAddNewCategory}>Salvar Categoria</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-5 w-5">
-                            <ListFilter className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuLabel>Filtrar Categoria</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuCheckboxItem checked={categoryFilter === 'Todas'} onSelect={() => setCategoryFilter('Todas')}>Todas as Categorias</DropdownMenuCheckboxItem>
-                        {activeCategories.map(cat => (
-                             <DropdownMenuCheckboxItem key={cat} checked={categoryFilter === cat} onSelect={() => setCategoryFilter(cat)}>{cat}</DropdownMenuCheckboxItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  Categoria
+                  <Dialog open={isAddCategoryModalOpen} onOpenChange={setIsAddCategoryModalOpen}>
+                      <DialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 text-lime-400">
+                              <PlusCircle className="h-4 w-4" />
+                          </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                          <DialogHeader>
+                              <DialogTitle>Adicionar Nova Categoria</DialogTitle>
+                          </DialogHeader>
+                          <div className="py-4">
+                              <Label htmlFor="category-name">Nome da Categoria</Label>
+                              <Input id="category-name" placeholder="Ex: Restaurante" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} />
+                          </div>
+                          <DialogFooter>
+                              <DialogClose asChild>
+                                  <Button type="button" variant="secondary">Cancelar</Button>
+                              </DialogClose>
+                              <Button type="button" onClick={handleAddNewCategory}>Salvar Categoria</Button>
+                          </DialogFooter>
+                      </DialogContent>
+                  </Dialog>
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-5 w-5">
+                              <ListFilter className="h-4 w-4" />
+                          </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                          <DropdownMenuLabel>Filtrar Categoria</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuCheckboxItem checked={categoryFilter === 'Todas'} onSelect={() => setCategoryFilter('Todas')}>Todas as Categorias</DropdownMenuCheckboxItem>
+                          {activeCategories.map(cat => (
+                              <DropdownMenuCheckboxItem key={cat} checked={categoryFilter === cat} onSelect={() => setCategoryFilter(cat)}>{cat}</DropdownMenuCheckboxItem>
+                          ))}
+                      </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </TableHead>
               <TableHead>
                 <Button variant="ghost" onClick={() => requestSort('joinDate')}>
@@ -318,7 +328,11 @@ export default function AdminEmpresasPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Switch defaultChecked={company.isActive} />
+                  <Switch
+                     checked={company.isActive}
+                     onCheckedChange={(checked) => handleActivationToggle(company.id, checked)}
+                     disabled={company.status === 'Pendente'}
+                   />
                 </TableCell>
                 <TableCell>
                   <AlertDialog>

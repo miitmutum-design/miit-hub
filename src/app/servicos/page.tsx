@@ -3,7 +3,7 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { businesses, getBusinessById } from '@/lib/data';
+import { businesses, getBusinessById, adminCompanies } from '@/lib/data';
 import BusinessListItem from '@/components/BusinessListItem';
 import { isCompanyActuallyOpen } from '@/lib/availability';
 import { mockCompanyProfiles } from '@/contexts/CompanyContext';
@@ -14,12 +14,39 @@ function SearchResults({ query }: { query: string }) {
 
   const formattedQuery = query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
   
-  const allBusinesses = businesses.map(b => getBusinessById(b.id)).filter(Boolean) as (typeof businesses[0])[];
+  // Combine all businesses and filter by active/approved status
+  const allBusinesses = [
+      ...businesses, 
+      ...adminCompanies.map(c => ({
+        id: c.id,
+        name: c.name,
+        category: c.category,
+        distance: 'N/A',
+        rating: 0,
+        reviews: [],
+        image: { url: '', hint: ''},
+        whatsapp: '',
+        websiteUrl: '',
+        description: ''
+      }))
+  ]
+  .map(b => getBusinessById(b.id))
+  .filter(Boolean) as (typeof businesses[0])[];
+
 
   const searchedBusinesses = allBusinesses.filter(business => {
+      const companyAdminData = adminCompanies.find(c => c.id === business.id);
       const profile = mockCompanyProfiles[business.id as keyof typeof mockCompanyProfiles];
       const fullProfile = { ...business, ...profile };
       
+      // Check for approval and active status
+      const isApproved = companyAdminData?.status === 'Aprovada';
+      const isActiveOnPWA = companyAdminData?.isActive === true;
+      if (!isApproved || !isActiveOnPWA) {
+          return false;
+      }
+
+      // Check if open based on schedule/overrides
       if (!isCompanyActuallyOpen(fullProfile)) {
           return false;
       }
